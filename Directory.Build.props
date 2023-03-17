@@ -12,8 +12,8 @@
     <AirshipIosNugetVersion>16.11.2</AirshipIosNugetVersion>
 
     <!-- Airship.Net version -->
-    <AirshipCrossPlatformVersion>17.0.1</AirshipCrossPlatformVersion>
-    <AirshipCrossPlatformNugetVersion>17.0.1</AirshipCrossPlatformNugetVersion>
+    <AirshipCrossPlatformVersion>17.0.0</AirshipCrossPlatformVersion>
+    <AirshipCrossPlatformNugetVersion>17.0.0</AirshipCrossPlatformNugetVersion>
   </PropertyGroup>
 
   <!-- Nuget packaging metadata -->
