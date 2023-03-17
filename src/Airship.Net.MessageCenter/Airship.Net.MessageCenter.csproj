@@ -14,7 +14,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>airship.net.messagecenter</PackageId>
+		<PackageId>Airship.Net.MessageCenter</PackageId>
 		<Title>Airship SDK - Message Center</Title>
 		<Summary>Airship SDK .NET Library</Summary>
 		<Description>Adds support for built-in Message Center UIs</Description>
@@ -43,8 +43,8 @@
 	<!-- Dependencies -->
 	<ItemGroup>
 		<ProjectReference Include="..\Airship.Net\Airship.Net.csproj" />
-		<ProjectReference Condition="'$(TargetFramework)' == 'net6.0-android'" Include="..\..\binderator\generated\airship.android.messagecenter\airship.android.messagecenter.csproj" />
-		<ProjectReference Condition="'$(TargetFramework)' == 'net6.0-android'" Include="..\..\binderator\generated\airship.android.core\airship.android.core.csproj" />
+		<ProjectReference Condition="'$(TargetFramework)' == 'net6.0-android'" Include="..\..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
+		<ProjectReference Condition="'$(TargetFramework)' == 'net6.0-android'" Include="..\..\binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj" />
 		<ProjectReference Condition="'$(TargetFramework)' == 'net6.0-ios'" Include="..\AirshipBindings.iOS.Basement\AirshipBindings.iOS.Basement.csproj" />
 		<ProjectReference Condition="'$(TargetFramework)' == 'net6.0-ios'" Include="..\AirshipBindings.iOS.Core\AirshipBindings.iOS.Core.csproj" />
 		<ProjectReference Condition="'$(TargetFramework)' == 'net6.0-ios'" Include="..\AirshipBindings.iOS.ExtendedActions\AirshipBindings.iOS.ExtendedActions.csproj" />

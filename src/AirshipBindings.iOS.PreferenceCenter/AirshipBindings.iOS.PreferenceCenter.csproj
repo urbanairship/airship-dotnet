@@ -6,7 +6,7 @@
     <ProjectGuid>{13E9ACF2-4FE5-4FA6-96C4-BDFB6FF7C3A0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>AirshipBindings.iOS.PreferenceCenter</RootNamespace>
-    <AssemblyName>airship.ios.preferencecenter</AssemblyName>
+    <AssemblyName>Airship.Net.iOS.PreferenceCenter</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Preference Center</AssemblyTitle>
     <Description>Preference Center support for Airship SDK</Description>
     <TargetFramework>net6.0-ios</TargetFramework>

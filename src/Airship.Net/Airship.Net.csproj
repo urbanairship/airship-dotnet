@@ -14,7 +14,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>airship.net</PackageId>
+		<PackageId>Airship.Net</PackageId>
 		<Title>Airship SDK</Title>
 		<Summary>Airship SDK .NET Library</Summary>
 		<Description>A full suite of mobile engagement tools for building next-generation apps</Description>
@@ -28,10 +28,10 @@
 	  <CreatePackage>false</CreatePackage>
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0-android'">
-		<ProjectReference Include="..\..\binderator\generated\airship.android.automation\airship.android.automation.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\airship.android.core\airship.android.core.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\airship.android.layout\airship.android.layout.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\airship.android.messagecenter\airship.android.messagecenter.csproj" />
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj" />
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj" />
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Layout\Airship.Net.Android.Layout.csproj" />
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
 	</ItemGroup>
 
 	 <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-ios'">

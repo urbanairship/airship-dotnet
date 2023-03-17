@@ -6,7 +6,7 @@
     <ProjectGuid>{BFFFE653-04CD-4563-BF2D-B6F31349F30D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>AirshipBindings.iOS.ExtendedActions</RootNamespace>
-    <AssemblyName>airship.ios.extendedactions</AssemblyName>
+    <AssemblyName>Airship.Net.iOS.ExtendedActions</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - ExtendedActions</AssemblyTitle>
     <Description>Extended actions support for Airship SDK</Description>
     <TargetFramework>net6.0-ios</TargetFramework>

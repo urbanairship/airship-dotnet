@@ -8,7 +8,7 @@
     <TemplateGuid>{b6f3ff35-79b2-4f25-a2fc-60a7cf61013b}</TemplateGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>UrbanAirship</RootNamespace>
-    <AssemblyName>airship.ios.messagecenter</AssemblyName>
+    <AssemblyName>Airship.Net.iOS.MessageCenter</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - MessageCenter</AssemblyTitle>
     <Description>Message Center support for the Airship SDK</Description>
     <TargetFramework>net6.0-ios</TargetFramework>
