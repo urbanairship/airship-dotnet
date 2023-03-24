@@ -23,7 +23,7 @@
     <AssemblyCompany>Airship, Inc.</AssemblyCompany>
     <PackageTags>airship, urbanairship</PackageTags>
     <Copyright>©Airship. All rights reserved.</Copyright>
-    <PackageProjectUrl>https://github.com/urbanairship/urbanairship-xamarin/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/urbanairship/airship-dotnet/</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>

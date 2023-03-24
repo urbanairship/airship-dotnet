@@ -99,6 +99,12 @@ tasks.register('syncRootVersion') {
             match: "UACrossPlatformVersion (.*)]",
             replace: "UACrossPlatformVersion (\"$crossPlatformNugetVersion\")]"
         )
+
+        ant.replaceregexp(
+            file: "$projectDir/src/SharedAssemblyInfo.iOS.cs",
+            match: "AssemblyVersion (.*)]",
+            replace: "AssemblyVersion (\"$crossPlatformNugetVersion\")]"
+        )
     }
 }
 
@@ -155,7 +161,7 @@ tasks.register('syncDirectoryBuildProps') {
                     AssemblyCompany('Airship, Inc.')
                     PackageTags('airship, urbanairship')
                     Copyright('©Airship. All rights reserved.')
-                    PackageProjectUrl('https://github.com/urbanairship/urbanairship-xamarin/')
+                    PackageProjectUrl('https://github.com/urbanairship/airship-dotnet/')
                     PackageLicenseExpression('Apache-2.0')
                     PackageRequireLicenseAcceptance('false')
                     AllowedOutputExtensionsInPackageBuildOutputFolder('$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb')
