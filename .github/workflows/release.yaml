@@ -42,12 +42,12 @@ jobs:
         with:
           python-version: '3.9'
           
-      - name: Setup GCP
-        uses: google-github-actions/setup-gcloud@daadedc81d5f9d3c06d2c92f49202a3cc2b919ba # v0.2.1
-        with:
-          version: '351.0.0'
-          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+      # - name: Setup GCP
+      #   uses: google-github-actions/setup-gcloud@daadedc81d5f9d3c06d2c92f49202a3cc2b919ba # v0.2.1
+      #   with:
+      #     version: '351.0.0'
+      #     service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+      #     service_account_key: ${{ secrets.GCP_SA_KEY }}
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -64,23 +64,24 @@ jobs:
         run: |
           dotnet workload install android ios maui-android maui-ios maui-maccatalyst
 
-      - name: Install doc dependencies
-        run: |
-          brew install doxygen
-          brew install graphviz
+      # - name: Install doc dependencies
+      #   run: |
+      #     brew install doxygen
+      #     brew install graphviz
 
       - name: Build
-        run: ./gradlew build pack packageDocs
+        #run: ./gradlew build pack packageDocs
+        run: ./gradlew build pack
 
-      - name: Publish Nuget
+      - name: Publish Nugets
         env:
           NUGET_PRODUCTION_API_KEY: ${{ secrets.NUGET_PRODUCTION_API_KEY }}
         run: ./gradlew publishToProduction
 
-      - name: Upload Docs
-        run: |
-          VERSION=${{ steps.get_version.outputs.VERSION }}
-          gsutil cp docs/build/$VERSION.tar.gz gs://ua-web-ci-prod-docs-transfer/libraries/xamarin/$VERSION.tar.gz
+      # - name: Upload Docs
+      #   run: |
+      #     VERSION=${{ steps.get_version.outputs.VERSION }}
+      #     gsutil cp docs/build/$VERSION.tar.gz gs://ua-web-ci-prod-docs-transfer/libraries/maui/$VERSION.tar.gz
 
       - name: Create Github Release
         uses: actions/create-release@v1.0.1
