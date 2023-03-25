@@ -8,7 +8,7 @@
     <TemplateGuid>{b6f3ff35-79b2-4f25-a2fc-60a7cf61013b}</TemplateGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>AirshipBindings.iOS.Basement</RootNamespace>
-    <AssemblyName>airship.ios.basement</AssemblyName>
+    <AssemblyName>Airship.Net.iOS.Basement</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Basement</AssemblyTitle>
     <Description>Basement module for Airship SDK</Description>
     <TargetFramework>net6.0-ios</TargetFramework>

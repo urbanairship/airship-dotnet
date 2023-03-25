@@ -22,28 +22,25 @@
 
   @{
     string title = "Airship Android SDK";
-    switch (Model.NuGetPackageId)
+    switch (Model.Name)
     {
-      case "airship.android.accengage":
-        title += "- Accengage";
+      case "urbanairship-adm":
+        title += " - ADM Push Provider";
         break;
-      case "airship.android.adm":
-        title += "- ADM Push Provider";
+      case "urbanairship-fcm":
+        title += " - FCM Push Provider";
         break;
-      case "airship.android.fcm":
-        title += "- FCM Push Provider";
+      case "urbanairship-messagecenter":
+        title += " - Message Center";
         break;
-      case "airship.android.messagecenter":
-        title += "- Message Center";
+      case "urbanairship-preferencecenter":
+        title += " - Preference Center";
         break;
-      case "airship.android.preferencecenter":
-        title += "- Preference Center";
+      case "urbanairship-automation":
+        title += " - Automation";
         break;
-      case "airship.android.automation":
-        title += "- Automation";
-        break;
-      case "airship.android.layout":
-      case "airship.android.core":
+      case "urbanairship-layout":
+      case "urbanairship-core":
         // Use default title
         break;
     }
@@ -108,8 +105,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\source\UACrossPlatformVersion.cs" />
-    <Compile Include="..\..\source\SharedAssemblyInfo.cs" />
+    <Compile Include="..\..\..\src\UACrossPlatformVersion.cs" />
+    <Compile Include="..\..\..\src\SharedAssemblyInfo.Common.cs" />
+
     <Compile Include="..\..\source\@(Model.MavenGroupId)\@(Model.Name)\Additions\*.cs">
       <Link>Additions/%(RecursiveDir)/%(Filename)%(Extension)</Link>
     </Compile>

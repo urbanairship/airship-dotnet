@@ -6,7 +6,7 @@
     <ProjectGuid>{C9325C9E-B43A-4BE8-AD68-B7BF6942F9F8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>AirshipBindings.iOS.NotificationContentExtension</RootNamespace>
-    <AssemblyName>airship.ios.notificationcontentextension</AssemblyName>
+    <AssemblyName>Airship.Net.iOS.NotificationContentExtension</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Notification Content Extension</AssemblyTitle>
     <Description>Notification content extension support for Airship SDK</Description>
     <TargetFramework>net6.0-ios</TargetFramework>

@@ -6,7 +6,7 @@
     <ProjectGuid>{7F49C0FA-F958-44CF-9246-8B8577748E6F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>UrbanAirship</RootNamespace>
-    <AssemblyName>airship.ios.core</AssemblyName>
+    <AssemblyName>Airship.Net.iOS.Core</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Core</AssemblyTitle>
     <Description>Core of Airship SDK</Description>
     <TargetFramework>net6.0-ios</TargetFramework>

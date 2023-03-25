@@ -53,26 +53,26 @@
   <!-- Package dependencies -->
 
   <ItemGroup Label="Common Package Dependencies" Condition="!$(UseProjectReferences)">
-    <PackageReference Include="airship.net" Version="$(AirshipCrossPlatformNugetVersion)" />
-    <PackageReference Include="airship.net.messagecenter" Version="$(AirshipCrossPlatformNugetVersion)" />
+    <PackageReference Include="Airship.Net" Version="$(AirshipCrossPlatformNugetVersion)" />
+    <PackageReference Include="Airship.Net.MessageCenter" Version="$(AirshipCrossPlatformNugetVersion)" />
   </ItemGroup>
 
   <ItemGroup Label="iOS Package Dependencies" Condition="'$(TargetFramework)' == 'net6.0-ios' And !$(UseProjectReferences)">
-    <PackageReference Include="airship.ios.basement" Version="$(AirshipIosNugetVersion)" />
-    <PackageReference Include="airship.ios.core" Version="$(AirshipIosNugetVersion)" />
-    <PackageReference Include="airship.ios.messagecenter" Version="$(AirshipIosNugetVersion)" />
-    <PackageReference Include="airship.ios.extendedactions" Version="$(AirshipIosNugetVersion)" />
-    <PackageReference Include="airship.ios.automation" Version="$(AirshipIosNugetVersion)" />
-    <PackageReference Include="airship.ios.preferencecenter" Version="$(AirshipIosNugetVersion)" />
+    <PackageReference Include="Airship.Net.iOS.Basement" Version="$(AirshipIosNugetVersion)" />
+    <PackageReference Include="Airship.Net.iOS.Core" Version="$(AirshipIosNugetVersion)" />
+    <PackageReference Include="Airship.Net.iOS.MessageCenter" Version="$(AirshipIosNugetVersion)" />
+    <PackageReference Include="Airship.Net.iOS.ExtendedActions" Version="$(AirshipIosNugetVersion)" />
+    <PackageReference Include="Airship.Net.iOS.Automation" Version="$(AirshipIosNugetVersion)" />
+    <PackageReference Include="Airship.Net.iOS.PreferenceCenter" Version="$(AirshipIosNugetVersion)" />
   </ItemGroup>
 
   <ItemGroup Label="Android Package Dependencies" Condition="'$(TargetFramework)' == 'net6.0-android' And !$(UseProjectReferences)">
-    <PackageReference Include="airship.android.core" Version="$(AirshipAndroidNugetVersion)" />
-    <PackageReference Include="airship.android.messagecenter" Version="$(AirshipAndroidNugetVersion)" />
-    <PackageReference Include="airship.android.layout" Version="$(AirshipAndroidNugetVersion)" />
-    <PackageReference Include="airship.android.fcm" Version="$(AirshipAndroidNugetVersion)" />
-    <PackageReference Include="airship.android.automation" Version="$(AirshipAndroidNugetVersion)" />
-    <PackageReference Include="airship.android.preferencecenter" Version="$(AirshipAndroidNugetVersion)" />
+    <PackageReference Include="Airship.Net.Android.Core" Version="$(AirshipAndroidNugetVersion)" />
+    <PackageReference Include="Airship.Net.Android.MessageCenter" Version="$(AirshipAndroidNugetVersion)" />
+    <PackageReference Include="Airship.Net.Android.Layout" Version="$(AirshipAndroidNugetVersion)" />
+    <PackageReference Include="Airship.Net.Android.Fcm" Version="$(AirshipAndroidNugetVersion)" />
+    <PackageReference Include="Airship.Net.Android.Automation" Version="$(AirshipAndroidNugetVersion)" />
+    <PackageReference Include="Airship.Net.Android.Preferencecenter" Version="$(AirshipAndroidNugetVersion)" />
   </ItemGroup>
 
   <!-- Project dependencies -->
@@ -92,12 +92,12 @@
   </ItemGroup>
 
   <ItemGroup Label="Android Project Dependencies" Condition="'$(TargetFramework)' == 'net6.0-android' And $(UseProjectReferences)">
-    <ProjectReference Include="..\binderator\generated\airship.android.core\airship.android.core.csproj" />
-    <ProjectReference Include="..\binderator\generated\airship.android.automation\airship.android.automation.csproj" />
-    <ProjectReference Include="..\binderator\generated\airship.android.layout\airship.android.layout.csproj" />
-    <ProjectReference Include="..\binderator\generated\airship.android.messagecenter\airship.android.messagecenter.csproj" />
-    <ProjectReference Include="..\binderator\generated\airship.android.preferencecenter\airship.android.preferencecenter.csproj" />
-    <ProjectReference Include="..\binderator\generated\airship.android.fcm\airship.android.fcm.csproj" />
+    <ProjectReference Include="..\binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj" />
+    <ProjectReference Include="..\binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj" />
+    <ProjectReference Include="..\binderator\generated\Airship.Net.Android.Layout\Airship.Net.Android.Layout.csproj" />
+    <ProjectReference Include="..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
+    <ProjectReference Include="..\binderator\generated\Airship.Net.Android.PreferenceCenter\Airship.Net.Android.PreferenceCenter.csproj" />
+    <ProjectReference Include="..\binderator\generated\Airship.Net.Android.Fcm\Airship.Net.Android.Fcm.csproj" />
   </ItemGroup>
 
   <!-- Removes -->
