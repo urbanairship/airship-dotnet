@@ -80,8 +80,17 @@ tasks {
   }
 
   register<Delete>("clean") {
-    delete(file("build").listFiles())
-    delete(file("externals").listFiles())
-    delete(file(binderatorGeneratedDir).listFiles())
+    val buildDir = file("build")
+    if (buildDir.exists()) {
+      delete(buildDir.listFiles())
+    }
+
+    val externalsDir = file("externals")
+    delete(externalsDir.listFiles())
+
+    val generatedDir = file(binderatorGeneratedDir)
+    if (generatedDir.exists()) {
+      delete(generatedDir.listFiles())
+    }
   }
 }
