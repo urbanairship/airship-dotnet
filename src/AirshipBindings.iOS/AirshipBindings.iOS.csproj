@@ -10,7 +10,7 @@
     <ImplicitUsings>true</ImplicitUsings>
     <AssemblyVersion>$(AirshipIosVersion)</AssemblyVersion>
     <PackageVersion>$(AirshipIosNugetVersion)</PackageVersion>
-    <IsTrimmable>true</IsTrimmable>
+    <IsTrimmable>false</IsTrimmable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
   </PropertyGroup>
