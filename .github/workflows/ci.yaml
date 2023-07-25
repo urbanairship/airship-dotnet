@@ -11,7 +11,7 @@ env:
 
 jobs:
   ci:
-    runs-on: macOS-latest
+    runs-on: macOS-13
     steps:
       - uses: actions/checkout@v2
 
