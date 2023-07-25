@@ -243,3 +243,6 @@ binderator/output
 
 # Idea folder
 .idea
+
+# VSCode folder
+.vscode
