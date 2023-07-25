@@ -12,6 +12,7 @@ namespace AirshipDotNet.MessageCenter.Handlers;
 /// <summary>
 /// Handler responsible for displaying a single Message Center message via the platform WKWebView.
 /// </summary>
+[Preserve(AllMembers = true)]
 public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
 {
     public static PropertyMapper<IMessageView, MessageViewHandler> MessageViewMapper = new(ViewHandler.ViewMapper)

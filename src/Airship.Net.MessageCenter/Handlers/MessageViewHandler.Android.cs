@@ -12,6 +12,7 @@ namespace AirshipDotNet.MessageCenter.Handlers;
 /// <summary>
 /// Handler responsible for displaying a single Message Center message via the platform MessageWebView.
 /// </summary>
+[Preserve(AllMembers = true)]
 public partial class MessageViewHandler : ViewHandler<IMessageView, MessageWebView>
 {
     private UrbanAirship.MessageCenter.Message? message;

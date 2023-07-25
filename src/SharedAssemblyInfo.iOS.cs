@@ -11,11 +11,10 @@ using System.Reflection;
 // When the attribute is present, the linker—if enabled—will process the assembly
 // even if you’re using the “Link SDK assemblies only” option, which is the default for device builds.
 
-//[assembly: LinkerSafe] // commented due to: warning CS0618: 'LinkerSafeAttribute' is obsolete: Replace with:
-[assembly: System.Reflection.AssemblyMetadata ("IsTrimmable", "True")]
+[assembly: System.Reflection.AssemblyMetadata ("IsTrimmable", "False")]
 
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("17.0.0")]
+[assembly: AssemblyVersion ("17.1.0")]

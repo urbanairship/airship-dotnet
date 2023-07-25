@@ -71,7 +71,8 @@ namespace UrbanAirship
 		IUAPreferenceConditions[] Conditions { get; set; }
 	}
 
-    // @interface UAPreferenceAlertItemButton : NSObject
+	// @interface UAPreferenceAlertItemButton : NSObject
+	[Preserve(AllMembers = true)]
     [BaseType(typeof(NSObject))]
 	interface UAPreferenceAlertItemButton
 	{

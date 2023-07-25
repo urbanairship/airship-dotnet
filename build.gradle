@@ -56,9 +56,11 @@ tasks.register('createLocalFeed') {
     mustRunAfter('pack')
 
     doLast() {
-        // add doesn't have a "-force" option, so first remove all the nuget packages from the local feed
+        // add doesn't have a "--force" option and "--skip-duplicates" doesn't work with pushes to local feeds,
+        // so first remove all the nuget packages from the local feed
         File localNugetFeed = file("${rootDir}/local-nuget-feed")
         localNugetFeed.deleteDir()
+        localNugetFeed.mkdirs()
 
         // get all the nuget packages from the build directory
         def nupkgs = buildDir.listFiles(new FilenameFilter() {
@@ -71,13 +73,13 @@ tasks.register('createLocalFeed') {
         nupkgs.each { nupkg ->
             // add the package to the local nuget feed
             exec {
-                commandLine "nuget", "add", "$nupkg", "-source", "$localNugetFeed"
+                commandLine "dotnet", "nuget", "push", "$nupkg", "-s", "$localNugetFeed"
             }
         }
 
         // clear the local nuget cache (so new packages with unchanged versions are used)
         exec {
-            commandLine "nuget", "locals", "all", "-clear"
+            commandLine "dotnet", "nuget", "locals", "all", "--clear"
         }
     }
 }
@@ -245,7 +247,7 @@ class PublishTask extends DefaultTask {
         nupkgs.each { nupkg ->
             // publish the package
             getProject().exec {
-                commandLine "nuget", "push", "$nupkg", "-Source", "${nugetRepoURL}", "-ApiKey", "${nugetApiKey}", "-SkipDuplicate", "-NonInteractive"
+                commandLine "dotnet", "nuget", "push", "$nupkg", "--source", "${nugetRepoURL}", "--api-key", "${nugetApiKey}", "--skip-duplicate"
             }
         }
     }

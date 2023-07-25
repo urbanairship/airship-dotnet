@@ -13,7 +13,7 @@
     <DisableExtraReferences>true</DisableExtraReferences>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
-    <IsTrimmable>true</IsTrimmable>
+    <IsTrimmable>false</IsTrimmable>
     <AssemblyVersion>$(AirshipIosVersion)</AssemblyVersion>
     <PackageVersion>$(AirshipIosNugetVersion)</PackageVersion>
     <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>

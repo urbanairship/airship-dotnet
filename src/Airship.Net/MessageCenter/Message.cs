@@ -5,6 +5,7 @@ namespace AirshipDotNet.MessageCenter
     /// <summary>
     /// A Message model object.
     /// </summary>
+    [Preserve(AllMembers = true)]
     public partial class Message
     {
         /// <summary>
