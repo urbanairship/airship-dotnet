@@ -25,6 +25,9 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           global-json-file: global.json
+          
+      - name: Set up NuGet
+        uses: nuget/setup-nuget@v1
 
       - name: Install iOS cert and provisioning profile
         env:
