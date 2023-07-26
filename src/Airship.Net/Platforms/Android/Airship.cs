@@ -115,10 +115,6 @@ namespace AirshipDotNet
             {
                 uAFeatures.Add(PrivacyManager.FeaturePush);
             }
-            if (features.HasFlag(Features.Chat))
-            {
-                uAFeatures.Add(PrivacyManager.FeatureChat);
-            }
             if (features.HasFlag(Features.Analytics))
             {
                 uAFeatures.Add(PrivacyManager.FeatureAnalytics);
@@ -130,10 +126,6 @@ namespace AirshipDotNet
             if (features.HasFlag(Features.Contacts))
             {
                 uAFeatures.Add(PrivacyManager.FeatureContacts);
-            }
-            if (features.HasFlag(Features.Location))
-            {
-                uAFeatures.Add(PrivacyManager.FeatureLocation);
             }
 
             return uAFeatures.ToArray();
@@ -158,11 +150,6 @@ namespace AirshipDotNet
                 features |= Features.Push;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureChat) == PrivacyManager.FeatureChat)
-            {
-                features |= Features.Chat;
-            }
-
             if ((uAFeatures & PrivacyManager.FeatureAnalytics) == PrivacyManager.FeatureAnalytics)
             {
                 features |= Features.Analytics;
@@ -176,11 +163,6 @@ namespace AirshipDotNet
             if ((uAFeatures & PrivacyManager.FeatureContacts) == PrivacyManager.FeatureContacts)
             {
                 features |= Features.Contacts;
-            }
-
-            if ((uAFeatures & PrivacyManager.FeatureLocation) == PrivacyManager.FeatureLocation)
-            {
-                features |= Features.Location;
             }
 
             return features;

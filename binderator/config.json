@@ -17,56 +17,56 @@
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-adm",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.0.3",
+        "nugetVersion": "17.0.3",
         "nugetId": "Airship.Net.Android.Adm",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-automation",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.0.3",
+        "nugetVersion": "17.0.3",
         "nugetId": "Airship.Net.Android.Automation",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-core",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.0.3",
+        "nugetVersion": "17.0.3",
         "nugetId": "Airship.Net.Android.Core",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-fcm",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.0.3",
+        "nugetVersion": "17.0.3",
         "nugetId": "Airship.Net.Android.Fcm",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-layout",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.0.3",
+        "nugetVersion": "17.0.3",
         "nugetId": "Airship.Net.Android.Layout",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-message-center",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.0.3",
+        "nugetVersion": "17.0.3",
         "nugetId": "Airship.Net.Android.MessageCenter",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-preference-center",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.0.3",
+        "nugetVersion": "17.0.3",
         "nugetId": "Airship.Net.Android.PreferenceCenter",
         "dependencyOnly": false
       },
@@ -169,7 +169,7 @@
       {
         "groupId": "androidx.room",
         "artifactId": "room-runtime",
-        "version": "2.5.0",
+        "version": "2.5.1",
         "nugetVersion": "2.5.0",
         "nugetId": "Xamarin.AndroidX.Room.Runtime",
         "dependencyOnly": true

@@ -53,12 +53,12 @@ namespace AirshipDotNet
         InAppAutomation = 1 << 0,
         MessageCenter = 1 << 1,
         Push = 1 << 2,
-        Chat = 1 << 3,
+        //RETIRED: Chat = 1 << 3,
         Analytics = 1 << 4,
         TagsAndAttributes = 1 << 5,
         Contacts = 1 << 6,
-        Location = 1 << 7,
-        All = InAppAutomation | MessageCenter | Push | Chat | Analytics | TagsAndAttributes | Contacts | Location
+        //RETIRED: Location = 1 << 7,
+        All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts
     }
 
     /// <summary>
