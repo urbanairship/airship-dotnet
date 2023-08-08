@@ -5,8 +5,8 @@
   <!-- Versions -->
   <PropertyGroup>
     <!-- Airship native SDK versions -->
-    <AirshipAndroidVersion>17.0.3</AirshipAndroidVersion>
-    <AirshipAndroidNugetVersion>17.0.3</AirshipAndroidNugetVersion>
+    <AirshipAndroidVersion>17.1.0</AirshipAndroidVersion>
+    <AirshipAndroidNugetVersion>17.1.0</AirshipAndroidNugetVersion>
 
     <AirshipIosVersion>16.12.3</AirshipIosVersion>
     <AirshipIosNugetVersion>16.12.3</AirshipIosNugetVersion>
