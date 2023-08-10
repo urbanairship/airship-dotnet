@@ -47,7 +47,7 @@
     <!-- Controls whether to use project references or nuget packages for Airship dependencies. -->
     <!-- While developing, switch to project references to allow all code to be editied. -->
     <!-- Once finished, run the 'pack' and 'createLocalFeed' Gradle tasks and switch back to package refs. -->
-    <UseProjectReferences>true</UseProjectReferences>
+    <UseProjectReferences>false</UseProjectReferences>
   </PropertyGroup>
 
   <!-- Package dependencies -->
