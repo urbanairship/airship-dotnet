@@ -7,6 +7,7 @@ using UrbanAirship.Automation;
 using UrbanAirship.Actions;
 using UrbanAirship.Channel;
 using UrbanAirship.MessageCenter;
+using UrbanAirship.Push;
 using AttributeEditor = AirshipDotNet.Attributes.AttributeEditor;
 
 namespace AirshipDotNet
@@ -14,7 +15,7 @@ namespace AirshipDotNet
     /// <summary>
     /// Provides cross-platform access to a common subset of functionality between the iOS and Android SDKs
     /// </summary>
-    public class Airship : Java.Lang.Object, IDeepLinkListener, IAirship, IInboxListener, MessageCenterClass.IOnShowMessageCenterListener, IAirshipChannelListener
+    public class Airship : Java.Lang.Object, IDeepLinkListener, IAirship, IInboxListener, MessageCenterClass.IOnShowMessageCenterListener, IAirshipChannelListener, IPushNotificationStatusListener
     {
         private static readonly Lazy<Airship> sharedAirship = new(() =>
         {
@@ -29,11 +30,13 @@ namespace AirshipDotNet
             
             //Adding Inbox updated listener
             MessageCenterClass.Shared().Inbox.AddListener(this);
+
+            UAirship.Shared().PushManager.AddNotificationStatusListener(this);
         }
 
         public event EventHandler<ChannelEventArgs>? OnChannelCreation;
 
-        public event EventHandler<ChannelEventArgs>? OnChannelUpdate;
+        public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate;
 
         private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
         public event EventHandler<DeepLinkEventArgs> OnDeepLinkReceived
@@ -473,7 +476,15 @@ namespace AirshipDotNet
         public void OnInboxUpdated() => OnMessageCenterUpdated?.Invoke(this, EventArgs.Empty);
 
         public void OnChannelCreated(string channelId) => OnChannelCreation?.Invoke(this, new ChannelEventArgs(channelId));
-        
-        public void OnChannelUpdated(string channelId) => OnChannelUpdate?.Invoke(this, new ChannelEventArgs(channelId));
+
+        public void OnChange(PushNotificationStatus status) => OnPushNotificationStatusUpdate?.Invoke(this,
+            new PushNotificationStatusEventArgs(
+                status.IsUserNotificationsEnabled,
+                status.AreNotificationsAllowed,
+                status.IsPushPrivacyFeatureEnabled,
+                status.IsPushTokenRegistered,
+                status.IsUserOptedIn,
+                status.IsOptIn)
+            );
     }
 }

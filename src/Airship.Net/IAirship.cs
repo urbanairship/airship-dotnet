@@ -1,5 +1,6 @@
 ﻿/* Copyright Airship and Contributors */
 
+using System;
 using AirshipDotNet.Attributes;
 using AirshipDotNet.Channel;
 
@@ -7,7 +8,7 @@ namespace AirshipDotNet
 {
 
     /// <summary>
-    /// Arguments for Channel creation and update events.
+    /// Arguments for Channel creation events.
     /// </summary>
     public class ChannelEventArgs : EventArgs
     {
@@ -16,6 +17,67 @@ namespace AirshipDotNet
         public ChannelEventArgs(string channelId)
         {
             ChannelId = channelId;
+        }
+    }
+
+    /// <summary>
+    /// Arguments for push notification status update events.
+    /// </summary>
+    public class PushNotificationStatusEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Indicatees whether user notifications are enabled via <c>PushManager</c>.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if user notifications are enabled, else <c>false</c>.
+        /// </value>
+        public bool IsUserNotificationsEnabled { get; private set; }
+
+        /// <summary>
+        /// Indicates whether notifications are allowed for the application at the system level.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if notifications are allowed, else <c>false</c>.
+        /// </value>
+        public bool AreNotificationsAllowed { get; private set; }
+
+        /// <summary>
+        /// Indicates whether <c>Features.Push</c> is enabled via <c>PrivacyManager</c>.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the push feature is enabled, else <c>false</c>.
+        /// </value>
+        public bool IsPushPrivacyFeatureEnabled { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the application has successfully registered a push token.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if a token was received and registered, else <c>false</c>.
+        /// </value>
+        public bool IsPushTokenRegistered { get; private set; }
+
+        /// <summary>
+        /// Checks if <c>IsUserNotificationsEnabled</c>, <c>AreNotificationsAllowed</c>, and <c>IsPushPrivacyFeatureEnabled</c> is enabled.
+        /// </summary>
+        public bool IsUserOptedIn { get; private set; }
+
+        /// <summary>
+        /// Checks if <c>IsUserOptedIn</c> and <c>IsPushTokenRegistered</c> is enabled.
+        /// </summary>
+        public bool IsOptIn { get; private set; }
+
+        /// <summary>
+        /// Creates push notification status event args.
+        /// </summary>
+        public PushNotificationStatusEventArgs(bool isUserNotificationsEnabled, bool areNotificationsAllowed, bool isPushPrivacyFeatureEnabled, bool isPushTokenRegistered, bool isUserOptedIn, bool isOptIn)
+        {
+            IsUserNotificationsEnabled = isUserNotificationsEnabled;
+            AreNotificationsAllowed = areNotificationsAllowed;
+            IsPushPrivacyFeatureEnabled = isPushPrivacyFeatureEnabled;
+            IsPushTokenRegistered = isPushTokenRegistered;
+            IsUserOptedIn = isUserOptedIn;
+            IsOptIn = isOptIn;
         }
     }
 
@@ -128,10 +190,10 @@ namespace AirshipDotNet
         event EventHandler<ChannelEventArgs> OnChannelCreation;
 
         /// <summary>
-        /// Add/remove the channel update event listener.
+        /// Add/remove the push notification status listener.
         /// </summary>
-        /// <value>The channel update event listener.</value>
-        event EventHandler<ChannelEventArgs> OnChannelUpdate;
+        /// <value>The push notification status listener.</value>
+        event EventHandler<PushNotificationStatusEventArgs> OnPushNotificationStatusUpdate;
 
         /// <summary>
         /// Add/remove the deep link event listener.

@@ -35,15 +35,9 @@ namespace AirshipDotNet
                 }
             });
 
-            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAChannel.ChannelUpdatedEvent, (NSNotification notification) =>
-            {
-                var userInfo = notification.UserInfo;
-                if (userInfo is not null)
-                {
-                    var channelID = userInfo[UAChannel.ChannelIdentifierKey].ToString();
-                    OnChannelUpdate?.Invoke(this, new ChannelEventArgs(channelID));
-                }
-            });
+            // TODO(18.0.0): Observe updates from Push notificationStatusPublisher and
+            //               wire up to OnPushNotificationStatusUpdate once iOS SDK bindings have been updated
+
 
             //Adding Inbox updated Listener
             NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)"com.urbanairship.notification.message_list_updated", (notification) =>
@@ -54,7 +48,7 @@ namespace AirshipDotNet
 
         public event EventHandler<ChannelEventArgs>? OnChannelCreation;
 
-        public event EventHandler<ChannelEventArgs>? OnChannelUpdate;
+        public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate;
 
         private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
         public event EventHandler<DeepLinkEventArgs> OnDeepLinkReceived
