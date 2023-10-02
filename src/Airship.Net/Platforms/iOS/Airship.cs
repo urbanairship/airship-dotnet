@@ -35,15 +35,9 @@ namespace AirshipDotNet
                 }
             });
 
-            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAChannel.ChannelUpdatedEvent, (NSNotification notification) =>
-            {
-                var userInfo = notification.UserInfo;
-                if (userInfo is not null)
-                {
-                    var channelID = userInfo[UAChannel.ChannelIdentifierKey].ToString();
-                    OnChannelUpdate?.Invoke(this, new ChannelEventArgs(channelID));
-                }
-            });
+            // TODO(18.0.0): Observe updates from Push notificationStatusPublisher and
+            //               wire up to OnPushNotificationStatusUpdate once iOS SDK bindings have been updated
+
 
             //Adding Inbox updated Listener
             NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)"com.urbanairship.notification.message_list_updated", (notification) =>
@@ -54,7 +48,7 @@ namespace AirshipDotNet
 
         public event EventHandler<ChannelEventArgs>? OnChannelCreation;
 
-        public event EventHandler<ChannelEventArgs>? OnChannelUpdate;
+        public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate;
 
         private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
         public event EventHandler<DeepLinkEventArgs> OnDeepLinkReceived
@@ -135,10 +129,6 @@ namespace AirshipDotNet
             {
                 uAFeatures |= UAFeatures.Push;
             }
-            if (features.HasFlag(Features.Chat))
-            {
-                uAFeatures |= UAFeatures.Chat;
-            }
             if (features.HasFlag(Features.Analytics))
             {
                 uAFeatures |= UAFeatures.Analytics;
@@ -150,10 +140,6 @@ namespace AirshipDotNet
             if (features.HasFlag(Features.Contacts))
             {
                 uAFeatures |= UAFeatures.Contacts;
-            }
-            if (features.HasFlag(Features.Location))
-            {
-                uAFeatures |= UAFeatures.Location;
             }
 
             return uAFeatures;
@@ -175,10 +161,6 @@ namespace AirshipDotNet
             {
                 features |= Features.Push;
             }
-            if (uAFeatures.HasFlag(UAFeatures.Chat))
-            {
-                features |= Features.Chat;
-            }
             if (uAFeatures.HasFlag(UAFeatures.Analytics))
             {
                 features |= Features.Analytics;
@@ -190,10 +172,6 @@ namespace AirshipDotNet
             if (uAFeatures.HasFlag(UAFeatures.Contacts))
             {
                 features |= Features.Contacts;
-            }
-            if (uAFeatures.HasFlag(UAFeatures.Location))
-            {
-                features |= Features.Location;
             }
 
             return features;

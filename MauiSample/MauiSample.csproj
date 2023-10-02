@@ -52,6 +52,14 @@
 
   <!-- Package dependencies -->
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
+    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
+  </PropertyGroup>
   <ItemGroup Label="Common Package Dependencies" Condition="!$(UseProjectReferences)">
     <PackageReference Include="Airship.Net" Version="$(AirshipCrossPlatformNugetVersion)" />
     <PackageReference Include="Airship.Net.MessageCenter" Version="$(AirshipCrossPlatformNugetVersion)" />
@@ -73,6 +81,8 @@
     <PackageReference Include="Airship.Net.Android.Fcm" Version="$(AirshipAndroidNugetVersion)" />
     <PackageReference Include="Airship.Net.Android.Automation" Version="$(AirshipAndroidNugetVersion)" />
     <PackageReference Include="Airship.Net.Android.Preferencecenter" Version="$(AirshipAndroidNugetVersion)" />
+    <PackageReference Include="Airship.Net.Android.LiveUpdate" Version="$(AirshipAndroidNugetVersion)" />
+    <PackageReference Include="Airship.Net.Android.FeatureFlag" Version="$(AirshipAndroidNugetVersion)" />
   </ItemGroup>
 
   <!-- Project dependencies -->
@@ -98,6 +108,8 @@
     <ProjectReference Include="..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
     <ProjectReference Include="..\binderator\generated\Airship.Net.Android.PreferenceCenter\Airship.Net.Android.PreferenceCenter.csproj" />
     <ProjectReference Include="..\binderator\generated\Airship.Net.Android.Fcm\Airship.Net.Android.Fcm.csproj" />
+    <ProjectReference Include="..\binderator\generated\Airship.Net.Android.LiveUpdate\Airship.Net.Android.LiveUpdate.csproj" />
+    <ProjectReference Include="..\binderator\generated\Airship.Net.Android.FeatureFlag\Airship.Net.Android.FeatureFlag.csproj" />
   </ItemGroup>
 
   <!-- Removes -->
