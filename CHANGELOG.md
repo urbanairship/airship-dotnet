@@ -1,5 +1,14 @@
 # Airship Xamarin Changelog
 
+## Version 18.0.0 - October 19, 2023
+Major release that updates Airship SDKs to the latest 17.x releases.
+
+### Changes
+- Updated iOS SDK to 17.5.0
+- Updated Android SDK to 17.3.0
+- Added the ability to update Channel and Contact subscriptions to the .Net library
+- Removed Channel update listener in favor of a new notification status listener.
+
 ## Version 17.1.0 - July 24, 2023
 Minor release that updates Airship SDKs to the latest 16.x releases and fixes issues with bitcode for iOS.
 
