@@ -7,63 +7,49 @@ using ObjCRuntime;
 namespace UrbanAirship
 {
 
-	[Native]
-	public enum UAApplicationState : ulong
-	{
-		Active = 0,
-		Inactive = 1,
-		Background = 2
-	}
+    [Native]
+    public enum UAApplicationState : ulong
+    {
+        Active = 0,
+        Inactive = 1,
+        Background = 2
+    }
 
-	[Native]
-	public enum UAAttributeUpdateType : ulong
-	{
-		Remove = 0,
-		Set = 1
-	}
+    [Native]
+    public enum UAChannelScope : ulong
+    {
+        App = 0,
+        Web = 1,
+        Email = 2,
+        Sms = 3
+    }
 
-	[Native]
-	public enum UAChannelScope : ulong
-	{
-		App = 0,
-		Web = 1,
-		Email = 2,
-		Sms = 3
-	}
+    [Native]
+    public enum UAChannelType : ulong
+    {
+        Email = 0,
+        Sms = 1,
+        Open = 2
+    }
 
-	[Native]
-	public enum UAChannelType : ulong
-	{
-		Email = 0,
-		Sms = 1,
-		Open = 2
-	}
+    [Native]
+    public enum UACloudSite : ulong
+    {
+        Us = 0,
+        Eu = 1
+    }
 
-	[Native]
-	public enum UACloudSite : ulong
-	{
-		Us = 0,
-		Eu = 1
-	}
-
-	[Native]
-	public enum UADispatcherTimeBase : ulong
-	{
-		Wall = 0,
-		System = 1
-	}
-
-	[Native]
-	public enum UALogLevel : long
-	{
-		Undefined = -1,
-		None = 0,
-		Error = 1,
-		Warn = 2,
-		Info = 3,
-		Debug = 4,
-		Trace = 5
-	}
+    [Native]
+    public enum UALogLevel : long
+    {
+        Undefined = -1,
+        None = 0,
+        Error = 1,
+        Warn = 2,
+        Info = 3,
+        Debug = 4,
+        Trace = 5
+    }
 
     [Native]
     public enum UASDKExtension : ulong
@@ -77,41 +63,40 @@ namespace UrbanAirship
     }
 
     [Native]
-	public enum UATagGroupUpdateType : ulong
-	{
-		Add = 0,
-		Remove = 1,
-		Set = 2
-	}
+    public enum UABoundaryEvent : ulong
+    {
+        Enter = 1,
+        Exit = 2
+    }
 
-	[Native]
-	public enum UABoundaryEvent : ulong
-	{
-		Enter = 1,
-		Exit = 2
-	}
+    [Native]
+    public enum URLType : ulong
+    {
+        Web = 0,
+        Video = 1,
+        Image = 2
+    }
 
-	[Native]
-	public enum UATaskConflictPolicy : ulong
-	{
-		Keep = 0,
-		Replace = 1,
-		Append = 2
-	}
+    [Native]
+    public enum UrlTypes : ulong
+    {
+        Image = 0,
+        Video = 1,
+        Web = 2
+    }
 
-	[Native]
-	public enum URLType : ulong
-	{
-		Web = 0,
-		Video = 1,
-		Image = 2
-	}
+    [Native]
+    public enum UAPermissionStatus : ulong
+    {
+        notDetermined = 0,
+        granted = 1,
+        denied = 2
+    }
 
-	[Native]
-	public enum UrlTypes : ulong
-	{
-		Image = 0,
-		Video = 1,
-		Web = 2
-	}
+    [Native]
+    public enum UAPermission : ulong
+    {
+        displayNotifications = 0,
+        location = 1
+    }
 }
