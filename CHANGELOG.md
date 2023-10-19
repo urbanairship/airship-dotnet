@@ -1,5 +1,11 @@
 # Airship Xamarin Changelog
 
+## Version 17.1.1 - October 20, 2023
+Patch release that bumps the iOS SDK version to 16.12.5 which should fix build issues with Core missing a private swift interface for some targets.
+
+## Changes
+- iOS SDK version 16.12.5
+
 ## Version 17.1.0 - July 24, 2023
 Minor release that updates Airship SDKs to the latest 16.x releases and fixes issues with bitcode for iOS.
 
