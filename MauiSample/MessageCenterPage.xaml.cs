@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+using System.Windows.Input;
 using AirshipDotNet;
 using AirshipDotNet.MessageCenter;
 using AirshipDotNet.MessageCenter.Controls;
@@ -27,10 +27,13 @@ public partial class MessageCenterPage : ContentPage
 
     public void Refresh()
     {
-        Airship.Instance.FetchInboxMessages(success =>
+        Airship.Instance.InboxMessages(messages =>
         {
-            listView.ItemsSource = Airship.Instance.InboxMessages;
-            refreshView.IsRefreshing = false;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                listView.ItemsSource = messages;
+                refreshView.IsRefreshing = false;
+            });
         });
     }
 
