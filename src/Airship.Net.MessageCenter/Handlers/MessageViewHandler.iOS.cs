@@ -21,10 +21,10 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
         [nameof(IMessageView.MessageId)] = MapMessageId
     };
 
-    private readonly NativeBridgeDelegate nativeBridgeDelegate;
-    private readonly NavigationDelegate navigationDelegate;
-    private readonly UANativeBridge nativeBridge;
-    private readonly UAMessageCenterNativeBridgeExtension nativeBridgeExtension;
+    private NativeBridgeDelegate nativeBridgeDelegate;
+    private NavigationDelegate navigationDelegate;
+    private UANativeBridge nativeBridge;
+    private UAMessageCenterNativeBridgeExtension nativeBridgeExtension;
     private string messageId;
     private UAMessageCenterMessage message;
     private UAMessageCenterUser user;

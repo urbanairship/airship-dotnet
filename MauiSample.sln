@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 17.0.31611.283
@@ -22,8 +22,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.iOS.Automation", "src\AirshipBindings.iOS.Automation\AirshipBindings.iOS.Automation.csproj", "{70434FB5-A468-4777-9478-DD2AB80BE0E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.iOS.MessageCenter", "src\AirshipBindings.iOS.MessageCenter\AirshipBindings.iOS.MessageCenter.csproj", "{AC22EEC5-DCA6-49D3-8B37-533B5565E2CF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.iOS.ExtendedActions", "src\AirshipBindings.iOS.ExtendedActions\AirshipBindings.iOS.ExtendedActions.csproj", "{BFFFE653-04CD-4563-BF2D-B6F31349F30D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.PreferenceCenter", "binderator\generated\Airship.Net.Android.PreferenceCenter\Airship.Net.Android.PreferenceCenter.csproj", "{D20DD1BB-7DF5-49C8-B8C1-E0905D273203}"
 EndProject

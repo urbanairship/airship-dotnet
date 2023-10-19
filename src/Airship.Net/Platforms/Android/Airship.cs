@@ -394,9 +394,9 @@ namespace AirshipDotNet
         {
             return new Contact.SubscriptionListEditor((List<Contact.SubscriptionListEditor.SubscriptionListOperation> payload) =>
             {
-                var editor = UAirship.Shared().Contact.EditSubscriptionLists();
-                ApplyContactSubscriptionListHelper(payload, editor);
-                editor.Apply();
+                //var editor = UAirship.Shared().Contact.EditSubscriptionLists();
+                ApplyContactSubscriptionListHelper(payload);
+                //editor.Apply();
             });
         }
 
@@ -468,65 +468,66 @@ namespace AirshipDotNet
         {
             foreach (Channel.SubscriptionListEditor.SubscriptionListOperation operation in operations)
             {
-                if (!Enum.IsDefined(typeof(Channel.SubscriptionListEditor.OperationType), operation.operationType))
+                if (!Enum.IsDefined(typeof(Channel.SubscriptionListEditor.OperationType), operation.OperationType))
                 {
                     continue;
                 }
 
-                switch (operation.operationType)
+                switch (operation.OperationType)
                 {
                     case Channel.SubscriptionListEditor.OperationType.SUBSCRIBE:
-                        editor.Subscribe(operation.list);
+                        editor.Subscribe(operation.List);
                         break;
                     case Channel.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
-                        editor.Unsubscribe(operation.list);
+                        editor.Unsubscribe(operation.List);
                         break;
                 }
             }
         }
 
-        private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations, ScopedSubscriptionListEditor editor)
+        //private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations, ScopedSubscriptionListEditor editor)
+        private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations)
         {
 
             foreach (Contact.SubscriptionListEditor.SubscriptionListOperation operation in operations)
             {
-                if (!Enum.IsDefined(typeof(Contact.SubscriptionListEditor.OperationType), operation.operationType))
+                if (!Enum.IsDefined(typeof(Contact.SubscriptionListEditor.OperationType), operation.OperationType))
                 {
                     continue;
                 }
 
-                string scope = operation.scope;
-                string[] scopes = { "app", "web", "email", "sms" };
-                if (scopes.Any(scope.Contains))
-                {
-                    Scope channelScope = Scope.App;
-                    if (operation.scope == "app")
-                    {
-                        channelScope = Scope.App;
-                    }
-                    else if (operation.scope == "web")
-                    {
-                        channelScope = Scope.Web;
-                    }
-                    else if (operation.scope == "email")
-                    {
-                        channelScope = Scope.Email;
-                    }
-                    else if (operation.scope == "sms")
-                    {
-                        channelScope = Scope.Sms;
-                    }
+                //string scope = operation.scope;
+                //string[] scopes = { "app", "web", "email", "sms" };
+                //if (scopes.Any(scope.Contains))
+                //{
+                //    Scope channelScope = Scope.App;
+                //    if (operation.Scope == "app")
+                //    {
+                //        channelScope = Scope.App;
+                //    }
+                //    else if (operation.scope == "web")
+                //    {
+                //        channelScope = Scope.Web;
+                //    }
+                //    else if (operation.Scope == "email")
+                //    {
+                //        channelScope = Scope.Email;
+                //    }
+                //    else if (operation.Scope == "sms")
+                //    {
+                //        channelScope = Scope.Sms;
+                //    }
 
-                    switch (operation.operationType)
-                    {
-                        case Contact.SubscriptionListEditor.OperationType.SUBSCRIBE:
-                            editor.Subscribe(operation.list, channelScope);
-                            break;
-                        case Contact.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
-                            editor.Unsubscribe(operation.list, channelScope);
-                            break;
-                    }
-                }
+                //    switch (operation.OperationType)
+                //    {
+                //        case Contact.SubscriptionListEditor.OperationType.SUBSCRIBE:
+                //            editor.Subscribe(operation.List, channelScope);
+                //            break;
+                //        case Contact.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
+                //            editor.Unsubscribe(operation.List, channelScope);
+                //            break;
+                //    }
+                //}
             }
         }
 
