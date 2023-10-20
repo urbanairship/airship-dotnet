@@ -77,12 +77,12 @@ public partial class PushSettingsViewController : ContentPage
     {
         namedUserLabel.Text = "";
         // FIXME:
-    //    Airship.Instance.GetNamedUser(namedUser =>
-    //    {
-    //        Device.BeginInvokeOnMainThread(() =>
-    //        {
-    //            namedUserLabel.Placeholder = namedUser != null ? namedUser : "named user";
-    //        });
-    //    });
-    //}
+        //    Airship.Instance.GetNamedUser(namedUser =>
+        //    {
+        //        Device.BeginInvokeOnMainThread(() =>
+        //        {
+        //            namedUserLabel.Placeholder = namedUser != null ? namedUser : "named user";
+        //        });
+        //    });
+    }
 }
