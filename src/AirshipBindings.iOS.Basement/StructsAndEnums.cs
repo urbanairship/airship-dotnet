@@ -5,10 +5,11 @@ using ObjCRuntime;
 using System;
 using UIKit;
 
-namespace UrbanAirship {
+namespace UrbanAirship
+{
 
     [Native]
-    public enum UASituation : long
+    public enum UAActionSituation : long
     {
         ManualInvocation = 0,
         LaunchedFromPush = 1,
@@ -52,12 +53,12 @@ namespace UrbanAirship {
         InAppAutomation = (1 << 0),
         MessageCenter = (1 << 1),
         Push = (1 << 2),
-        //RETIRED: Chat = (1 << 3),
+        Chat = (1 << 3),
         Analytics = (1 << 4),
         TagsAndAttributes = (1 << 5),
         Contacts = (1 << 6),
-        //RETIRED: Location = (1 << 7),
-        All = (InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts )
+        Location = (1 << 7),
+        All = (InAppAutomation | MessageCenter | Push | Chat | Analytics | TagsAndAttributes | Contacts | Location)
     }
 
     [Native]
@@ -73,7 +74,7 @@ namespace UrbanAirship {
         Provisional = (1 << 6),
         Announcement = (1 << 7)
     }
-    
+
     [Native]
     public enum UAAuthorizedNotificationSettings : ulong
     {

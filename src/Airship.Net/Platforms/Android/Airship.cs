@@ -6,16 +6,19 @@ using UrbanAirship;
 using UrbanAirship.Automation;
 using UrbanAirship.Actions;
 using UrbanAirship.Channel;
+//using Urbanairship.Contacts;
 using UrbanAirship.MessageCenter;
 using UrbanAirship.Push;
 using AttributeEditor = AirshipDotNet.Attributes.AttributeEditor;
+using ChannelSubscriptionListEditor = AirshipDotNet.Channel.SubscriptionListEditor;
+using ContactSubscriptionListEditor = AirshipDotNet.Contact.SubscriptionListEditor;
 
 namespace AirshipDotNet
 {
     /// <summary>
     /// Provides cross-platform access to a common subset of functionality between the iOS and Android SDKs
     /// </summary>
-    public class Airship : Java.Lang.Object, IDeepLinkListener, IAirship, IInboxListener, MessageCenterClass.IOnShowMessageCenterListener, IAirshipChannelListener, IPushNotificationStatusListener
+    public class Airship : Java.Lang.Object, IDeepLinkListener, IAirship, IInboxListener, MessageCenterClass.IOnShowMessageCenterListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener
     {
         private static readonly Lazy<Airship> sharedAirship = new(() =>
         {
@@ -27,18 +30,29 @@ namespace AirshipDotNet
         private void Init()
         {
             UAirship.Shared().Channel.AddChannelListener(this);
-            
+
+            //Adding Push notification status listener
+            UAirship.Shared().PushManager.AddNotificationStatusListener(this);
+
             //Adding Inbox updated listener
             MessageCenterClass.Shared().Inbox.AddListener(this);
-
-            UAirship.Shared().PushManager.AddNotificationStatusListener(this);
         }
 
+        /// <summary>
+        /// Add/remove the channel creation listener.
+        /// </summary>
         public event EventHandler<ChannelEventArgs>? OnChannelCreation;
 
+        /// <summary>
+        /// Add/remove the push notification status listener.
+        /// </summary>
         public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate;
 
         private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
+
+        /// <summary>
+        /// Add/remove the deep link listener.
+        /// </summary>
         public event EventHandler<DeepLinkEventArgs> OnDeepLinkReceived
         {
             add
@@ -58,9 +72,16 @@ namespace AirshipDotNet
             }
         }
 
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
         public event EventHandler? OnMessageCenterUpdated;
 
         private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
+
+        /// <summary>
+        /// Add/remove the Message Center display listener.
+        /// </summary>
         public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
         {
             add
@@ -176,21 +197,11 @@ namespace AirshipDotNet
 
         public string? ChannelId => UAirship.Shared().Channel.Id;
 
-        public string? NamedUser
-        {
-            get => UAirship.Shared().Contact.NamedUserId;
+        public void GetNamedUser(Action<string> namedUser) => namedUser(UAirship.Shared().Contact.NamedUserId);
 
-            set {
-                if (value != null)
-                {
-                    UAirship.Shared().Contact.Identify(value);
-                }
-                else
-                {
-                    UAirship.Shared().Contact.Reset();
-                }
-            }
-        }
+        public void ResetContact() => UAirship.Shared().Contact.Reset();
+
+        public void IdentifyContact(string namedUserId) => UAirship.Shared().Contact.Identify(namedUserId);
 
         public Channel.TagEditor EditDeviceTags()
         {
@@ -224,7 +235,8 @@ namespace AirshipDotNet
 
             var builder = new UrbanAirship.Analytics.CustomEvent.Builder(eventName);
 
-            if (eventValue is not null) {
+            if (eventValue is not null)
+            {
                 builder.SetEventValue((double)eventValue);
             }
 
@@ -276,53 +288,41 @@ namespace AirshipDotNet
 
         public void DeleteMessage(string messageId) => MessageCenterClass.Shared().Inbox.DeleteMessages(new List<String> { messageId });
 
-        public int MessageCenterUnreadCount => MessageCenterClass.Shared().Inbox.UnreadCount;
+        public void MessageCenterUnreadCount(Action<int> messageCount) => messageCount(MessageCenterClass.Shared().Inbox.UnreadCount);
 
-        public int MessageCenterCount => MessageCenterClass.Shared().Inbox.Count;
+        public void MessageCenterCount(Action<int> messageCount) => messageCount(MessageCenterClass.Shared().Inbox.Count);
 
-        public List<MessageCenter.Message> InboxMessages
+        public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
-            get
+            var messagesList = new List<MessageCenter.Message>();
+            var messages = MessageCenterClass.Shared().Inbox.Messages;
+            foreach (var message in messages)
             {
-                var messagesList = new List<MessageCenter.Message>();
-                var messages = MessageCenterClass.Shared().Inbox.Messages;
-                foreach (var message in messages)
+                var extras = new Dictionary<string, string>();
+                foreach (var key in message.Extras.KeySet())
                 {
-                    var extras = new Dictionary<string, string?>();
-                    var keySet = message.Extras.KeySet();
-                    if (keySet is not null)
-                    {
-                        foreach (var key in keySet)
-                        {
-                            var value = message.Extras.Get(key)?.ToString();
-                            extras.Add(key, value);
-                        }
-                    }
-                    DateTime? sentDate = FromDate(message.SentDate);
-                    DateTime? expirationDate = FromDate(message.ExpirationDate);
-
-                    var inboxMessage = new MessageCenter.Message(
-                        message.MessageId,
-                        message.Title,
-                        sentDate,
-                        expirationDate,
-                        message.IsRead,
-                        message.ListIconUrl,
-                        extras);
-
-                    messagesList.Add(inboxMessage);
+                    extras.Add(key, message.Extras.Get(key).ToString());
                 }
 
-                return messagesList;
+                DateTime? sentDate = FromDate(message.SentDate);
+                DateTime? expirationDate = FromDate(message.ExpirationDate);
+
+                var inboxMessage = new MessageCenter.Message(
+                    message.MessageId,
+                    message.Title,
+                    sentDate,
+                    expirationDate,
+                    message.IsRead,
+                    message.ListIconUrl,
+                    extras);
+
+                messagesList.Add(inboxMessage);
             }
+
+            listMessages(messagesList);
         }
 
-        public void FetchInboxMessages(Action<bool> onComplete)
-        {
-            MessageCenterClass.Shared().Inbox.FetchMessages(onComplete);
-        }
-
-        private static Date? FromDateTime(DateTime? dateTime)
+        private Date FromDateTime(DateTime dateTime)
         {
             if (dateTime == null)
             {
@@ -332,7 +332,7 @@ namespace AirshipDotNet
             return new Date(epochSeconds * 1000);
         }
 
-        private static DateTime? FromDate(Date? date)
+        private static DateTime? FromDate(Date date)
         {
             if (date == null)
             {
@@ -342,21 +342,25 @@ namespace AirshipDotNet
             return epoch.AddMilliseconds(date.Time);
         }
 
-        public Channel.TagGroupsEditor EditNamedUserTagGroups() =>
-            new((List<Channel.TagGroupsEditor.TagOperation> payload) =>
+        public Channel.TagGroupsEditor EditContactTagGroups()
+        {
+            return new Channel.TagGroupsEditor((List<Channel.TagGroupsEditor.TagOperation> payload) =>
             {
-                TagGroupsEditor editor = UAirship.Shared().Contact.EditTagGroups()!;
+                var editor = UAirship.Shared().Contact.EditTagGroups();
                 TagGroupHelper(payload, editor);
                 editor.Apply();
             });
+        }
 
-        public Channel.TagGroupsEditor EditChannelTagGroups() =>
-            new((List<Channel.TagGroupsEditor.TagOperation> payload) =>
+        public Channel.TagGroupsEditor EditChannelTagGroups()
+        {
+            return new Channel.TagGroupsEditor((List<Channel.TagGroupsEditor.TagOperation> payload) =>
             {
                 var editor = UAirship.Shared().Channel.EditTagGroups();
                 TagGroupHelper(payload, editor);
                 editor.Apply();
             });
+        }
 
         public AttributeEditor EditAttributes() => EditChannelAttributes();
 
@@ -368,15 +372,36 @@ namespace AirshipDotNet
                 editor.Apply();
             });
 
-        public AttributeEditor EditNamedUserAttributes() =>
+        /// <summary>
+        public AttributeEditor EditContactAttributes() =>
             new((List<AttributeEditor.IAttributeOperation> operations) =>
             {
-                var editor = UAirship.Shared().Contact.EditAttributes()!;
+                var editor = UAirship.Shared().Contact.EditAttributes();
                 ApplyAttributesOperations(editor, operations);
                 editor.Apply();
             });
 
-        private static void ApplyAttributesOperations(UrbanAirship.Channel.AttributeEditor editor, List<AttributeEditor.IAttributeOperation> operations)
+        public ChannelSubscriptionListEditor EditChannelSubscriptionLists()
+        {
+            return new Channel.SubscriptionListEditor((List<Channel.SubscriptionListEditor.SubscriptionListOperation> payload) =>
+            {
+                var editor = UAirship.Shared().Channel.EditSubscriptionLists();
+                ApplyChannelSubscriptionListHelper(payload, editor);
+                editor.Apply();
+            });
+        }
+
+        public ContactSubscriptionListEditor EditContactSubscriptionLists()
+        {
+            return new Contact.SubscriptionListEditor((List<Contact.SubscriptionListEditor.SubscriptionListOperation> payload) =>
+            {
+                //var editor = UAirship.Shared().Contact.EditSubscriptionLists();
+                ApplyContactSubscriptionListHelper(payload);
+                //editor.Apply();
+            });
+        }
+
+        private void ApplyAttributesOperations(UrbanAirship.Channel.AttributeEditor editor, List<AttributeEditor.IAttributeOperation> operations)
         {
             foreach (var operation in operations)
             {
@@ -404,7 +429,7 @@ namespace AirshipDotNet
                 {
                     editor.SetAttribute(doubleOperation.Key, doubleOperation.Value);
                 }
-                    
+
                 if (operation is AttributeEditor.SetAttributeOperation<DateTime> dateOperation)
                 {
                     var date = FromDateTime(dateOperation.Value);
@@ -440,6 +465,86 @@ namespace AirshipDotNet
             }
         }
 
+        private void ApplyChannelSubscriptionListHelper(List<Channel.SubscriptionListEditor.SubscriptionListOperation> operations, UrbanAirship.Channel.SubscriptionListEditor editor)
+        {
+            foreach (Channel.SubscriptionListEditor.SubscriptionListOperation operation in operations)
+            {
+                if (!Enum.IsDefined(typeof(Channel.SubscriptionListEditor.OperationType), operation.OperationType))
+                {
+                    continue;
+                }
+
+                switch (operation.OperationType)
+                {
+                    case Channel.SubscriptionListEditor.OperationType.SUBSCRIBE:
+                        editor.Subscribe(operation.List);
+                        break;
+                    case Channel.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
+                        editor.Unsubscribe(operation.List);
+                        break;
+                }
+            }
+        }
+
+        //private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations, ScopedSubscriptionListEditor editor)
+        private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations)
+        {
+
+            foreach (Contact.SubscriptionListEditor.SubscriptionListOperation operation in operations)
+            {
+                if (!Enum.IsDefined(typeof(Contact.SubscriptionListEditor.OperationType), operation.OperationType))
+                {
+                    continue;
+                }
+
+                //string scope = operation.scope;
+                //string[] scopes = { "app", "web", "email", "sms" };
+                //if (scopes.Any(scope.Contains))
+                //{
+                //    Scope channelScope = Scope.App;
+                //    if (operation.Scope == "app")
+                //    {
+                //        channelScope = Scope.App;
+                //    }
+                //    else if (operation.scope == "web")
+                //    {
+                //        channelScope = Scope.Web;
+                //    }
+                //    else if (operation.Scope == "email")
+                //    {
+                //        channelScope = Scope.Email;
+                //    }
+                //    else if (operation.Scope == "sms")
+                //    {
+                //        channelScope = Scope.Sms;
+                //    }
+
+                //    switch (operation.OperationType)
+                //    {
+                //        case Contact.SubscriptionListEditor.OperationType.SUBSCRIBE:
+                //            editor.Subscribe(operation.List, channelScope);
+                //            break;
+                //        case Contact.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
+                //            editor.Unsubscribe(operation.List, channelScope);
+                //            break;
+                //    }
+                //}
+            }
+        }
+
+        public bool InAppAutomationEnabled
+        {
+            get
+            {
+                return InAppAutomation.Shared().Enabled;
+            }
+
+            set
+            {
+                InAppAutomation.Shared().Enabled = value;
+            }
+        }
+
         public bool InAppAutomationPaused
         {
             get => InAppAutomation.Shared().Paused;
@@ -454,7 +559,8 @@ namespace AirshipDotNet
 
         public bool OnDeepLink(string deepLink)
         {
-            if (onDeepLinkReceived != null) {
+            if (onDeepLinkReceived != null)
+            {
                 onDeepLinkReceived(this, new DeepLinkEventArgs(deepLink));
                 return true;
             }

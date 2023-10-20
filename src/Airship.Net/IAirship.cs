@@ -1,14 +1,16 @@
 ﻿/* Copyright Airship and Contributors */
 
-using System;
 using AirshipDotNet.Attributes;
 using AirshipDotNet.Channel;
+using AirshipDotNet.Contact;
+using ChannelSubscriptionListEditor = AirshipDotNet.Channel.SubscriptionListEditor;
+using ContactSubscriptionListEditor = AirshipDotNet.Contact.SubscriptionListEditor;
 
 namespace AirshipDotNet
 {
 
     /// <summary>
-    /// Arguments for Channel creation events.
+    /// Arguments for Channel creation and update events.
     /// </summary>
     public class ChannelEventArgs : EventArgs
     {
@@ -115,11 +117,11 @@ namespace AirshipDotNet
         InAppAutomation = 1 << 0,
         MessageCenter = 1 << 1,
         Push = 1 << 2,
-        //RETIRED: Chat = 1 << 3,
+        // RETIRED: Chat = 1 << 3,
         Analytics = 1 << 4,
         TagsAndAttributes = 1 << 5,
         Contacts = 1 << 6,
-        //RETIRED: Location = 1 << 7,
+        // RETIRED: Location = 1 << 7,
         All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts
     }
 
@@ -175,13 +177,24 @@ namespace AirshipDotNet
         /// Get the channel ID for the device.
         /// </summary>
         /// <value>The channel identifier.</value>
-        string? ChannelId { get; }
+        string ChannelId { get; }
 
         /// <summary>
-        /// Gets or sets the named user ID.
+        /// Gets the named user ID.
         /// </summary>
         /// <value>The named user ID.</value>
-        string? NamedUser { get; set; }
+        void GetNamedUser(Action<string> namedUser);
+
+        /// <summary>
+        /// Reset Contacts.
+        /// </summary>
+        void ResetContact();
+
+        /// <summary>
+        /// Sets the named user ID.
+        /// </summary>
+        /// <value>The named user ID.</value>
+        void IdentifyContact(string namedUserId);
 
         /// <summary>
         /// Add/remove the channel creation event listener.
@@ -192,7 +205,6 @@ namespace AirshipDotNet
         /// <summary>
         /// Add/remove the push notification status listener.
         /// </summary>
-        /// <value>The push notification status listener.</value>
         event EventHandler<PushNotificationStatusEventArgs> OnPushNotificationStatusUpdate;
 
         /// <summary>
@@ -269,32 +281,26 @@ namespace AirshipDotNet
         /// Get the message center unread count.
         /// </summary>
         /// <value>The message center unread count.</value>
-        int MessageCenterUnreadCount { get; }
+        void MessageCenterUnreadCount(Action<int> unreadMessageCount);
 
         /// <summary>
         /// Get the total count of message center messages.
         /// </summary>
         /// <value>The message center count.</value>
-        int MessageCenterCount { get; }
+        void MessageCenterCount(Action<int> messageCount);
 
         /// <summary>
         /// Get the list of messages contained in the messages center.
         /// </summary>
         /// <value>The list of message.</value>
-        List<MessageCenter.Message> InboxMessages { get; }
-
-        /// <summary>
-        /// Displays a specific message.
-        /// </summary>
-        /// <param name="onComplete">Action that will be called on completion, with a boolean flag indicating success.</param>
-        void FetchInboxMessages(Action<bool> onComplete);
+        void InboxMessages(Action<List<MessageCenter.Message>> messages);
 
         /// <summary>
         /// Returns an editor for named user tag groups.
         /// </summary>
         /// <returns>A <see cref="AirshipDotNet.Channel.TagGroupsEditor">TagGroupsEditor</see>
         /// for named user tag groups.</returns>
-        TagGroupsEditor EditNamedUserTagGroups();
+        TagGroupsEditor EditContactTagGroups();
 
         /// <summary>
         /// Returns an editor for channel tag groups.
@@ -311,11 +317,25 @@ namespace AirshipDotNet
         AttributeEditor EditChannelAttributes();
 
         /// <summary>
-        /// Edit named user attributes.
+        /// Edit contact attributes.
         /// </summary>
         /// <returns>An <see cref="AirshipDotNet.Attributes.AttributeEditor">AttributeEditor</see>
-        /// for named user attributes.</returns>
-        AttributeEditor EditNamedUserAttributes();
+        /// for contact attributes.</returns>
+        AttributeEditor EditContactAttributes();
+
+        /// <summary>
+        /// Edit channel subscription lists.
+        /// </summary>
+        /// <returns>An <see cref="AirshipDotNet.Channel.SubscriptionListsEditor">SubscriptionListsEditor</see>
+        /// for channel subscription lists.</returns>
+        ChannelSubscriptionListEditor EditChannelSubscriptionLists();
+
+        /// <summary>
+        /// Edit contact subscription list.
+        /// </summary>
+        /// <returns>An <see cref="AirshipDotNet.Contact.SubscriptionListsEditor">SubscriptionListsEditor</see>
+        /// for contact subscription lists.</returns>
+        ContactSubscriptionListEditor EditContactSubscriptionLists();
 
         /// <summary>
         /// Gets or sets whether In-App Automation is paused.
