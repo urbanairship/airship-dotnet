@@ -69,7 +69,6 @@
     <PackageReference Include="Airship.Net.iOS.Basement" Version="$(AirshipIosNugetVersion)" />
     <PackageReference Include="Airship.Net.iOS.Core" Version="$(AirshipIosNugetVersion)" />
     <PackageReference Include="Airship.Net.iOS.MessageCenter" Version="$(AirshipIosNugetVersion)" />
-    <PackageReference Include="Airship.Net.iOS.ExtendedActions" Version="$(AirshipIosNugetVersion)" />
     <PackageReference Include="Airship.Net.iOS.Automation" Version="$(AirshipIosNugetVersion)" />
     <PackageReference Include="Airship.Net.iOS.PreferenceCenter" Version="$(AirshipIosNugetVersion)" />
   </ItemGroup>
@@ -98,7 +97,6 @@
     <ProjectReference Include="..\src\AirshipBindings.iOS.Automation\AirshipBindings.iOS.Automation.csproj" />
     <ProjectReference Include="..\src\AirshipBindings.iOS.MessageCenter\AirshipBindings.iOS.MessageCenter.csproj" />
     <ProjectReference Include="..\src\AirshipBindings.iOS.PreferenceCenter\AirshipBindings.iOS.PreferenceCenter.csproj" />
-    <ProjectReference Include="..\src\AirshipBindings.iOS.ExtendedActions\AirshipBindings.iOS.ExtendedActions.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Android Project Dependencies" Condition="'$(TargetFramework)' == 'net6.0-android' And $(UseProjectReferences)">
