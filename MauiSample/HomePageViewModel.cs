@@ -62,7 +62,8 @@ namespace MauiSample
             OnPrefCenterButtonClicked = new Command(PerformOnPrefCenterButtonClicked);
 
             Airship.Instance.OnChannelCreation += OnChannelEvent;
-            Airship.Instance.OnPushNotificationStatusUpdate += OnPushNotificationStatusEvent;
+            // FIXME:
+            //Airship.Instance.OnPushNotificationStatusUpdate += OnPushNotificationStatusEvent;
 
             Refresh();
         }
@@ -70,8 +71,10 @@ namespace MauiSample
         ~HomePageViewModel()
         {
             Airship.Instance.OnChannelCreation -= OnChannelEvent;
+            // FIXME:
+            //Airship.Instance.OnPushNotificationStatusUpdate -= OnPushNotificationStatusEvent;
         }
-      
+
         private void OnChannelEvent(object sender, EventArgs e) => Refresh();
 
         private void OnPushNotificationStatusEvent(object sender, EventArgs e) => Refresh();

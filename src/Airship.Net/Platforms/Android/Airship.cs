@@ -486,6 +486,7 @@ namespace AirshipDotNet
             }
         }
 
+        // FIXME:
         //private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations, ScopedSubscriptionListEditor editor)
         private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations)
         {

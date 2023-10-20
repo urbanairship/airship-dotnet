@@ -30,19 +30,20 @@ namespace AirshipDotNet
                 OnChannelCreation?.Invoke(this, new ChannelEventArgs(channelID));
             });
 
-            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAPush.NotificationStatusUpdateEvent, (notification) =>
-            {
-                OnPushNotificationStatusUpdate?.Invoke(this,
-                    new PushNotificationStatusEventArgs(
-                        notification.UserInfo[UAPush.IsUserNotificationsEnabled].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.AreNotificationsAllowed].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.IsPushPrivacyFeatureEnabled].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.IsPushTokenRegistered].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.IsUserOptedIn].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.IsOptedIn].Equals((NSNumber)1)
-                    )
-                );
-            });
+            // FIXME:
+            //NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAPush.NotificationStatusUpdateEvent, (notification) =>
+            //{
+            //    OnPushNotificationStatusUpdate?.Invoke(this,
+            //        new PushNotificationStatusEventArgs(
+            //            notification.UserInfo[UAPush.IsUserNotificationsEnabled].Equals((NSNumber)1),
+            //            notification.UserInfo[UAPush.AreNotificationsAllowed].Equals((NSNumber)1),
+            //            notification.UserInfo[UAPush.IsPushPrivacyFeatureEnabled].Equals((NSNumber)1),
+            //            notification.UserInfo[UAPush.IsPushTokenRegistered].Equals((NSNumber)1),
+            //            notification.UserInfo[UAPush.IsUserOptedIn].Equals((NSNumber)1),
+            //            notification.UserInfo[UAPush.IsOptedIn].Equals((NSNumber)1)
+            //        )
+            //    );
+            //});
 
             //Adding Inbox updated Listener
             NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)"com.urbanairship.notification.message_list_updated", (notification) =>
@@ -204,7 +205,10 @@ namespace AirshipDotNet
 
         public string? ChannelId => UAirship.Channel.Identifier;
 
-        public void GetNamedUser(Action<string> namedUser) => UAirship.Contact.GetNamedUserID(namedUser);
+        public void GetNamedUser(Action<string> namedUser)
+        {
+            UAirship.Contact.GetNamedUserID(namedUser);
+        }
 
         public void ResetContact() => UAirship.Contact.Reset();
 

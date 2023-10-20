@@ -21,10 +21,10 @@
             Route="Inbox" />
 
         <ShellContent
-            Title="Sttings"
-            Icon="settings_inbox.png"
+            Title="Settings"
+            Icon="icon_settings.png"
             ContentTemplate="{DataTemplate local:PushSettingsViewController}"
-            Route="Inbox" />
+            Route="Settings" />
 
     </TabBar>
 </Shell>
