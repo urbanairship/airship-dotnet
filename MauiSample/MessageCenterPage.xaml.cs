@@ -30,8 +30,11 @@ public partial class MessageCenterPage : ContentPage
     {
         Airship.Instance.InboxMessages(messages =>
         {
-            listView.ItemsSource = messages;
-            refreshView.IsRefreshing = false;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                listView.ItemsSource = messages;
+                refreshView.IsRefreshing = false;
+            });
         });
     }
 

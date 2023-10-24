@@ -30,20 +30,19 @@ namespace AirshipDotNet
                 OnChannelCreation?.Invoke(this, new ChannelEventArgs(channelID));
             });
 
-            // FIXME:
-            //NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAPush.NotificationStatusUpdateEvent, (notification) =>
-            //{
-            //    OnPushNotificationStatusUpdate?.Invoke(this,
-            //        new PushNotificationStatusEventArgs(
-            //            notification.UserInfo[UAPush.IsUserNotificationsEnabled].Equals((NSNumber)1),
-            //            notification.UserInfo[UAPush.AreNotificationsAllowed].Equals((NSNumber)1),
-            //            notification.UserInfo[UAPush.IsPushPrivacyFeatureEnabled].Equals((NSNumber)1),
-            //            notification.UserInfo[UAPush.IsPushTokenRegistered].Equals((NSNumber)1),
-            //            notification.UserInfo[UAPush.IsUserOptedIn].Equals((NSNumber)1),
-            //            notification.UserInfo[UAPush.IsOptedIn].Equals((NSNumber)1)
-            //        )
-            //    );
-            //});
+            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAPush.NotificationStatusUpdateEvent, (notification) =>
+            {
+                OnPushNotificationStatusUpdate?.Invoke(this,
+                    new PushNotificationStatusEventArgs(
+                        notification.UserInfo[UAPush.IsUserNotificationsEnabled].Equals((NSNumber)1),
+                        notification.UserInfo[UAPush.AreNotificationsAllowed].Equals((NSNumber)1),
+                        notification.UserInfo[UAPush.IsPushPrivacyFeatureEnabled].Equals((NSNumber)1),
+                        notification.UserInfo[UAPush.IsPushTokenRegistered].Equals((NSNumber)1),
+                        notification.UserInfo[UAPush.IsUserOptedIn].Equals((NSNumber)1),
+                        notification.UserInfo[UAPush.IsOptedIn].Equals((NSNumber)1)
+                    )
+                );
+            });
 
             //Adding Inbox updated Listener
             NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)"com.urbanairship.notification.message_list_updated", (notification) =>
