@@ -226,7 +226,7 @@
         "groupId": "androidx.work",
         "artifactId": "work-runtime",
         "version": "2.8.0",
-        "nugetVersion": "2.7.1.6",
+        "nugetVersion": "2.7.1.5",
         "nugetId": "Xamarin.AndroidX.Work.Runtime",
         "dependencyOnly": true
       },

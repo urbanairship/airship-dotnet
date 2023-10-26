@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <NoBindingEmbedding>true</NoBindingEmbedding>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,14 +9,14 @@
     <AssemblyName>Airship.Net.iOS.PreferenceCenter</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Preference Center</AssemblyTitle>
     <Description>Preference Center support for Airship SDK</Description>
-    <TargetFramework>net6.0-ios</TargetFramework>
+    <TargetFramework>net7.0-ios</TargetFramework>
     <DisableExtraReferences>true</DisableExtraReferences>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <IsTrimmable>false</IsTrimmable>
     <AssemblyVersion>$(AirshipIosVersion)</AssemblyVersion>
     <PackageVersion>$(AirshipIosNugetVersion)</PackageVersion>
-    <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>14.0</SupportedOSPlatformVersion>
     <IsBindingProject>true</IsBindingProject>
   </PropertyGroup>
 
