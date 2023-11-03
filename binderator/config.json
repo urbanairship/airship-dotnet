@@ -146,7 +146,7 @@
         "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-common",
         "version": "2.5.1",
-        "nugetVersion": "2.5.1.2",
+        "nugetVersion": "2.5.1.1",
         "nugetId": "Xamarin.AndroidX.Lifecycle.Common",
         "dependencyOnly": true
       },
@@ -154,7 +154,7 @@
         "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-common-java8",
         "version": "2.5.1",
-        "nugetVersion": "2.5.1.2",
+        "nugetVersion": "2.5.1.1",
         "nugetId": "Xamarin.AndroidX.Lifecycle.Common.Java8",
         "dependencyOnly": true
       },
@@ -162,7 +162,7 @@
         "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-runtime-ktx",
         "version": "2.5.1",
-        "nugetVersion": "2.5.1.2",
+        "nugetVersion": "2.5.1.1",
         "nugetId": "Xamarin.AndroidX.Lifecycle.Runtime.Ktx",
         "dependencyOnly": true
       },
@@ -170,7 +170,7 @@
         "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-viewmodel-ktx",
         "version": "2.5.1",
-        "nugetVersion": "2.5.1.2",
+        "nugetVersion": "2.5.1.1",
         "nugetId": "Xamarin.AndroidX.Lifecycle.ViewModel.Ktx",
         "dependencyOnly": true
       },
