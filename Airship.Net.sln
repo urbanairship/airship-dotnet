@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 25.0.1704.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "airship.android.core", "binderator\generated\airship.android.core\airship.android.core.csproj", "{BC06FD4D-9116-49FF-AF27-B3C5E7E10125}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.Core", "binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj", "{BC06FD4D-9116-49FF-AF27-B3C5E7E10125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "airship.android.adm", "binderator\generated\airship.android.adm\airship.android.adm.csproj", "{DCD3C3FE-6B8D-463E-850E-27BC8A3F0470}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.Adm", "binderator\generated\Airship.Net.Android.Adm\Airship.Net.Android.Adm.csproj", "{DCD3C3FE-6B8D-463E-850E-27BC8A3F0470}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "airship.android.layout", "binderator\generated\airship.android.layout\airship.android.layout.csproj", "{2F36FE2F-A1F6-4762-B6FB-6ADDB16C7A5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.Layout", "binderator\generated\Airship.Net.Android.Layout\Airship.Net.Android.Layout.csproj", "{2F36FE2F-A1F6-4762-B6FB-6ADDB16C7A5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "airship.android.automation", "binderator\generated\airship.android.automation\airship.android.automation.csproj", "{58478FE8-9760-40C3-9016-9435564C011E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.Automation", "binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj", "{58478FE8-9760-40C3-9016-9435564C011E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "airship.android.fcm", "binderator\generated\airship.android.fcm\airship.android.fcm.csproj", "{82685167-9AAB-4CFF-B686-9D678B54297F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.Fcm", "binderator\generated\Airship.Net.Android.Fcm\Airship.Net.Android.Fcm.csproj", "{82685167-9AAB-4CFF-B686-9D678B54297F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "airship.android.messagecenter", "binderator\generated\airship.android.messagecenter\airship.android.messagecenter.csproj", "{107BE8E5-E5FB-461E-B812-97834B04B5EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.MessageCenter", "binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj", "{107BE8E5-E5FB-461E-B812-97834B04B5EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "airship.android.preferencecenter", "binderator\generated\airship.android.preferencecenter\airship.android.preferencecenter.csproj", "{E99F9D88-6E68-46D8-9A8A-651C8490E59C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.PreferenceCenter", "binderator\generated\Airship.Net.Android.PreferenceCenter\Airship.Net.Android.PreferenceCenter.csproj", "{E99F9D88-6E68-46D8-9A8A-651C8490E59C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.Basement", "src\AirshipBindings.iOS.Basement\AirshipBindings.iOS.Basement.csproj", "{5E85A7FD-8C42-4DE6-B002-E3CC2DA529C7}"
 EndProject
@@ -34,10 +34,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.PreferenceCenter", "src\AirshipBindings.iOS.PreferenceCenter\AirshipBindings.iOS.PreferenceCenter.csproj", "{13E9ACF2-4FE5-4FA6-96C4-BDFB6FF7C3A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F4B616B3-15BA-45DB-AA24-97270963158F}"
-	ProjectSection(SolutionItems) = preProject
-		Airship.iOS.slnf = Airship.iOS.slnf
-		Airship.Android.slnf = Airship.Android.slnf
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.MessageCenter", "src\Airship.Net.MessageCenter\Airship.Net.MessageCenter.csproj", "{F429D476-7186-4C55-A5B6-60FA62215E78}"
 EndProject
