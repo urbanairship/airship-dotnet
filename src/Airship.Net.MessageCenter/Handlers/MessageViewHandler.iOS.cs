@@ -31,12 +31,34 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
 
     public MessageViewHandler() : base(MessageViewMapper)
     {
+
+    }
+
+    protected override WKWebView CreatePlatformView()
+    {
+        return new(UIScreen.MainScreen.Bounds, new WKWebViewConfiguration())
+        {
+            AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
+            TranslatesAutoresizingMaskIntoConstraints = true
+        };
+    }
+
+    private static void MapMessageId(MessageViewHandler handler, IMessageView entry)
+    {
+        if (entry.MessageId != null)
+        {
+            handler.LoadUser(entry.MessageId, result => { });
+        }
+    }
+
+    public void LoadUser(string messageId, Action<bool> result)
+    {
         UAMessageCenter.Shared.Inbox.GetUser(currentUser =>
         {
-            UAMessageCenter.Shared.Inbox.MessageForID(messageId, currentMmessage =>
+            UAMessageCenter.Shared.Inbox.MessageForID(messageId, currentMessage =>
             {
                 user = currentUser;
-                message = currentMmessage;
+                message = currentMessage;
 
                 nativeBridgeDelegate = new(this);
                 navigationDelegate = new(this);
@@ -48,28 +70,11 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
                     NativeBridgeExtensionDelegate = new UAMessageCenterNativeBridgeExtension(message, user)
                 };
 
+                PlatformView.NavigationDelegate = nativeBridge;
+
+                LoadMessage(messageId, result);
             });
         });
-    }
-
-    protected override WKWebView CreatePlatformView()
-    {
-        return new(UIScreen.MainScreen.Bounds, new WKWebViewConfiguration())
-        {
-            AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
-            TranslatesAutoresizingMaskIntoConstraints = true,
-            NavigationDelegate = nativeBridge
-        };
-    }
-
-    private static void MapMessageId(MessageViewHandler handler, IMessageView entry)
-    {
-        if (entry.MessageId != null)
-        {
-            handler.LoadMessage(entry.MessageId, result =>
-            {
-            });
-        }
     }
 
     public void LoadMessage(string messageId, Action<bool> result)
