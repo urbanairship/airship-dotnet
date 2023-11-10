@@ -2,6 +2,9 @@
 
 using AirshipDotNet.Attributes;
 using AirshipDotNet.Channel;
+using AirshipDotNet.Contact;
+using ChannelSubscriptionListEditor = AirshipDotNet.Channel.SubscriptionListEditor;
+using ContactSubscriptionListEditor = AirshipDotNet.Contact.SubscriptionListEditor;
 
 namespace AirshipDotNet
 {
@@ -16,6 +19,67 @@ namespace AirshipDotNet
         public ChannelEventArgs(string channelId)
         {
             ChannelId = channelId;
+        }
+    }
+
+    /// <summary>
+    /// Arguments for push notification status update events.
+    /// </summary>
+    public class PushNotificationStatusEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Indicatees whether user notifications are enabled via <c>PushManager</c>.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if user notifications are enabled, else <c>false</c>.
+        /// </value>
+        public bool IsUserNotificationsEnabled { get; private set; }
+
+        /// <summary>
+        /// Indicates whether notifications are allowed for the application at the system level.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if notifications are allowed, else <c>false</c>.
+        /// </value>
+        public bool AreNotificationsAllowed { get; private set; }
+
+        /// <summary>
+        /// Indicates whether <c>Features.Push</c> is enabled via <c>PrivacyManager</c>.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the push feature is enabled, else <c>false</c>.
+        /// </value>
+        public bool IsPushPrivacyFeatureEnabled { get; private set; }
+
+        /// <summary>
+        /// Indicates whether the application has successfully registered a push token.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if a token was received and registered, else <c>false</c>.
+        /// </value>
+        public bool IsPushTokenRegistered { get; private set; }
+
+        /// <summary>
+        /// Checks if <c>IsUserNotificationsEnabled</c>, <c>AreNotificationsAllowed</c>, and <c>IsPushPrivacyFeatureEnabled</c> is enabled.
+        /// </summary>
+        public bool IsUserOptedIn { get; private set; }
+
+        /// <summary>
+        /// Checks if <c>IsUserOptedIn</c> and <c>IsPushTokenRegistered</c> is enabled.
+        /// </summary>
+        public bool IsOptIn { get; private set; }
+
+        /// <summary>
+        /// Creates push notification status event args.
+        /// </summary>
+        public PushNotificationStatusEventArgs(bool isUserNotificationsEnabled, bool areNotificationsAllowed, bool isPushPrivacyFeatureEnabled, bool isPushTokenRegistered, bool isUserOptedIn, bool isOptIn)
+        {
+            IsUserNotificationsEnabled = isUserNotificationsEnabled;
+            AreNotificationsAllowed = areNotificationsAllowed;
+            IsPushPrivacyFeatureEnabled = isPushPrivacyFeatureEnabled;
+            IsPushTokenRegistered = isPushTokenRegistered;
+            IsUserOptedIn = isUserOptedIn;
+            IsOptIn = isOptIn;
         }
     }
 
@@ -53,12 +117,12 @@ namespace AirshipDotNet
         InAppAutomation = 1 << 0,
         MessageCenter = 1 << 1,
         Push = 1 << 2,
-        Chat = 1 << 3,
+        // RETIRED: Chat = 1 << 3,
         Analytics = 1 << 4,
         TagsAndAttributes = 1 << 5,
         Contacts = 1 << 6,
-        Location = 1 << 7,
-        All = InAppAutomation | MessageCenter | Push | Chat | Analytics | TagsAndAttributes | Contacts | Location
+        // RETIRED: Location = 1 << 7,
+        All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts
     }
 
     /// <summary>
@@ -113,13 +177,24 @@ namespace AirshipDotNet
         /// Get the channel ID for the device.
         /// </summary>
         /// <value>The channel identifier.</value>
-        string? ChannelId { get; }
+        string ChannelId { get; }
 
         /// <summary>
-        /// Gets or sets the named user ID.
+        /// Gets the named user ID.
         /// </summary>
         /// <value>The named user ID.</value>
-        string? NamedUser { get; set; }
+        void GetNamedUser(Action<string> namedUser);
+
+        /// <summary>
+        /// Reset Contacts.
+        /// </summary>
+        void ResetContact();
+
+        /// <summary>
+        /// Sets the named user ID.
+        /// </summary>
+        /// <value>The named user ID.</value>
+        void IdentifyContact(string namedUserId);
 
         /// <summary>
         /// Add/remove the channel creation event listener.
@@ -128,10 +203,9 @@ namespace AirshipDotNet
         event EventHandler<ChannelEventArgs> OnChannelCreation;
 
         /// <summary>
-        /// Add/remove the channel update event listener.
+        /// Add/remove the push notification status listener.
         /// </summary>
-        /// <value>The channel update event listener.</value>
-        event EventHandler<ChannelEventArgs> OnChannelUpdate;
+        event EventHandler<PushNotificationStatusEventArgs> OnPushNotificationStatusUpdate;
 
         /// <summary>
         /// Add/remove the deep link event listener.
@@ -207,32 +281,26 @@ namespace AirshipDotNet
         /// Get the message center unread count.
         /// </summary>
         /// <value>The message center unread count.</value>
-        int MessageCenterUnreadCount { get; }
+        void MessageCenterUnreadCount(Action<int> unreadMessageCount);
 
         /// <summary>
         /// Get the total count of message center messages.
         /// </summary>
         /// <value>The message center count.</value>
-        int MessageCenterCount { get; }
+        void MessageCenterCount(Action<int> messageCount);
 
         /// <summary>
         /// Get the list of messages contained in the messages center.
         /// </summary>
         /// <value>The list of message.</value>
-        List<MessageCenter.Message> InboxMessages { get; }
-
-        /// <summary>
-        /// Displays a specific message.
-        /// </summary>
-        /// <param name="onComplete">Action that will be called on completion, with a boolean flag indicating success.</param>
-        void FetchInboxMessages(Action<bool> onComplete);
+        void InboxMessages(Action<List<MessageCenter.Message>> messages);
 
         /// <summary>
         /// Returns an editor for named user tag groups.
         /// </summary>
         /// <returns>A <see cref="AirshipDotNet.Channel.TagGroupsEditor">TagGroupsEditor</see>
         /// for named user tag groups.</returns>
-        TagGroupsEditor EditNamedUserTagGroups();
+        TagGroupsEditor EditContactTagGroups();
 
         /// <summary>
         /// Returns an editor for channel tag groups.
@@ -249,11 +317,25 @@ namespace AirshipDotNet
         AttributeEditor EditChannelAttributes();
 
         /// <summary>
-        /// Edit named user attributes.
+        /// Edit contact attributes.
         /// </summary>
         /// <returns>An <see cref="AirshipDotNet.Attributes.AttributeEditor">AttributeEditor</see>
-        /// for named user attributes.</returns>
-        AttributeEditor EditNamedUserAttributes();
+        /// for contact attributes.</returns>
+        AttributeEditor EditContactAttributes();
+
+        /// <summary>
+        /// Edit channel subscription lists.
+        /// </summary>
+        /// <returns>An <see cref="AirshipDotNet.Channel.SubscriptionListsEditor">SubscriptionListsEditor</see>
+        /// for channel subscription lists.</returns>
+        ChannelSubscriptionListEditor EditChannelSubscriptionLists();
+
+        /// <summary>
+        /// Edit contact subscription list.
+        /// </summary>
+        /// <returns>An <see cref="AirshipDotNet.Contact.SubscriptionListsEditor">SubscriptionListsEditor</see>
+        /// for contact subscription lists.</returns>
+        ContactSubscriptionListEditor EditContactSubscriptionLists();
 
         /// <summary>
         /// Gets or sets whether In-App Automation is paused.

@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiSample.PushSettingsViewController">
+
+    <ContentPage.Content>
+
+        <TableView Intent="Settings">
+            <TableRoot>
+                <TableSection Title="">
+                    <TextCell Text="Privacy Manager"
+                              x:Name="displayFeaturesView"
+                              Tapped="displayFeatures"/>
+                </TableSection>
+
+                <TableSection Title="">
+                    <SwitchCell Text="Enable push"
+                                OnChanged="enablePush_OnChanged"
+                                x:Name="enabledPushSwitch"
+                                Tapped="enablePush_OnChanged"/>
+
+                    <TextCell Text="Channel ID"
+                              x:Name="channelId"
+                              Tapped="CopyChannelID"/>
+
+                </TableSection>
+
+                <TableSection Title="Contacts">
+                    
+
+                    <EntryCell Label="Named user"
+                               Completed="AddNamedUser"
+                               x:Name="namedUserLabel">
+
+                        <EntryCell.Keyboard>
+                            <Keyboard x:FactoryMethod="Create">
+                                <x:Arguments>
+                                    <KeyboardFlags>CapitalizeNone</KeyboardFlags>
+                                </x:Arguments>
+                            </Keyboard>
+                        </EntryCell.Keyboard>
+
+                    </EntryCell>
+                </TableSection>
+
+                <TableSection Title="Tags">
+                    <EntryCell Label="Tags"
+                               Completed="AddTag"
+                               x:Name="tagLabel"
+                               Placeholder="Add new tag" >
+
+                        <EntryCell.Keyboard>
+                            <Keyboard x:FactoryMethod="Create">
+                                <x:Arguments>
+                                    <KeyboardFlags>CapitalizeNone</KeyboardFlags>
+                                </x:Arguments>
+                            </Keyboard>
+                        </EntryCell.Keyboard>
+                    </EntryCell>
+
+                    <ViewCell>
+                        <StackLayout Padding="20,0,0,0"
+                        Orientation="Vertical">
+                            <Label Text="" x:Name="tagsList"/>
+                        </StackLayout>
+                    </ViewCell>
+
+                </TableSection>
+            </TableRoot>
+        </TableView>
+    </ContentPage.Content>
+</ContentPage>

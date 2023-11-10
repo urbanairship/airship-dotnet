@@ -6,6 +6,7 @@ using UIKit;
 using Foundation;
 using UrbanAirship;
 using AirshipDotNet.MessageCenter.Controls;
+using Vision;
 
 namespace AirshipDotNet.MessageCenter.Handlers;
 
@@ -20,24 +21,17 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
         [nameof(IMessageView.MessageId)] = MapMessageId
     };
 
-    private readonly NativeBridgeDelegate nativeBridgeDelegate;
-    private readonly NavigationDelegate navigationDelegate;
-    private readonly UANativeBridge nativeBridge;
-    private readonly UAMessageCenterNativeBridgeExtension nativeBridgeExtension;
+    private NativeBridgeDelegate nativeBridgeDelegate;
+    private NavigationDelegate navigationDelegate;
+    private UANativeBridge nativeBridge;
+    private UAMessageCenterNativeBridgeExtension nativeBridgeExtension;
     private string messageId;
+    private UAMessageCenterMessage message;
+    private UAMessageCenterUser user;
 
     public MessageViewHandler() : base(MessageViewMapper)
     {
-        nativeBridgeDelegate = new(this);
-        navigationDelegate = new(this);
-        nativeBridgeExtension = new UAMessageCenterNativeBridgeExtension();
 
-        nativeBridge = new()
-        {
-            ForwardNavigationDelegate = navigationDelegate,
-            NativeBridgeDelegate = nativeBridgeDelegate,
-            NativeBridgeExtensionDelegate = nativeBridgeExtension
-        };
     }
 
     protected override WKWebView CreatePlatformView()
@@ -45,8 +39,7 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
         return new(UIScreen.MainScreen.Bounds, new WKWebViewConfiguration())
         {
             AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight,
-            TranslatesAutoresizingMaskIntoConstraints = true,
-            NavigationDelegate = nativeBridge
+            TranslatesAutoresizingMaskIntoConstraints = true
         };
     }
 
@@ -54,61 +47,92 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
     {
         if (entry.MessageId != null)
         {
-            handler.LoadMessage(entry.MessageId);
+            handler.LoadUser(entry.MessageId, result => { });
         }
     }
 
-    protected void LoadMessage(string? messageId)
+    public void LoadUser(string messageId, Action<bool> result)
     {
-        if (messageId == null) return;
-        var message = UAMessageCenter.Shared.MessageList.Message(messageId);
+        UAMessageCenter.Shared.Inbox.GetUser(currentUser =>
+        {
+            UAMessageCenter.Shared.Inbox.MessageForID(messageId, currentMessage =>
+            {
+                user = currentUser;
+                message = currentMessage;
+
+                nativeBridgeDelegate = new(this);
+                navigationDelegate = new(this);
+
+                nativeBridge = new()
+                {
+                    ForwardNavigationDelegate = navigationDelegate,
+                    NativeBridgeDelegate = nativeBridgeDelegate,
+                    NativeBridgeExtensionDelegate = new UAMessageCenterNativeBridgeExtension(message, user)
+                };
+
+                PlatformView.NavigationDelegate = nativeBridge;
+
+                LoadMessage(messageId, result);
+            });
+        });
+    }
+
+    public void LoadMessage(string messageId, Action<bool> result)
+    {
         if (message != null)
         {
-            LoadMessageBody(message);
+            LoadMessageBody(message, result);
         }
         else
         {
-            UAMessageCenter.Shared.MessageList.RetrieveMessageList(() =>
+            UAMessageCenter.Shared.Inbox.RefreshMessages(refresh =>
+            {
+                if (refresh == true)
                 {
-                    message = UAMessageCenter.Shared.MessageList.Message(messageId);
-                    if (message != null && !message.IsExpired())
+                    UAMessageCenter.Shared.Inbox.MessageForID(messageId, newMessage =>
                     {
-                        LoadMessageBody(message);
-                    }
-                    else
-                    {
-                        VirtualView.OnLoadFailed(messageId, false, MessageFailureStatus.Unavailable);
-                    }
-                },
-                () => VirtualView.OnLoadFailed(messageId, false, MessageFailureStatus.FetchFailed)
-            );
+                        message = newMessage;
+                        if (message != null && !message.IsExpired)
+                        {
+                            LoadMessageBody(message, result);
+                        }
+                        else
+                        {
+                            VirtualView.OnLoadFailed(messageId, false, MessageFailureStatus.Unavailable);
+                            result(false);
+                        }
+                    });
+                }
+                else
+                {
+                    VirtualView.OnLoadFailed(messageId, false, MessageFailureStatus.FetchFailed);
+                    result(false);
+                }
+            });
         }
-
     }
 
-    protected void LoadMessageBody(UAInboxMessage message)
+    protected void LoadMessageBody(UAMessageCenterMessage message, Action<bool> result)
     {
-        messageId = message.MessageID;
-
-        UAMessageCenter.Shared.User.GetUserData((UAUserData userData) =>
+        if (user == null)
         {
-            if (userData == null) return;
+            result(false);
+        }
 
-            var auth = UAUtils.AuthHeaderString(userData.Username, userData.Password);
-            NSMutableDictionary dict = new NSMutableDictionary
-            {
-                { new NSString("Authorization"), new NSString(auth) }
-            };
-            var request = new NSMutableUrlRequest(message.MessageBodyURL) {
-                Headers = dict
-            };
+        var auth = UAUtils.AuthHeaderString(user.Username, user.Password);
 
-            MainThread.BeginInvokeOnMainThread(() =>
-                PlatformView.LoadRequest(request)
-            );
+        NSMutableDictionary dict = new NSMutableDictionary();
+        dict.Add(new NSString("Authorization"), new NSString(auth));
 
-            VirtualView.OnLoadStarted(message.MessageID);
-        });
+        var request = new NSMutableUrlRequest(message.BodyURL);
+        request.Headers = dict;
+
+        MainThread.BeginInvokeOnMainThread(() =>
+            PlatformView.LoadRequest(request)
+        );
+
+        VirtualView.OnLoadStarted(messageId);
+        result(true);
     }
 
     private class NavigationDelegate : NSObject, IUANavigationDelegate
@@ -176,4 +200,3 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
         }
     }
 }
-

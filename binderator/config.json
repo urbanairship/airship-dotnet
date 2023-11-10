@@ -17,56 +17,72 @@
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-adm",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
         "nugetId": "Airship.Net.Android.Adm",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-automation",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
         "nugetId": "Airship.Net.Android.Automation",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-core",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
         "nugetId": "Airship.Net.Android.Core",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-fcm",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
         "nugetId": "Airship.Net.Android.Fcm",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
+        "artifactId": "urbanairship-feature-flag",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
+        "nugetId": "Airship.Net.Android.FeatureFlag",
+        "dependencyOnly": false
+      },
+      {
+        "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-layout",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
         "nugetId": "Airship.Net.Android.Layout",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
+        "artifactId": "urbanairship-live-update",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
+        "nugetId": "Airship.Net.Android.LiveUpdate",
+        "dependencyOnly": false
+      },
+      {
+        "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-message-center",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
         "nugetId": "Airship.Net.Android.MessageCenter",
         "dependencyOnly": false
       },
       {
         "groupId": "com.urbanairship.android",
         "artifactId": "urbanairship-preference-center",
-        "version": "16.11.1",
-        "nugetVersion": "16.11.1",
+        "version": "17.5.0",
+        "nugetVersion": "17.5.0",
         "nugetId": "Airship.Net.Android.PreferenceCenter",
         "dependencyOnly": false
       },
@@ -130,7 +146,7 @@
         "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-common",
         "version": "2.5.1",
-        "nugetVersion": "2.5.1.2",
+        "nugetVersion": "2.5.1.1",
         "nugetId": "Xamarin.AndroidX.Lifecycle.Common",
         "dependencyOnly": true
       },
@@ -138,7 +154,7 @@
         "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-common-java8",
         "version": "2.5.1",
-        "nugetVersion": "2.5.1.2",
+        "nugetVersion": "2.5.1.1",
         "nugetId": "Xamarin.AndroidX.Lifecycle.Common.Java8",
         "dependencyOnly": true
       },
@@ -146,7 +162,7 @@
         "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-runtime-ktx",
         "version": "2.5.1",
-        "nugetVersion": "2.5.1.2",
+        "nugetVersion": "2.5.1.1",
         "nugetId": "Xamarin.AndroidX.Lifecycle.Runtime.Ktx",
         "dependencyOnly": true
       },
@@ -154,7 +170,7 @@
         "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-viewmodel-ktx",
         "version": "2.5.1",
-        "nugetVersion": "2.5.1.2",
+        "nugetVersion": "2.5.1.1",
         "nugetId": "Xamarin.AndroidX.Lifecycle.ViewModel.Ktx",
         "dependencyOnly": true
       },
@@ -168,8 +184,16 @@
       },
       {
         "groupId": "androidx.room",
+        "artifactId": "room-ktx",
+        "version": "2.5.1",
+        "nugetVersion": "2.5.0",
+        "nugetId": "Xamarin.AndroidX.Room.Room.Ktx",
+        "dependencyOnly": true
+      },
+      {
+        "groupId": "androidx.room",
         "artifactId": "room-runtime",
-        "version": "2.5.0",
+        "version": "2.5.1",
         "nugetVersion": "2.5.0",
         "nugetId": "Xamarin.AndroidX.Room.Runtime",
         "dependencyOnly": true
@@ -202,7 +226,7 @@
         "groupId": "androidx.work",
         "artifactId": "work-runtime",
         "version": "2.8.0",
-        "nugetVersion": "2.7.1.6",
+        "nugetVersion": "2.7.1.5",
         "nugetId": "Xamarin.AndroidX.Work.Runtime",
         "dependencyOnly": true
       },

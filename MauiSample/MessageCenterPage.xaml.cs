@@ -2,6 +2,7 @@
 using AirshipDotNet;
 using AirshipDotNet.MessageCenter;
 using AirshipDotNet.MessageCenter.Controls;
+using Microsoft.Maui.Controls;
 
 namespace MauiSample;
 
@@ -10,14 +11,14 @@ public partial class MessageCenterPage : ContentPage
     public ICommand RefreshCommand { private set; get; }
 
     public MessageCenterPage()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
 
-    RefreshCommand = new Command(
-        execute: () => Refresh(),
-        canExecute: () => !refreshView.IsRefreshing
-    );
-	}
+        RefreshCommand = new Command(
+            execute: () => Refresh(),
+            canExecute: () => !refreshView.IsRefreshing
+        );
+    }
 
     protected override void OnAppearing()
     {
@@ -27,10 +28,13 @@ public partial class MessageCenterPage : ContentPage
 
     public void Refresh()
     {
-        Airship.Instance.FetchInboxMessages(success =>
+        Airship.Instance.InboxMessages(messages =>
         {
-            listView.ItemsSource = Airship.Instance.InboxMessages;
-            refreshView.IsRefreshing = false;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                listView.ItemsSource = messages;
+                refreshView.IsRefreshing = false;
+            });
         });
     }
 

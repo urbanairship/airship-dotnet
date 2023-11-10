@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <NoBindingEmbedding>true</NoBindingEmbedding>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AssemblyName>Airship.Net.iOS.NotificationContentExtension</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Notification Content Extension</AssemblyTitle>
     <Description>Notification content extension support for Airship SDK</Description>
-    <TargetFramework>net6.0-ios</TargetFramework>
+    <TargetFramework>net7.0-ios</TargetFramework>
     <DisableExtraReferences>true</DisableExtraReferences>
     <Nullable>enable</Nullable>
     <IsTrimmable>false</IsTrimmable>
@@ -17,7 +17,7 @@
     <PackageVersion>$(AirshipIosNugetVersion)</PackageVersion>
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>
-    <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>14.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

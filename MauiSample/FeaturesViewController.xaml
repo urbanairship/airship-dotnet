@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiSample.FeaturesViewController">
+
+    <ContentPage.Content>
+
+        <TableView Intent="Settings">
+
+            <TableRoot>
+
+                <TableSection Title= "Privay Manager">
+
+                    <SwitchCell
+                        Text="Push"
+                        OnChanged="enablePushFeature_OnChanged"
+                        x:Name="enabledPushFeatureSwitch"
+                        Tapped="enablePushFeature_OnChanged"/>
+
+                    <SwitchCell
+                        Text="Message Center"
+                        OnChanged="enableMessageCenterFeature_OnChanged"
+                        x:Name="enableMessageCenterFeatureSwitch"
+                        Tapped="enableMessageCenterFeature_OnChanged"/>
+
+                    <SwitchCell
+                        Text="Automation"
+                        OnChanged="enableInAppAutomationFeature_OnChanged"
+                        x:Name="enableInAppAutomationFeatureSwitch"
+                        Tapped="enableInAppAutomationFeature_OnChanged"/>
+
+                    <SwitchCell
+                        Text="Analytics"
+                        OnChanged="enableAnalyticsFeature_OnChanged"
+                        x:Name="EnableAnalyticsFeatureSwitch"
+                        Tapped="enableAnalyticsFeature_OnChanged"/>
+
+                    <SwitchCell
+                        Text="Tags AND Attributes"
+                        OnChanged="enableTagsAndAttributesFeature_OnChanged"
+                        x:Name="enableTagsAndAttributesFeatureSwitch"
+                        Tapped="enableTagsAndAttributesFeature_OnChanged"/>
+
+                    <SwitchCell
+                        Text="Contacts"
+                        OnChanged="enableContactsFeature_OnChanged"
+                        x:Name="enableContactsFeatureSwitch"
+                        Tapped="enableContactsFeature_OnChanged"/>
+
+                </TableSection>
+
+            </TableRoot>
+
+        </TableView>
+
+    </ContentPage.Content>
+
+</ContentPage>

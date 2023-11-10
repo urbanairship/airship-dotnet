@@ -3,6 +3,7 @@ ext {
 }
 
 task clean(type: Delete) {
+    setFollowSymlinks(true) // <-- add this line to avoid "could not follow symlink" errors
     doLast() {
         project.delete fileTree("$rootDir/frameworks/")
         project.delete "$rootDir/Carthage"
@@ -41,7 +42,7 @@ task downloadFrameworks {
                 exec {
                     workingDir "${rootDir}/frameworks"
                     executable "unzip"
-                    args "-u", "${airshipProperties.iosFrameworkZip}"
+                    args "-o", "${airshipProperties.iosFrameworkZip}"
                 }
             }
         }

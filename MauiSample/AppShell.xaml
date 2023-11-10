@@ -19,6 +19,13 @@
             Icon="icon_inbox.png"
             ContentTemplate="{DataTemplate local:MessageCenterPage}"
             Route="Inbox" />
+
+        <ShellContent
+            Title="Settings"
+            Icon="icon_settings.png"
+            ContentTemplate="{DataTemplate local:PushSettingsViewController}"
+            Route="Settings" />
+
     </TabBar>
 </Shell>
 
