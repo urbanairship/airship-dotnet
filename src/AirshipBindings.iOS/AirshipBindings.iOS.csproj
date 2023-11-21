@@ -5,7 +5,7 @@
     <AssemblyName>Airship.Net.iOS</AssemblyName>
     <AssemblyTitle>Airship iOS SDK</AssemblyTitle>
     <Description>A full suite of mobile engagement tools for building next-generation apps</Description>
-    <TargetFramework>net7.0-ios</TargetFramework>
+    <TargetFramework>net8.0-ios</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <AssemblyVersion>$(AirshipIosVersion)</AssemblyVersion>
