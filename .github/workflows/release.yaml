@@ -73,15 +73,12 @@ jobs:
       #     brew install doxygen
       #     brew install graphviz
 
-      - name: Build
-        run: ./gradlew build pack
-        #run: ./gradlew build pack packageDocs
-
-      - name: Publish Nugets
+      - name: Build and Publish Nugets
         env:
           NUGET_PRODUCTION_API_KEY: ${{ secrets.NUGET_PRODUCTION_API_KEY }}
-        run: ./gradlew publishToProduction
-
+        run: ./gradlew build pack publishToProduction
+        #run: ./gradlew build pack packageDocs
+        
       - name: Create Github Release
         uses: actions/create-release@v1.0.1
         env:
