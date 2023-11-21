@@ -6,7 +6,7 @@ task clean(type: Delete) {
 }
 
 task build {
-    mustRunAfter(':binderator:build', ':src:AirshipBindings.iOS.common:build')
+    dependsOn(':binderator:build', ':src:AirshipBindings.iOS.common:build')
   
     def BuildConfiguration=project.properties['build_configuration'] ?: "Release"
     doLast() {
@@ -17,7 +17,7 @@ task build {
 }
 
 task pack {
-    mustRunAfter(':binderator:pack', ':src:AirshipBindings.iOS.common:pack')
+    dependsOn(':src:Airship.Net:build')
     
     // Pack Airship.Net library
     doLast() {

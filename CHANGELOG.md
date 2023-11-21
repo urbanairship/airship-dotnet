@@ -1,4 +1,11 @@
-# Airship Xamarin Changelog
+# Airship DotNet Changelog
+
+## Version 19.0.0 - Nov 21, 2023
+Major release that updates the Airship bindings and cross-platform libraries to target .NET 8.0. The Airship .NET SDK now requires .NET 8.0 (`net8.0-android` and `net8.0-ios`) as the minimum target framework, and iOS 14+ as the minimum deployment version with Xcode 15+.
+
+## Changes
+- Updated iOS SDK to 17.6.1
+- Resolved build issues in Windows Visual Studio. Linked Mac builds are now working as expected.
 
 ## Version 18.0.0 - Nov 10, 2023
 Major release that updates to Airship SDK 17.x. This release adds support for Stories, In-App experiences downstream of a sequence in Journeys, and improves SDK auth. The .NET SDK now requires .NET 7.0 (`net7.0-android` and `net7.0-ios`) as the minimum target framework, and iOS 14+ as the minimum deployment version with Xcode 14.3+.
