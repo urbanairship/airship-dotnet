@@ -1,22 +1,20 @@
 ext {
-    pod = 'UrbanAirship-iOS-SDK'
-    iosSdkModuleName = 'AirshipAutomation'
+  pod = 'UrbanAirship-iOS-SDK'
+  iosSdkModuleName = 'AirshipAutomation'
 }
 
-apply from: "../ios-common-build.gradle"
-
 task clean(type: Delete) {
-    doLast() {
-        project.delete "bin"
-        project.delete "obj"
-        project.delete "$buildDir"
-    }
+  doLast() {
+    project.delete "bin"
+    project.delete "obj"
+    project.delete "$buildDir"
+  }
 }
 
 task carthageUpdate {
-    doLast() {
-        exec {
-            commandLine "strip", "-S", "-x", "../../Carthage/Build/iOS/AirshipAutomation.framework/AirshipAutomation"
-        }
+  doLast() {
+    exec {
+      commandLine "strip", "-S", "-x", "../../Carthage/Build/iOS/AirshipAutomation.framework/AirshipAutomation"
     }
+  }
 }
