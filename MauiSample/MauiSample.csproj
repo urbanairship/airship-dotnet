@@ -33,6 +33,8 @@
     <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
     <MtouchLink>None</MtouchLink>
     <CreatePackage>false</CreatePackage>
+    <RuntimeIdentifier Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' != 'arm64'">iossimulator-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'arm64'">iossimulator-arm64</RuntimeIdentifier> 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net8.0-ios'">
