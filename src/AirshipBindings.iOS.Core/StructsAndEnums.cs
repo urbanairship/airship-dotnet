@@ -2,6 +2,7 @@
  Copyright Airship and Contributors
 */
 
+using System;
 using ObjCRuntime;
 
 namespace UrbanAirship
@@ -48,7 +49,9 @@ namespace UrbanAirship
         Warn = 2,
         Info = 3,
         Debug = 4,
-        Trace = 5
+        [Obsolete("Use Verbose instead. Trace will be removed in a future release.")]
+        Trace = 5,
+        Verbose = 5
     }
 
     [Native]
