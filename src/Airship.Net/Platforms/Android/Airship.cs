@@ -1,12 +1,12 @@
 ﻿/* Copyright Airship and Contributors */
 
+using Com.Urbanairship.Contacts;
 using Java.Util;
 using Java.Util.Concurrent;
 using UrbanAirship;
 using UrbanAirship.Automation;
 using UrbanAirship.Actions;
 using UrbanAirship.Channel;
-//using Urbanairship.Contacts;
 using UrbanAirship.MessageCenter;
 using UrbanAirship.Push;
 using AttributeEditor = AirshipDotNet.Attributes.AttributeEditor;
@@ -254,12 +254,12 @@ namespace AirshipDotNet
             {
                 foreach (dynamic property in customEvent.PropertyList)
                 {
-                    if (string.IsNullOrEmpty(property.name))
+                    if (string.IsNullOrEmpty(property.Name))
                     {
                         continue;
                     }
 
-                    builder.AddProperty(property.name, property.value);
+                    builder.AddProperty(property.Name, property.Value);
                 }
             }
 
@@ -322,7 +322,7 @@ namespace AirshipDotNet
             listMessages(messagesList);
         }
 
-        private Date FromDateTime(DateTime dateTime)
+        private Date FromDateTime(DateTime? dateTime)
         {
             if (dateTime == null)
             {
@@ -332,7 +332,7 @@ namespace AirshipDotNet
             return new Date(epochSeconds * 1000);
         }
 
-        private static DateTime? FromDate(Date date)
+        private static DateTime? FromDate(Date? date)
         {
             if (date == null)
             {
@@ -344,7 +344,7 @@ namespace AirshipDotNet
 
         public Channel.TagGroupsEditor EditContactTagGroups()
         {
-            return new Channel.TagGroupsEditor((List<Channel.TagGroupsEditor.TagOperation> payload) =>
+            return new Channel.TagGroupsEditor(payload =>
             {
                 var editor = UAirship.Shared().Contact.EditTagGroups();
                 TagGroupHelper(payload, editor);
@@ -354,7 +354,7 @@ namespace AirshipDotNet
 
         public Channel.TagGroupsEditor EditChannelTagGroups()
         {
-            return new Channel.TagGroupsEditor((List<Channel.TagGroupsEditor.TagOperation> payload) =>
+            return new Channel.TagGroupsEditor( payload =>
             {
                 var editor = UAirship.Shared().Channel.EditTagGroups();
                 TagGroupHelper(payload, editor);
@@ -365,16 +365,15 @@ namespace AirshipDotNet
         public AttributeEditor EditAttributes() => EditChannelAttributes();
 
         public AttributeEditor EditChannelAttributes() =>
-            new((List<AttributeEditor.IAttributeOperation> operations) =>
+            new(operations =>
             {
                 var editor = UAirship.Shared().Channel.EditAttributes();
                 ApplyAttributesOperations(editor, operations);
                 editor.Apply();
             });
 
-        /// <summary>
         public AttributeEditor EditContactAttributes() =>
-            new((List<AttributeEditor.IAttributeOperation> operations) =>
+            new(operations =>
             {
                 var editor = UAirship.Shared().Contact.EditAttributes();
                 ApplyAttributesOperations(editor, operations);
@@ -383,7 +382,7 @@ namespace AirshipDotNet
 
         public ChannelSubscriptionListEditor EditChannelSubscriptionLists()
         {
-            return new Channel.SubscriptionListEditor((List<Channel.SubscriptionListEditor.SubscriptionListOperation> payload) =>
+            return new ChannelSubscriptionListEditor(payload =>
             {
                 var editor = UAirship.Shared().Channel.EditSubscriptionLists();
                 ApplyChannelSubscriptionListHelper(payload, editor);
@@ -393,11 +392,11 @@ namespace AirshipDotNet
 
         public ContactSubscriptionListEditor EditContactSubscriptionLists()
         {
-            return new Contact.SubscriptionListEditor((List<Contact.SubscriptionListEditor.SubscriptionListOperation> payload) =>
+            return new ContactSubscriptionListEditor(payload =>
             {
-                //var editor = UAirship.Shared().Contact.EditSubscriptionLists();
-                ApplyContactSubscriptionListHelper(payload);
-                //editor.Apply();
+                var editor = UAirship.Shared().Contact.EditSubscriptionLists();
+                ApplyContactSubscriptionListHelper(payload, editor);
+                editor.Apply();
             });
         }
 
@@ -445,9 +444,8 @@ namespace AirshipDotNet
 
         private static void TagGroupHelper(List<Channel.TagGroupsEditor.TagOperation> payload, TagGroupsEditor editor)
         {
-            foreach (Channel.TagGroupsEditor.TagOperation tagOperation in payload)
+            foreach (var tagOperation in payload)
             {
-
                 switch (tagOperation.operationType)
                 {
                     case Channel.TagGroupsEditor.OperationType.ADD:
@@ -459,91 +457,80 @@ namespace AirshipDotNet
                     case Channel.TagGroupsEditor.OperationType.SET:
                         editor.SetTags(tagOperation.group, tagOperation.tags);
                         break;
-                    default:
-                        break;
                 }
             }
         }
 
-        private void ApplyChannelSubscriptionListHelper(List<Channel.SubscriptionListEditor.SubscriptionListOperation> operations, UrbanAirship.Channel.SubscriptionListEditor editor)
+        private void ApplyChannelSubscriptionListHelper(List<ChannelSubscriptionListEditor.SubscriptionListOperation> operations, UrbanAirship.Channel.SubscriptionListEditor editor)
         {
-            foreach (Channel.SubscriptionListEditor.SubscriptionListOperation operation in operations)
+            foreach (var operation in operations)
             {
-                if (!Enum.IsDefined(typeof(Channel.SubscriptionListEditor.OperationType), operation.OperationType))
+                if (!Enum.IsDefined(typeof(ChannelSubscriptionListEditor.OperationType), operation.OperationType))
                 {
                     continue;
                 }
 
                 switch (operation.OperationType)
                 {
-                    case Channel.SubscriptionListEditor.OperationType.SUBSCRIBE:
+                    case ChannelSubscriptionListEditor.OperationType.SUBSCRIBE:
                         editor.Subscribe(operation.List);
                         break;
-                    case Channel.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
+                    case ChannelSubscriptionListEditor.OperationType.UNSUBSCRIBE:
                         editor.Unsubscribe(operation.List);
                         break;
                 }
             }
         }
 
-        // FIXME:
-        //private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations, ScopedSubscriptionListEditor editor)
-        private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations)
+        private void ApplyContactSubscriptionListHelper(List<ContactSubscriptionListEditor.SubscriptionListOperation> operations, ScopedSubscriptionListEditor editor)
         {
-
-            foreach (Contact.SubscriptionListEditor.SubscriptionListOperation operation in operations)
+            foreach (var operation in operations)
             {
-                if (!Enum.IsDefined(typeof(Contact.SubscriptionListEditor.OperationType), operation.OperationType))
+                if (!Enum.IsDefined(typeof(ContactSubscriptionListEditor.OperationType), operation.OperationType))
                 {
                     continue;
                 }
 
-                //string scope = operation.scope;
-                //string[] scopes = { "app", "web", "email", "sms" };
-                //if (scopes.Any(scope.Contains))
-                //{
-                //    Scope channelScope = Scope.App;
-                //    if (operation.Scope == "app")
-                //    {
-                //        channelScope = Scope.App;
-                //    }
-                //    else if (operation.scope == "web")
-                //    {
-                //        channelScope = Scope.Web;
-                //    }
-                //    else if (operation.Scope == "email")
-                //    {
-                //        channelScope = Scope.Email;
-                //    }
-                //    else if (operation.Scope == "sms")
-                //    {
-                //        channelScope = Scope.Sms;
-                //    }
+                string scope = operation.Scope;
+                string[] scopes = { "app", "web", "email", "sms" };
+                if (scopes.Contains(scope))
+                {
+                    Scope channelScope = Scope.App;
 
-                //    switch (operation.OperationType)
-                //    {
-                //        case Contact.SubscriptionListEditor.OperationType.SUBSCRIBE:
-                //            editor.Subscribe(operation.List, channelScope);
-                //            break;
-                //        case Contact.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
-                //            editor.Unsubscribe(operation.List, channelScope);
-                //            break;
-                //    }
-                //}
+                    if (operation.Scope == "app")
+                    {
+                        channelScope = Scope.App;
+                    }
+                    else if (operation.Scope == "web")
+                    {
+                        channelScope = Scope.Web;
+                    }
+                    else if (operation.Scope == "email")
+                    {
+                        channelScope = Scope.Email;
+                    }
+                    else if (operation.Scope == "sms")
+                    {
+                        channelScope = Scope.Sms;
+                    }
+                    
+                    switch (operation.OperationType)
+                    {
+                        case Contact.SubscriptionListEditor.OperationType.SUBSCRIBE:
+                            editor.Subscribe(operation.List, channelScope);
+                            break;
+                        case Contact.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
+                            editor.Unsubscribe(operation.List, channelScope);
+                            break;
+                    }
+                }
             }
         }
 
         public bool InAppAutomationEnabled
         {
-            get
-            {
-                return InAppAutomation.Shared().Enabled;
-            }
-
-            set
-            {
-                InAppAutomation.Shared().Enabled = value;
-            }
+            get => InAppAutomation.Shared().Enabled;
+            set => InAppAutomation.Shared().Enabled = value;
         }
 
         public bool InAppAutomationPaused
