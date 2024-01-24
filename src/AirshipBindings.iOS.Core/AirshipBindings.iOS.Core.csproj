@@ -9,7 +9,7 @@
     <AssemblyName>Airship.Net.iOS.Core</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Core</AssemblyTitle>
     <Description>Core of Airship SDK</Description>
-    <TargetFramework>net7.0-ios</TargetFramework>
+    <TargetFramework>net8.0-ios</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>
