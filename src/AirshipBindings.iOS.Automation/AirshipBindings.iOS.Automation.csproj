@@ -11,7 +11,7 @@
     <AssemblyName>Airship.Net.iOS.Automation</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Automation</AssemblyTitle>
     <Description>Automation support for Airship SDK</Description>
-    <TargetFramework>net7.0-ios</TargetFramework>
+    <TargetFramework>net8.0-ios</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>

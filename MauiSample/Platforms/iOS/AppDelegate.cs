@@ -14,7 +14,7 @@ public class AppDelegate : MauiUIApplicationDelegate
     {
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
-        UAirship.LogLevel = UALogLevel.Trace;
+        UAirship.LogLevel = UALogLevel.Verbose;
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.

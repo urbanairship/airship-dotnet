@@ -262,13 +262,13 @@ namespace AirshipDotNet
                 NSMutableDictionary<NSString, NSObject> propertyDictionary = new();
                 foreach (dynamic property in customEvent.PropertyList)
                 {
-                    if (string.IsNullOrEmpty(property.name))
+                    if (string.IsNullOrEmpty(property.Name))
                     {
                         continue;
                     }
 
-                    NSString key = (NSString)property.name;
-                    NSObject value = NSObject.FromObject(property.value);
+                    NSString key = (NSString)property.Name;
+                    NSObject value = NSObject.FromObject(property.Value);
 
                     if (property is CustomEvent.Property<string[]> stringArrayProperty)
                     {
@@ -283,8 +283,7 @@ namespace AirshipDotNet
                 }
                 if (propertyDictionary.Count > 0)
                 {
-                    //TODO: 
-                    //uaEvent.Properties = new NSDictionary<NSString, NSObject>(propertyDictionary.Keys, propertyDictionary.Values);
+                    uaEvent.Properties = new NSDictionary<NSString, NSObject>(propertyDictionary.Keys, propertyDictionary.Values);
                 }
             }
 
@@ -391,7 +390,7 @@ namespace AirshipDotNet
 
         public Channel.TagGroupsEditor EditChannelTagGroups()
         {
-            return new((List<Channel.TagGroupsEditor.TagOperation> payload) =>
+            return new(payload =>
             {
                 ChannelTagGroupHelper(payload, () =>
                 {
@@ -402,7 +401,7 @@ namespace AirshipDotNet
 
         public Channel.TagGroupsEditor EditContactTagGroups()
         {
-            return new((List<Channel.TagGroupsEditor.TagOperation> payload) =>
+            return new(payload =>
             {
                 ContactTagGroupHelper(payload);
             });
@@ -413,7 +412,7 @@ namespace AirshipDotNet
 
         public AttributeEditor EditChannelAttributes()
         {
-            return new((List<AttributeEditor.IAttributeOperation> operations) =>
+            return new(operations =>
             {
                 ApplyChannelAttributesOperations(operations);
             });
@@ -421,7 +420,7 @@ namespace AirshipDotNet
 
         public AttributeEditor EditContactAttributes()
         {
-            return new((List<AttributeEditor.IAttributeOperation> operations) =>
+            return new(operations =>
             {
                 ApplyContactAttributesOperations(operations);
             });
@@ -430,7 +429,7 @@ namespace AirshipDotNet
 
         public Channel.SubscriptionListEditor EditChannelSubscriptionLists()
         {
-            return new Channel.SubscriptionListEditor((List<Channel.SubscriptionListEditor.SubscriptionListOperation> payload) =>
+            return new Channel.SubscriptionListEditor(payload =>
             {
                 ApplyChannelSubscriptionListHelper(payload);
             });
@@ -438,7 +437,7 @@ namespace AirshipDotNet
 
         public Contact.SubscriptionListEditor EditContactSubscriptionLists()
         {
-            return new Contact.SubscriptionListEditor((List<Contact.SubscriptionListEditor.SubscriptionListOperation> payload) =>
+            return new Contact.SubscriptionListEditor(payload =>
             {
                 ApplyContactSubscriptionListHelper(payload);
             });
@@ -597,7 +596,7 @@ namespace AirshipDotNet
         {
             UAirship.Channel.EditSubscriptionLists(editor =>
             {
-                foreach (Channel.SubscriptionListEditor.SubscriptionListOperation operation in operations)
+                foreach (var operation in operations)
                 {
                     if (!Enum.IsDefined(typeof(Channel.SubscriptionListEditor.OperationType), operation.OperationType))
                     {
@@ -624,7 +623,7 @@ namespace AirshipDotNet
             UAirship.Contact.EditSubscriptionLists(editor =>
             {
 
-                foreach (Contact.SubscriptionListEditor.SubscriptionListOperation operation in operations)
+                foreach (var operation in operations)
                 {
                     if (!Enum.IsDefined(typeof(Contact.SubscriptionListEditor.OperationType), operation.OperationType))
                     {

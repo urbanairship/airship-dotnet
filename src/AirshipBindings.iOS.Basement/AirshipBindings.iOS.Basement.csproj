@@ -11,7 +11,7 @@
     <AssemblyName>Airship.Net.iOS.Basement</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Basement</AssemblyTitle>
     <Description>Basement module for Airship SDK</Description>
-    <TargetFramework>net7.0-ios</TargetFramework>
+    <TargetFramework>net8.0-ios</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>

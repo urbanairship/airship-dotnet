@@ -5,12 +5,12 @@
 ### Requirements
 
 * Visual Studio for Mac ([stable](https://visualstudio.microsoft.com/vs/mac/) or [preview](https://visualstudio.microsoft.com/vs/mac/preview/))
-* A supported Xcode version (at the time of writing, VS 2022 supported Xcode 14.2)
+* A supported Xcode version (at the time of writing, VS 2022 recommends Xcode 15.1+)
 * OpenJDK 11
   * Using [Homebrew](https://brew.sh/): `brew install openjdk@11`
   * Or [SDKMAN!](https://sdkman.io/): `sdk install java 11.0.18-zulu`
 * Android SDK: API 31+ platform, emulator, build tools, command line tools, etc.
-* .NET6 SDK (install via VS)
+* .NET8 SDK (install via VS)
 * .NET Workloads (install via VS): maui, android, ios
 * Doxygen & Graphviz (`brew install doxygen graphviz`)
 * Carthage (`brew install carthage`)

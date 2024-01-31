@@ -9,7 +9,7 @@
     <AssemblyName>Airship.Net.iOS.PreferenceCenter</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - Preference Center</AssemblyTitle>
     <Description>Preference Center support for Airship SDK</Description>
-    <TargetFramework>net7.0-ios</TargetFramework>
+    <TargetFramework>net8.0-ios</TargetFramework>
     <DisableExtraReferences>true</DisableExtraReferences>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
