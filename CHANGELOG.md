@@ -1,11 +1,11 @@
 # Airship DotNet Changelog
 
 ## Version 19.1.0 - Jan 25, 2024
-Minor release that updates to Airship SDK 17.7.1, fixes an iOS custom event properties reporting issue, and Android contact subscription list editing. Apps that target iOS and make use of custom events or Android and make use of contact subscription editing should update.
+Minor release that updates to Airship SDK to iOS 17.7.3 and Android 17.7.2, fixes an iOS custom event properties reporting issue, and Android contact subscription list editing. Apps that target iOS and make use of custom events or Android and make use of contact subscription editing should update.
 
 ### Changes
-- Updated iOS SDK to 17.7.1
-- Updated Android SDK to 17.7.1
+- Updated iOS SDK to 17.7.3
+- Updated Android SDK to 17.7.2
 - Fixed a bug that prevented custom event properties from being reported on iOS
 - Fixed contact subscription list updates (`EditContactSubscriptionLists`) on Android
 - Deprecated iOS `Trace` log level and add the replacement `Verbose` log level.
