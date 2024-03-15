@@ -7,6 +7,7 @@ Minor release that updates the Airship SDK to iOS 17.9.0 and Android 17.7.3, and
 - Updated iOS SDK to 17.9.0
 - Updated Android SDK to 17.7.3
 - Support for dark mode and extended theming options for Message Center plist
+- Fixed an iOS bug in the Message Center message delete and mark read methods in Airship.Net
 
 ## Version 19.1.0 - Jan 25, 2024
 Minor release that updates the Airship SDK to iOS 17.7.3 and Android 17.7.2, fixes an iOS custom event properties reporting issue, and Android contact subscription list editing. Apps that target iOS and make use of custom events or Android and make use of contact subscription editing should update.
