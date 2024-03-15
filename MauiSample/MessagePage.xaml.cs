@@ -1,4 +1,5 @@
-﻿using AirshipDotNet.MessageCenter.Controls;
+﻿using AirshipDotNet;
+using AirshipDotNet.MessageCenter.Controls;
 
 namespace MauiSample;
 
@@ -32,8 +33,12 @@ public partial class MessagePage : ContentPage
     void MessageView_LoadFailed(object sender, MessageLoadFailedEventArgs args) =>
         LoadFailed?.Invoke(this, args);
 
-    void MessageView_LoadFinished(object sender, MessageLoadFinishedEventArgs args) =>
+    void MessageView_LoadFinished(object sender, MessageLoadFinishedEventArgs args)
+    {
         LoadFinished?.Invoke(this, args);
+
+        Airship.Instance.MarkMessageRead(MessageId);
+    }
 
     void MessageView_Closed(object sender, MessageClosedEventArgs args) =>
         Closed?.Invoke(this, args);

@@ -14,6 +14,8 @@ env:
 
 jobs:
   release:
+    permissions:
+      contents: write
     runs-on: macOS-13
     steps:
       - uses: actions/checkout@v2
@@ -80,9 +82,8 @@ jobs:
         #run: ./gradlew build pack packageDocs
         
       - name: Create Github Release
-        uses: actions/create-release@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           release_name: ${{ steps.get_version.outputs.VERSION }}
