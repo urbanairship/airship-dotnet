@@ -132,6 +132,7 @@
 
   <ItemGroup Label="iOS Resources" Condition="'$(TargetFramework)' == 'net8.0-ios'">
     <BundleResource Include="Platforms\iOS\AirshipConfig.plist" Link="AirshipConfig.plist" />
+    <BundleResource Include="Platforms\iOS\MessageCenterTheme.plist" Link="MessageCenterTheme.plist" />
   </ItemGroup>
 
   <ItemGroup Label="Android Resources" Condition="'$(TargetFramework)' == 'net8.0-android'">
