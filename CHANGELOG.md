@@ -1,5 +1,15 @@
 # Airship DotNet Changelog
 
+## Version 19.3.0 - Apr 8, 2024
+Minor release that updates the Airship SDK to iOS 17.10.0 and Android 17.7.4,
+
+### Changes
+- Updated iOS SDK to 17.10.0
+- Updated Android SDK to 17.7.4
+- iOS: Fixed issue with frequency checks being checked before the message is ready to display
+- Android: Fixed channel ID creation delay after enabling a feature when none was enabled
+- Android: Fixed a potential NPE when reading from intent extras on API 33
+
 ## Version 19.2.0 - Mar 15, 2024
 Minor release that updates the Airship SDK to iOS 17.9.0 and Android 17.7.3, and expands plist theming options available for Message Center.
 
