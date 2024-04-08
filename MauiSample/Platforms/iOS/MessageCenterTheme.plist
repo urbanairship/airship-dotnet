@@ -77,6 +77,6 @@
 	<key>backButtonColorDark</key>
 	<string>#DDDDDD</string>
 	<key>navigationBarTitle</key>
-	<string>Test Navigation Bar Title</string>
+	<string>Nav Bar Title</string>
 </dict>
 </plist>
