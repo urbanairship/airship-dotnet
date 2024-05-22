@@ -33,7 +33,7 @@ public class AppDelegate : MauiUIApplicationDelegate
 
         Console.WriteLine("AirshipConfig: {0}", config);
 
-        UAirship.Push.ResetBadge();
+        UAirship.Push.ResetBadge(handler => {});
 
         return base.FinishedLaunching(application, launchOptions);
     }

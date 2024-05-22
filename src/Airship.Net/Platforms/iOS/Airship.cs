@@ -4,6 +4,7 @@ using Foundation;
 using UrbanAirship;
 using AirshipDotNet.Analytics;
 using AirshipDotNet.Attributes;
+using static SystemConfiguration.NetworkReachability;
 
 namespace AirshipDotNet
 {
@@ -24,37 +25,25 @@ namespace AirshipDotNet
             // Load unreferenced modules
             AirshipAutomation.Init();
 
-            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAChannel.ChannelCreatedEvent, (notification) =>
+            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAirshipNotificationChannelCreated.Name, (notification) =>
             {
-                string channelID = notification.UserInfo[UAChannel.ChannelIdentifierKey].ToString();
+                string channelID = notification.UserInfo?[UAirshipNotificationChannelCreated.ChannelIDKey].ToString();
                 OnChannelCreation?.Invoke(this, new ChannelEventArgs(channelID));
             });
-
-            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAPush.NotificationStatusUpdateEvent, (notification) =>
-            {
-                OnPushNotificationStatusUpdate?.Invoke(this,
-                    new PushNotificationStatusEventArgs(
-                        notification.UserInfo[UAPush.IsUserNotificationsEnabled].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.AreNotificationsAllowed].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.IsPushPrivacyFeatureEnabled].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.IsPushTokenRegistered].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.IsUserOptedIn].Equals((NSNumber)1),
-                        notification.UserInfo[UAPush.IsOptedIn].Equals((NSNumber)1)
-                    )
-                );
-            });
-
+            
             //Adding Inbox updated Listener
-            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)"com.urbanairship.notification.message_list_updated", (notification) =>
+            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAirshipNotificationMessageCenterListUpdated.Name, (notification) =>
             {
                 OnMessageCenterUpdated?.Invoke(this, EventArgs.Empty);
             });
+
         }
 
         /// <summary>
         /// Add/remove the channel creation listener.
         /// </summary>
         public event EventHandler<ChannelEventArgs>? OnChannelCreation;
+
 
         /// <summary>
         /// Add/remove the push notification status listener.
@@ -71,7 +60,8 @@ namespace AirshipDotNet
             add
             {
                 onDeepLinkReceived += value;
-                UAirship.Shared.WeakDeepLinkDelegate = this;
+                //FIXME:
+                UAirship.WeakDeepLinkDelegate = this;
             }
             remove
             {
@@ -79,7 +69,8 @@ namespace AirshipDotNet
 
                 if (onDeepLinkReceived == null)
                 {
-                    UAirship.Shared.WeakDeepLinkDelegate = null;
+                    // FIXME:
+                    //UAirship.Shared.WeakDeepLinkDelegate = null;
                 }
             }
         }
@@ -122,15 +113,15 @@ namespace AirshipDotNet
 
         public Features EnabledFeatures
         {
-            get => FeaturesFromUAFeatures(UAirship.Shared.PrivacyManager.EnabledFeatures);
-            set => UAirship.Shared.PrivacyManager.EnabledFeatures = UaFeaturesFromFeatures(value);
+            get => FeaturesFromUAFeatures(UAirship.PrivacyManager.EnabledFeatures);
+            set => UAirship.PrivacyManager.EnabledFeatures = UaFeaturesFromFeatures(value);
         }
 
         public void EnableFeatures(Features features) =>
-            UAirship.Shared.PrivacyManager.EnableFeatures(UaFeaturesFromFeatures(features));
+            UAirship.PrivacyManager.EnableFeatures(UaFeaturesFromFeatures(features));
 
         public void DisableFeatures(Features features) =>
-            UAirship.Shared.PrivacyManager.DisableFeatures(UaFeaturesFromFeatures(features));
+            UAirship.PrivacyManager.DisableFeatures(UaFeaturesFromFeatures(features));
 
         public bool IsFeatureEnabled(Features feature) => EnabledFeatures.HasFlag(feature);
         
@@ -206,7 +197,10 @@ namespace AirshipDotNet
 
         public void GetNamedUser(Action<string> namedUser)
         {
-            UAirship.Contact.GetNamedUserID(namedUser);
+            UAirship.Contact.GetNamedUserID(user =>
+            {
+                namedUser(user);
+            });
         }
 
         public void ResetContact() => UAirship.Contact.Reset();
@@ -222,9 +216,12 @@ namespace AirshipDotNet
                 UAirship.Channel.Tags = Array.Empty<string>();
             }
 
-            UAirship.Channel.AddTags(addTags);
-            UAirship.Channel.RemoveTags(removeTags);
-            UAirship.Push.UpdateRegistration();
+            UAirship.Channel.EditTags(editor =>
+            {
+                editor.AddTags(addTags);
+                editor.RemoveTags(removeTags);
+                editor.Apply();
+            });
         }
 
         public void AddCustomEvent(CustomEvent customEvent)
@@ -287,7 +284,7 @@ namespace AirshipDotNet
                 }
             }
 
-            UAirship.Analytics.AddEvent(uaEvent);
+            UAirship.Analytics.RecordCustomEvent(uaEvent);
         }
 
         public void TrackScreen(string screen) => UAirship.Analytics.TrackScreen(screen);
@@ -390,11 +387,30 @@ namespace AirshipDotNet
 
         public Channel.TagGroupsEditor EditChannelTagGroups()
         {
-            return new(payload =>
+            return new(operations =>
             {
-                ChannelTagGroupHelper(payload, () =>
+                UAirship.Channel.EditTagGroups(editor =>
                 {
-                    UAirship.Push.UpdateRegistration();
+                    var channelActions = new Dictionary<Channel.TagGroupsEditor.OperationType, Action<string, string[]>>()
+                {
+                    { Channel.TagGroupsEditor.OperationType.ADD, (group, t) => editor.AddTags(t, group) },
+                    { Channel.TagGroupsEditor.OperationType.REMOVE, (group, t) => editor.RemoveTags(t, group) },
+                    { Channel.TagGroupsEditor.OperationType.SET, (group, t) => editor.SetTags(t, group) }
+                };
+
+                    foreach (Channel.TagGroupsEditor.TagOperation operation in operations)
+                    {
+                        if (!Enum.IsDefined(typeof(Channel.TagGroupsEditor.OperationType), operation.operationType))
+                        {
+                            continue;
+                        }
+
+                        string[] tagArray = new string[operation.tags.Count];
+                        operation.tags.CopyTo(tagArray, 0);
+                        channelActions[operation.operationType](operation.group, tagArray);
+                    }
+
+                    editor.Apply();
                 });
             });
         }
@@ -564,34 +580,6 @@ namespace AirshipDotNet
             });
         }
 
-        private void ChannelTagGroupHelper(List<Channel.TagGroupsEditor.TagOperation> operations, Action finished)
-        {
-            UAirship.Channel.EditTagGroups(editor =>
-            {
-                var channelActions = new Dictionary<Channel.TagGroupsEditor.OperationType, Action<string, string[]>>()
-                {
-                    { Channel.TagGroupsEditor.OperationType.ADD, (group, t) => editor.AddTags(t, group) },
-                    { Channel.TagGroupsEditor.OperationType.REMOVE, (group, t) => editor.RemoveTags(t, group) },
-                    { Channel.TagGroupsEditor.OperationType.SET, (group, t) => editor.SetTags(t, group) }
-                };
-
-                foreach (Channel.TagGroupsEditor.TagOperation operation in operations)
-                {
-                    if (!Enum.IsDefined(typeof(Channel.TagGroupsEditor.OperationType), operation.operationType))
-                    {
-                        continue;
-                    }
-
-                    string[] tagArray = new string[operation.tags.Count];
-                    operation.tags.CopyTo(tagArray, 0);
-                    channelActions[operation.operationType](operation.group, tagArray);
-                }
-
-                editor.Apply();
-                finished();
-            });
-        }
-
         private void ApplyChannelSubscriptionListHelper(List<Channel.SubscriptionListEditor.SubscriptionListOperation> operations)
         {
             UAirship.Channel.EditSubscriptionLists(editor =>
@@ -682,17 +670,20 @@ namespace AirshipDotNet
         {
         }
 
+        /**
+        // FIXME: Need to be exposed from iOS SDK
         public bool InAppAutomationPaused
         {
             get => UAInAppAutomation.Shared.Paused;
             set => UAInAppAutomation.Shared.Paused = value;
         }
 
+        // FIXME: Need to be exposed from iOS SDK
         public TimeSpan InAppAutomationDisplayInterval
         {
-            get => TimeSpan.FromSeconds(UAInAppAutomation.Shared.InAppMessageManager.DisplayInterval);
-            set => UAInAppAutomation.Shared.InAppMessageManager.DisplayInterval = value.TotalSeconds;
+            get => TimeSpan.FromSeconds(UAInAppAutomation.Shared.InAppMessaging.DisplayInterval);
+            set => UAInAppAutomation.Shared.InAppMessaging.DisplayInterval = value.TotalSeconds;
         }
-
+        **/
     }
 }

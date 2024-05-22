@@ -99,24 +99,6 @@ namespace UrbanAirship
         void RunActions(NSDictionary actionsPayload, UAActionSituation situation, Action completionHandler);
     }
 
-    // @interface UAActivityViewController : UIActivityViewController <UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate>
-    [BaseType(typeof(NSObject))]
-    interface UAActivityViewController : IUIPopoverControllerDelegate, IUIPopoverPresentationControllerDelegate
-    {
-        // @property (copy, nonatomic) void (^ _Nullable)(void) dismissalBlock;
-        [NullAllowed, Export("dismissalBlock", ArgumentSemantic.Copy)]
-        Action DismissalBlock { get; set; }
-
-        // -(CGRect)sourceRect __attribute__((warn_unused_result("")));
-        [Export("sourceRect")]
-        CGRect SourceRect();
-
-        // -(instancetype _Nonnull)initWithActivityItems:(NSArray * _Nonnull)activityItems applicationActivities:(NSArray<UIActivity *> * _Nullable)applicationActivities __attribute__((objc_designated_initializer));
-        [Export("initWithActivityItems:applicationActivities:")]
-        [DesignatedInitializer]
-        IntPtr Constructor(NSObject[] activityItems, [NullAllowed] UIActivity[] applicationActivities);
-    }
-
     // @interface UAirship : NSObject
     [BaseType(typeof(NSObject))]
     [DisableDefaultCtor]
@@ -127,26 +109,6 @@ namespace UrbanAirship
         [Export("deepLinkScheme")]
         string DeepLinkScheme { get; }
 
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull airshipReadyNotification;
-        [Static]
-        [Export("airshipReadyNotification")]
-        string AirshipReadyNotification { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull airshipReadyChannelIdentifier;
-        [Static]
-        [Export("airshipReadyChannelIdentifier")]
-        string AirshipReadyChannelIdentifier { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull airshipReadyAppKey;
-        [Static]
-        [Export("airshipReadyAppKey")]
-        string AirshipReadyAppKey { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull airshipReadyPayloadVersion;
-        [Static]
-        [Export("airshipReadyPayloadVersion")]
-        string AirshipReadyPayloadVersion { get; }
-
         // @property (readonly, nonatomic, class) BOOL isFlying;
         [Static]
         [Export("isFlying")]
@@ -156,31 +118,29 @@ namespace UrbanAirship
         [Export("config", ArgumentSemantic.Strong)]
         UARuntimeConfig Config { get; }
 
-        // @property (readonly, nonatomic, strong) UAApplicationMetrics * _Nonnull applicationMetrics;
-        [Export("applicationMetrics", ArgumentSemantic.Strong)]
-        UAApplicationMetrics ApplicationMetrics { get; }
-
-        [Wrap("WeakJavaScriptCommandDelegate")]
-        [NullAllowed]
-        IUAJavaScriptCommandDelegate JavaScriptCommandDelegate { get; set; }
-
-        // @property (nonatomic, weak) id<UAJavaScriptCommandDelegate> _Nullable javaScriptCommandDelegate;
-        [NullAllowed, Export("javaScriptCommandDelegate", ArgumentSemantic.Weak)]
-        NSObject WeakJavaScriptCommandDelegate { get; set; }
-
         // @property (readonly, nonatomic, strong) UAPermissionsManager * _Nonnull permissionsManager;
         [Export("permissionsManager", ArgumentSemantic.Strong)]
         UAPermissionsManager PermissionsManager { get; }
+
+        [Wrap("WeakJavaScriptCommandDelegate"), Static]
+        [NullAllowed]
+        UAJavaScriptCommandDelegate JavaScriptCommandDelegate { get; set; }
+
+        // @property (nonatomic, weak, class) id<UAJavaScriptCommandDelegate> _Nullable javaScriptCommandDelegate;
+        [Static]
+        [NullAllowed, Export("javaScriptCommandDelegate", ArgumentSemantic.Weak)]
+        NSObject WeakJavaScriptCommandDelegate { get; set; }
 
         // @property (readonly, nonatomic, strong) UAChannelCapture * _Nonnull channelCapture;
         [Export("channelCapture", ArgumentSemantic.Strong)]
         UAChannelCapture ChannelCapture { get; }
 
-        [Wrap("WeakDeepLinkDelegate")]
+        [Wrap("WeakDeepLinkDelegate"), Static]
         [NullAllowed]
-        IUADeepLinkDelegate DeepLinkDelegate { get; set; }
+        UADeepLinkDelegate DeepLinkDelegate { get; set; }
 
-        // @property (nonatomic, weak) id<UADeepLinkDelegate> _Nullable deepLinkDelegate;
+        // @property (nonatomic, weak, class) id<UADeepLinkDelegate> _Nullable deepLinkDelegate;
+        [Static]
         [NullAllowed, Export("deepLinkDelegate", ArgumentSemantic.Weak)]
         NSObject WeakDeepLinkDelegate { get; set; }
 
@@ -193,33 +153,29 @@ namespace UrbanAirship
         UALocaleManager LocaleManager { get; }
 
         // @property (readonly, nonatomic, strong) UAPrivacyManager * _Nonnull privacyManager;
+        [Static]
         [Export("privacyManager", ArgumentSemantic.Strong)]
         UAPrivacyManager PrivacyManager { get; }
 
-        // @property (readonly, nonatomic, strong, class) UAirship * _Nonnull shared;
-        [Static]
-        [Export("shared", ArgumentSemantic.Strong)]
-        UAirship Shared { get; }
-
-        // @property (readonly, nonatomic, strong, class) UAPush * _Nonnull push;
+        // @property (readonly, nonatomic, strong, class) id<UAPushProtocol> _Nonnull push;
         [Static]
         [Export("push", ArgumentSemantic.Strong)]
-        UAPush Push { get; }
+        IUAPushProtocol Push { get; }
 
-        // @property (readonly, nonatomic, strong, class) UAContact * _Nonnull contact;
+        // @property (readonly, nonatomic, strong, class) id<UAContactProtocol> _Nonnull contact;
         [Static]
         [Export("contact", ArgumentSemantic.Strong)]
-        UAContact Contact { get; }
+        IUAContactProtocol Contact { get; }
 
-        // @property (readonly, nonatomic, strong, class) UAAnalytics * _Nonnull analytics;
+        // @property (readonly, nonatomic, strong, class) id<UAAnalyticsProtocol> _Nonnull analytics;
         [Static]
         [Export("analytics", ArgumentSemantic.Strong)]
-        UAAnalytics Analytics { get; }
+        IUAAnalyticsProtocol Analytics { get; }
 
-        // @property (readonly, nonatomic, strong, class) UAChannel * _Nonnull channel;
+        // @property (readonly, nonatomic, strong, class) id<UAChannelProtocol> _Nonnull channel;
         [Static]
         [Export("channel", ArgumentSemantic.Strong)]
-        UAChannel Channel { get; }
+        IUAChannelProtocol Channel { get; }
 
         // +(void)takeOffWithLaunchOptions:(NSDictionary<UIApplicationLaunchOptionsKey,id> * _Nullable)launchOptions;
         [Static]
@@ -240,131 +196,766 @@ namespace UrbanAirship
         [Static]
         [Export("logLevel", ArgumentSemantic.Assign)]
         UALogLevel LogLevel { get; set; }
-
-        // +(id<UAComponent> _Nullable)componentForClassName:(NSString * _Nonnull)className __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("componentForClassName:")]
-        [return: NullAllowed]
-        IUAComponent ComponentForClassName(string className);
-
-        // -(void)deepLink:(NSURL * _Nonnull)deepLink completionHandler:(void (^ _Nonnull)(BOOL))completionHandler;
-        [Export("deepLink:completionHandler:")]
-        void DeepLink(NSUrl deepLink, Action<bool> completionHandler);
     }
 
-    // @interface UAirshipCoreResources : NSObject
-    [BaseType(typeof(NSObject))]
-    interface UAirshipCoreResources
+    // @protocol UAAnalyticsProtocol
+    [Protocol, Model]
+    interface UAAnalyticsProtocol
     {
-        // @property (readonly, nonatomic, strong, class) NSBundle * _Nonnull bundle;
-        [Static]
-        [Export("bundle", ArgumentSemantic.Strong)]
-        NSBundle Bundle { get; }
+        // @required @property (readonly, copy, nonatomic) NSString * _Nullable conversionSendID;
+        [Abstract]
+        [NullAllowed, Export("conversionSendID")]
+        string ConversionSendID { get; }
+
+        // @required @property (readonly, copy, nonatomic) NSString * _Nullable conversionPushMetadata;
+        [Abstract]
+        [NullAllowed, Export("conversionPushMetadata")]
+        string ConversionPushMetadata { get; }
+
+        // @required @property (readonly, copy, nonatomic) NSString * _Nonnull sessionID;
+        [Abstract]
+        [Export("sessionID")]
+        string SessionID { get; }
+
+        // @required -(void)recordCustomEvent:(UACustomEvent * _Nonnull)event;
+        [Abstract]
+        [Export("recordCustomEvent:")]
+        void RecordCustomEvent(UACustomEvent @event);
+
+        // @required -(void)recordRegionEvent:(UARegionEvent * _Nonnull)event;
+        [Abstract]
+        [Export("recordRegionEvent:")]
+        void RecordRegionEvent(UARegionEvent @event);
+
+        // @required -(void)trackInstallAttributionWithAppPurchaseDate:(NSDate * _Nullable)appPurchaseDate iAdImpressionDate:(NSDate * _Nullable)iAdImpressionDate;
+        [Abstract]
+        [Export("trackInstallAttributionWithAppPurchaseDate:iAdImpressionDate:")]
+        void TrackInstallAttribution([NullAllowed] NSDate appPurchaseDate, [NullAllowed] NSDate iAdImpressionDate);
+
+        // @required -(void)associateDeviceIdentifiers:(UAAssociatedIdentifiers * _Nonnull)associatedIdentifiers;
+        [Abstract]
+        [Export("associateDeviceIdentifiers:")]
+        void AssociateDeviceIdentifiers(UAAssociatedIdentifiers associatedIdentifiers);
+
+        // @required -(UAAssociatedIdentifiers * _Nonnull)currentAssociatedDeviceIdentifiers __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("currentAssociatedDeviceIdentifiers")]
+        UAAssociatedIdentifiers CurrentAssociatedDeviceIdentifiers();
+
+        // @required -(void)trackScreen:(NSString * _Nullable)screen;
+        [Abstract]
+        [Export("trackScreen:")]
+        void TrackScreen([NullAllowed] string screen);
+
+        // @required -(void)registerSDKExtension:(enum UASDKExtension)ext version:(NSString * _Nonnull)version;
+        [Abstract]
+        [Export("registerSDKExtension:version:")]
+        void RegisterSDKExtension(UASDKExtension ext, string version);
     }
 
-    // @interface UAirshipErrors : NSObject
-    [BaseType(typeof(NSObject))]
-    interface UAirshipErrors
+    interface IUAAnalyticsProtocol { };
+
+    // @protocol UAChannelProtocol
+    [Protocol, Model]
+    interface UAChannelProtocol
     {
-        // +(NSError * _Nonnull)parseError:(NSString * _Nonnull)message __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("parseError:")]
-        NSError ParseError(string message);
+        // @required @property (readonly, copy, nonatomic) NSString * _Nullable identifier;
+        [Abstract]
+        [NullAllowed, Export("identifier")]
+        string Identifier { get; }
 
-        // +(NSError * _Nonnull)error:(NSString * _Nonnull)message __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("error:")]
-        NSError Error(string message);
+        // @required @property (copy, nonatomic) NSArray<NSString *> * _Nonnull tags;
+        [Abstract]
+        [Export("tags", ArgumentSemantic.Copy)]
+        string[] Tags { get; set; }
+
+        // @required @property (nonatomic) BOOL isChannelTagRegistrationEnabled;
+        [Abstract]
+        [Export("isChannelTagRegistrationEnabled")]
+        bool IsChannelTagRegistrationEnabled { get; set; }
+
+        // @required -(UATagEditor * _Nonnull)editTags __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("editTags")]
+        UATagEditor EditTags();
+
+        // @required -(void)editTags:(void (^ _Nonnull)(UATagEditor * _Nonnull))editorBlock;
+        [Abstract]
+        [Export("editTags:")]
+        void EditTags(Action<UATagEditor> editorBlock);
+
+        // @required -(UATagGroupsEditor * _Nonnull)editTagGroups __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("editTagGroups")]
+        UATagGroupsEditor EditTagGroups();
+
+        // @required -(void)editTagGroups:(void (^ _Nonnull)(UATagGroupsEditor * _Nonnull))editorBlock;
+        [Abstract]
+        [Export("editTagGroups:")]
+        void EditTagGroups(Action<UATagGroupsEditor> editorBlock);
+
+        // @required -(UASubscriptionListEditor * _Nonnull)editSubscriptionLists __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("editSubscriptionLists")]
+        UASubscriptionListEditor EditSubscriptionLists();
+
+        // @required -(void)editSubscriptionLists:(void (^ _Nonnull)(UASubscriptionListEditor * _Nonnull))editorBlock;
+        [Abstract]
+        [Export("editSubscriptionLists:")]
+        void EditSubscriptionLists(Action<UASubscriptionListEditor> editorBlock);
+
+        // @required -(void)fetchSubscriptionListsWithCompletionHandler:(void (^ _Nonnull)(NSArray<NSString *> * _Nullable, NSError * _Nullable))completionHandler;
+        [Abstract]
+        [Export("fetchSubscriptionListsWithCompletionHandler:")]
+        void FetchSubscriptionLists(Action<NSArray<NSString>, NSError> completionHandler);
+
+        // @required -(UAAttributesEditor * _Nonnull)editAttributes __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("editAttributes")]
+        UAAttributesEditor EditAttributes();
+
+        // @required -(void)editAttributes:(void (^ _Nonnull)(UAAttributesEditor * _Nonnull))editorBlock;
+        [Abstract]
+        [Export("editAttributes:")]
+        void EditAttributes(Action<UAAttributesEditor> editorBlock);
+
+        // @required -(void)enableChannelCreation;
+        [Abstract]
+        [Export("enableChannelCreation")]
+        void EnableChannelCreation();
     }
-
-    // @interface UAirshipVersion : NSObject
-    [BaseType(typeof(NSObject))]
-    interface UAirshipVersion
+    interface IUAChannelProtocol { };
+         
+    // @protocol UAContactProtocol
+    [Protocol, Model]
+    interface UAContactProtocol
     {
-        // +(NSString * _Nonnull)get __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("get")]
-        string Get();
+        // @required -(void)getNamedUserIDWithCompletionHandler:(void (^ _Nonnull)(NSString * _Nullable))completionHandler;
+        [Abstract]
+        [Export("getNamedUserIDWithCompletionHandler:")]
+        void GetNamedUserID(Action<NSString> completionHandler);
+
+        // @required -(void)identify:(NSString * _Nonnull)namedUserID;
+        [Abstract]
+        [Export("identify:")]
+        void Identify(string namedUserID);
+
+        // @required -(void)reset;
+        [Abstract]
+        [Export("reset")]
+        void Reset();
+
+        // @required -(void)notifyRemoteLogin;
+        [Abstract]
+        [Export("notifyRemoteLogin")]
+        void NotifyRemoteLogin();
+
+        // @required -(UATagGroupsEditor * _Nonnull)editTagGroups __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("editTagGroups")]
+        UATagGroupsEditor EditTagGroups();
+
+        // @required -(void)editTagGroups:(void (^ _Nonnull)(UATagGroupsEditor * _Nonnull))editorBlock;
+        [Abstract]
+        [Export("editTagGroups:")]
+        void EditTagGroups(Action<UATagGroupsEditor> editorBlock);
+
+        // @required -(UAAttributesEditor * _Nonnull)editAttributes __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("editAttributes")]
+        UAAttributesEditor EditAttributes();
+
+        // @required -(void)editAttributes:(void (^ _Nonnull)(UAAttributesEditor * _Nonnull))editorBlock;
+        [Abstract]
+        [Export("editAttributes:")]
+        void EditAttributes(Action<UAAttributesEditor> editorBlock);
+
+        // @required -(void)registerEmail:(NSString * _Nonnull)address options:(UAEmailRegistrationOptions * _Nonnull)options;
+        [Abstract]
+        [Export("registerEmail:options:")]
+        void RegisterEmail(string address, UAEmailRegistrationOptions options);
+
+        // @required -(void)registerSMS:(NSString * _Nonnull)msisdn options:(UASMSRegistrationOptions * _Nonnull)options;
+        [Abstract]
+        [Export("registerSMS:options:")]
+        void RegisterSMS(string msisdn, UASMSRegistrationOptions options);
+
+        // @required -(void)registerOpen:(NSString * _Nonnull)address options:(UAOpenRegistrationOptions * _Nonnull)options;
+        [Abstract]
+        [Export("registerOpen:options:")]
+        void RegisterOpen(string address, UAOpenRegistrationOptions options);
+
+        // @required -(void)associateChannel:(NSString * _Nonnull)channelID type:(enum UAChannelType)type;
+        [Abstract]
+        [Export("associateChannel:type:")]
+        void AssociateChannel(string channelID, UAChannelType type);
+
+        // @required -(UAScopedSubscriptionListEditor * _Nonnull)editSubscriptionLists __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("editSubscriptionLists")]
+        UAScopedSubscriptionListEditor EditSubscriptionLists();
+
+        // @required -(void)editSubscriptionLists:(void (^ _Nonnull)(UAScopedSubscriptionListEditor * _Nonnull))editorBlock;
+        [Abstract]
+        [Export("editSubscriptionLists:")]
+        void EditSubscriptionLists(Action<UAScopedSubscriptionListEditor> editorBlock);
+
+        // @required -(void)fetchSubscriptionListsWithCompletionHandler:(void (^ _Nonnull)(NSDictionary<NSString *,UAChannelScopes *> * _Nullable, NSError * _Nullable))completionHandler;
+        [Abstract]
+        [Export("fetchSubscriptionListsWithCompletionHandler:")]
+        void FetchSubscriptionLists(Action<NSDictionary, NSError> completionHandler);
     }
 
-    // @interface UAAnalytics : NSObject <UAComponent, UAAnalyticsProtocol, UAEventManagerDelegate>
-    [BaseType(typeof(UAComponent))]
+    interface IUAContactProtocol { };
+
+    // @protocol UAPushProtocol
+    [Protocol, Model]
+    interface UAPushProtocol
+    {
+        // @required @property (readonly, nonatomic) BOOL isPushNotificationsOptedIn;
+        [Abstract]
+        [Export("isPushNotificationsOptedIn")]
+        bool IsPushNotificationsOptedIn { get; }
+
+        // @required @property (nonatomic) BOOL backgroundPushNotificationsEnabled;
+        [Abstract]
+        [Export("backgroundPushNotificationsEnabled")]
+        bool BackgroundPushNotificationsEnabled { get; set; }
+
+        // @required @property (nonatomic) BOOL userPushNotificationsEnabled;
+        [Abstract]
+        [Export("userPushNotificationsEnabled")]
+        bool UserPushNotificationsEnabled { get; set; }
+
+        // @required @property (nonatomic) BOOL requestExplicitPermissionWhenEphemeral;
+        [Abstract]
+        [Export("requestExplicitPermissionWhenEphemeral")]
+        bool RequestExplicitPermissionWhenEphemeral { get; set; }
+
+        // @required @property (readonly, copy, nonatomic) NSString * _Nullable deviceToken;
+        [Abstract]
+        [NullAllowed, Export("deviceToken")]
+        string DeviceToken { get; }
+
+        // @required @property (nonatomic) UANotificationOptions notificationOptions;
+        [Abstract]
+        [Export("notificationOptions")]
+        UANotificationOptions NotificationOptions { get; set; }
+
+        // @required @property (copy, nonatomic) NSSet<UNNotificationCategory *> * _Nonnull customCategories;
+        [Abstract]
+        [Export("customCategories", ArgumentSemantic.Copy)]
+        NSSet<UNNotificationCategory> CustomCategories { get; set; }
+
+        // @required @property (readonly, copy, nonatomic) NSSet<UNNotificationCategory *> * _Nonnull combinedCategories;
+        [Abstract]
+        [Export("combinedCategories", ArgumentSemantic.Copy)]
+        NSSet<UNNotificationCategory> CombinedCategories { get; }
+
+        // @required @property (nonatomic) BOOL requireAuthorizationForDefaultCategories;
+        [Abstract]
+        [Export("requireAuthorizationForDefaultCategories")]
+        bool RequireAuthorizationForDefaultCategories { get; set; }
+
+        [Wrap("WeakPushNotificationDelegate"), Abstract]
+        [NullAllowed]
+        UAPushNotificationDelegate PushNotificationDelegate { get; set; }
+
+        // @required @property (nonatomic, weak) id<UAPushNotificationDelegate> _Nullable pushNotificationDelegate;
+        [Abstract]
+        [NullAllowed, Export("pushNotificationDelegate", ArgumentSemantic.Weak)]
+        NSObject WeakPushNotificationDelegate { get; set; }
+
+        [Wrap("WeakRegistrationDelegate"), Abstract]
+        [NullAllowed]
+        UARegistrationDelegate RegistrationDelegate { get; set; }
+
+        // @required @property (nonatomic, weak) id<UARegistrationDelegate> _Nullable registrationDelegate;
+        [Abstract]
+        [NullAllowed, Export("registrationDelegate", ArgumentSemantic.Weak)]
+        NSObject WeakRegistrationDelegate { get; set; }
+
+        // @required @property (readonly, nonatomic, strong) UNNotificationResponse * _Nullable launchNotificationResponse;
+        [Abstract]
+        [NullAllowed, Export("launchNotificationResponse", ArgumentSemantic.Strong)]
+        UNNotificationResponse LaunchNotificationResponse { get; }
+
+        // @required @property (readonly, nonatomic) UAAuthorizedNotificationSettings authorizedNotificationSettings;
+        [Abstract]
+        [Export("authorizedNotificationSettings")]
+        UAAuthorizedNotificationSettings AuthorizedNotificationSettings { get; }
+
+        // @required @property (readonly, nonatomic) UAAuthorizationStatus authorizationStatus;
+        [Abstract]
+        [Export("authorizationStatus")]
+        UAAuthorizationStatus AuthorizationStatus { get; }
+
+        // @required @property (readonly, nonatomic) BOOL userPromptedForNotifications;
+        [Abstract]
+        [Export("userPromptedForNotifications")]
+        bool UserPromptedForNotifications { get; }
+
+        // @required @property (nonatomic) UNNotificationPresentationOptions defaultPresentationOptions;
+        [Abstract]
+        [Export("defaultPresentationOptions", ArgumentSemantic.Assign)]
+        UNNotificationPresentationOptions DefaultPresentationOptions { get; set; }
+
+        // @required -(void)enableUserPushNotificationsWithCompletionHandler:(void (^ _Nonnull)(BOOL))completionHandler;
+        [Abstract]
+        [Export("enableUserPushNotificationsWithCompletionHandler:")]
+        void EnableUserPushNotifications(Action<bool> completionHandler);
+
+        // @required @property (readonly, nonatomic) NSInteger badgeNumber;
+        [Abstract]
+        [Export("badgeNumber")]
+        nint BadgeNumber { get; }
+
+        // @required -(void)setBadgeNumber:(NSInteger)newBadgeNumber completionHandler:(void (^ _Nonnull)(NSError * _Nullable))completionHandler;
+        [Abstract]
+        [Export("setBadgeNumber:completionHandler:")]
+        void SetBadgeNumber(nint newBadgeNumber, Action<NSError> completionHandler);
+
+        // @required -(void)resetBadgeWithCompletionHandler:(void (^ _Nonnull)(NSError * _Nullable))completionHandler;
+        [Abstract]
+        [Export("resetBadgeWithCompletionHandler:")]
+        void ResetBadge(Action<NSError> completionHandler);
+
+        // @required @property (nonatomic) BOOL autobadgeEnabled;
+        [Abstract]
+        [Export("autobadgeEnabled")]
+        bool AutobadgeEnabled { get; set; }
+
+        // @required @property (nonatomic, strong) NSTimeZone * _Nullable timeZone;
+        [Abstract]
+        [NullAllowed, Export("timeZone", ArgumentSemantic.Strong)]
+        NSTimeZone TimeZone { get; set; }
+
+        // @required @property (nonatomic) BOOL quietTimeEnabled;
+        [Abstract]
+        [Export("quietTimeEnabled")]
+        bool QuietTimeEnabled { get; set; }
+
+        // @required -(void)setQuietTimeStartHour:(NSInteger)startHour startMinute:(NSInteger)startMinute endHour:(NSInteger)endHour endMinute:(NSInteger)endMinute;
+        [Abstract]
+        [Export("setQuietTimeStartHour:startMinute:endHour:endMinute:")]
+        void SetQuietTimeStartHour(nint startHour, nint startMinute, nint endHour, nint endMinute);
+    }
+
+    interface IUAPushProtocol {};
+
+    // @interface UAConfig : NSObject <NSCopying>
+    [BaseType(typeof(NSObject))]
+    interface UAConfig : INSCopying
+    {
+        // @property (copy, nonatomic) NSString * _Nullable developmentAppKey;
+        [NullAllowed, Export("developmentAppKey")]
+        string DevelopmentAppKey { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable developmentAppSecret;
+        [NullAllowed, Export("developmentAppSecret")]
+        string DevelopmentAppSecret { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable productionAppKey;
+        [NullAllowed, Export("productionAppKey")]
+        string ProductionAppKey { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable productionAppSecret;
+        [NullAllowed, Export("productionAppSecret")]
+        string ProductionAppSecret { get; set; }
+
+        // @property (nonatomic) enum UALogLevel developmentLogLevel;
+        [Export("developmentLogLevel", ArgumentSemantic.Assign)]
+        UALogLevel DevelopmentLogLevel { get; set; }
+
+        // @property (nonatomic) enum UALogLevel productionLogLevel;
+        [Export("productionLogLevel", ArgumentSemantic.Assign)]
+        UALogLevel ProductionLogLevel { get; set; }
+
+        // @property (nonatomic) BOOL autoPauseInAppAutomationOnLaunch;
+        [Export("autoPauseInAppAutomationOnLaunch")]
+        bool AutoPauseInAppAutomationOnLaunch { get; set; }
+
+        // @property (nonatomic) BOOL isWebViewInspectionEnabled;
+        [Export("isWebViewInspectionEnabled")]
+        bool IsWebViewInspectionEnabled { get; set; }
+
+        // @property (nonatomic) enum UACloudSite site;
+        [Export("site", ArgumentSemantic.Assign)]
+        UACloudSite Site { get; set; }
+
+        // @property (nonatomic) BOOL resetEnabledFeatures;
+        [Export("resetEnabledFeatures")]
+        bool ResetEnabledFeatures { get; set; }
+
+        // @property (nonatomic) UAFeatures enabledFeatures;
+        [Export("enabledFeatures", ArgumentSemantic.Assign)]
+        UAFeatures EnabledFeatures { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nonnull defaultAppKey;
+        [Export("defaultAppKey")]
+        string DefaultAppKey { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nonnull defaultAppSecret;
+        [Export("defaultAppSecret")]
+        string DefaultAppSecret { get; set; }
+
+        // @property (nonatomic) BOOL inProduction;
+        [Export("inProduction")]
+        bool InProduction { get; set; }
+
+        // @property (nonatomic) BOOL detectProvisioningMode;
+        [Export("detectProvisioningMode")]
+        bool DetectProvisioningMode { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable profilePath;
+        [NullAllowed, Export("profilePath")]
+        string ProfilePath { get; set; }
+
+        // @property (nonatomic) BOOL isAutomaticSetupEnabled;
+        [Export("isAutomaticSetupEnabled")]
+        bool IsAutomaticSetupEnabled { get; set; }
+
+        // @property (copy, nonatomic) NSArray<NSString *> * _Nonnull URLAllowList;
+        [Export("URLAllowList", ArgumentSemantic.Copy)]
+        string[] URLAllowList { get; set; }
+
+        // @property (copy, nonatomic) NSArray<NSString *> * _Nonnull URLAllowListScopeJavaScriptInterface;
+        [Export("URLAllowListScopeJavaScriptInterface", ArgumentSemantic.Copy)]
+        string[] URLAllowListScopeJavaScriptInterface { get; set; }
+
+        // @property (copy, nonatomic) NSArray<NSString *> * _Nonnull URLAllowListScopeOpenURL;
+        [Export("URLAllowListScopeOpenURL", ArgumentSemantic.Copy)]
+        string[] URLAllowListScopeOpenURL { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable itunesID;
+        [NullAllowed, Export("itunesID")]
+        string ItunesID { get; set; }
+
+        // @property (nonatomic) BOOL isAnalyticsEnabled;
+        [Export("isAnalyticsEnabled")]
+        bool IsAnalyticsEnabled { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable messageCenterStyleConfig;
+        [NullAllowed, Export("messageCenterStyleConfig")]
+        string MessageCenterStyleConfig { get; set; }
+
+        // @property (nonatomic) BOOL clearUserOnAppRestore;
+        [Export("clearUserOnAppRestore")]
+        bool ClearUserOnAppRestore { get; set; }
+
+        // @property (nonatomic) BOOL clearNamedUserOnAppRestore;
+        [Export("clearNamedUserOnAppRestore")]
+        bool ClearNamedUserOnAppRestore { get; set; }
+
+        // @property (nonatomic) BOOL isChannelCaptureEnabled;
+        [Export("isChannelCaptureEnabled")]
+        bool IsChannelCaptureEnabled { get; set; }
+
+        // @property (nonatomic) BOOL isChannelCreationDelayEnabled;
+        [Export("isChannelCreationDelayEnabled")]
+        bool IsChannelCreationDelayEnabled { get; set; }
+
+        // @property (nonatomic) BOOL isExtendedBroadcastsEnabled;
+        [Export("isExtendedBroadcastsEnabled")]
+        bool IsExtendedBroadcastsEnabled { get; set; }
+
+        // @property (nonatomic) BOOL requestAuthorizationToUseNotifications;
+        [Export("requestAuthorizationToUseNotifications")]
+        bool RequestAuthorizationToUseNotifications { get; set; }
+
+        // @property (nonatomic) BOOL requireInitialRemoteConfigEnabled;
+        [Export("requireInitialRemoteConfigEnabled")]
+        bool RequireInitialRemoteConfigEnabled { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable initialConfigURL;
+        [NullAllowed, Export("initialConfigURL")]
+        string InitialConfigURL { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable deviceAPIURL;
+        [NullAllowed, Export("deviceAPIURL")]
+        string DeviceAPIURL { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable analyticsURL;
+        [NullAllowed, Export("analyticsURL")]
+        string AnalyticsURL { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable remoteDataAPIURL;
+        [NullAllowed, Export("remoteDataAPIURL")]
+        string RemoteDataAPIURL { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable chatURL;
+        [NullAllowed, Export("chatURL")]
+        string ChatURL { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable chatWebSocketURL;
+        [NullAllowed, Export("chatWebSocketURL")]
+        string ChatWebSocketURL { get; set; }
+
+        // @property (nonatomic) BOOL useUserPreferredLocale;
+        [Export("useUserPreferredLocale")]
+        bool UseUserPreferredLocale { get; set; }
+
+        // @property (nonatomic) BOOL restoreMessageCenterOnReinstall;
+        [Export("restoreMessageCenterOnReinstall")]
+        bool RestoreMessageCenterOnReinstall { get; set; }
+
+        // @property (readonly, copy, nonatomic) NSString * _Nonnull appKey;
+        [Export("appKey")]
+        string AppKey { get; }
+
+        // @property (readonly, copy, nonatomic) NSString * _Nonnull appSecret;
+        [Export("appSecret")]
+        string AppSecret { get; }
+
+        // @property (readonly, nonatomic) enum UALogLevel logLevel;
+        [Export("logLevel")]
+        UALogLevel LogLevel { get; }
+
+        // +(UAConfig * _Nonnull)defaultConfig __attribute__((warn_unused_result("")));
+        [Static]
+        [Export("defaultConfig")]
+        UAConfig DefaultConfig();
+
+        // +(UAConfig * _Nonnull)configWithContentsOfFile:(NSString * _Nullable)path __attribute__((warn_unused_result("")));
+        [Static]
+        [Export("configWithContentsOfFile:")]
+        UAConfig Config([NullAllowed] string path);
+
+        // +(UAConfig * _Nonnull)config __attribute__((warn_unused_result("")));
+        [Static]
+        [Export("config")]
+        UAConfig Config();
+
+        // -(instancetype _Nonnull)initWithContentsOfFile:(NSString * _Nullable)path;
+        [Export("initWithContentsOfFile:")]
+        IntPtr Constructor([NullAllowed] string path);
+
+        // -(BOOL)validate __attribute__((warn_unused_result("")));
+        [Export("validate")]
+        bool Validate();
+
+        // +(BOOL)isProductionProvisioningProfile:(NSString * _Nonnull)profilePath __attribute__((warn_unused_result("")));
+        [Static]
+        [Export("isProductionProvisioningProfile:")]
+        bool IsProductionProvisioningProfile(string profilePath);
+    }
+
+    // @interface UAContact : NSObject <UAComponent, UAContactProtocol>
+    [BaseType(typeof(NSObject))]
     [DisableDefaultCtor]
-    interface UAAnalytics : IUAComponent
+    interface UAContact : IUAContactProtocol
     {
-        // @property (readonly, nonatomic, strong, class) UAAnalytics * _Nonnull shared;
-        [Static]
-        [Export("shared", ArgumentSemantic.Strong)]
-        UAAnalytics Shared { get; }
+        // -(void)getNamedUserIDWithCompletionHandler:(void (^ _Nonnull)(NSString * _Nullable))completionHandler;
+        [Export("getNamedUserIDWithCompletionHandler:")]
+        void GetNamedUserID(Action<string> completionHandler);
 
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull screenKey;
+        // -(void)identify:(NSString * _Nonnull)namedUserID;
+        [Export("identify:")]
+        void Identify(string namedUserID);
+
+        // -(void)reset;
+        [Export("reset")]
+        void Reset();
+
+        // -(void)notifyRemoteLogin;
+        [Export("notifyRemoteLogin")]
+        void NotifyRemoteLogin();
+
+        // -(UATagGroupsEditor * _Nonnull)editTagGroups __attribute__((warn_unused_result("")));
+        [Export("editTagGroups")]
+        UATagGroupsEditor EditTagGroups();
+
+        // -(void)editTagGroups:(void (^ _Nonnull)(UATagGroupsEditor * _Nonnull))editorBlock;
+        [Export("editTagGroups:")]
+        void EditTagGroups(Action<UATagGroupsEditor> editorBlock);
+
+        // -(UAAttributesEditor * _Nonnull)editAttributes __attribute__((warn_unused_result("")));
+        [Export("editAttributes")]
+        UAAttributesEditor EditAttributes();
+
+        // -(void)editAttributes:(void (^ _Nonnull)(UAAttributesEditor * _Nonnull))editorBlock;
+        [Export("editAttributes:")]
+        void EditAttributes(Action<UAAttributesEditor> editorBlock);
+
+        // -(void)registerEmail:(NSString * _Nonnull)address options:(UAEmailRegistrationOptions * _Nonnull)options;
+        [Export("registerEmail:options:")]
+        void RegisterEmail(string address, UAEmailRegistrationOptions options);
+
+        // -(void)registerSMS:(NSString * _Nonnull)msisdn options:(UASMSRegistrationOptions * _Nonnull)options;
+        [Export("registerSMS:options:")]
+        void RegisterSMS(string msisdn, UASMSRegistrationOptions options);
+
+        // -(void)registerOpen:(NSString * _Nonnull)address options:(UAOpenRegistrationOptions * _Nonnull)options;
+        [Export("registerOpen:options:")]
+        void RegisterOpen(string address, UAOpenRegistrationOptions options);
+
+        // -(void)associateChannel:(NSString * _Nonnull)channelID type:(enum UAChannelType)type;
+        [Export("associateChannel:type:")]
+        void AssociateChannel(string channelID, UAChannelType type);
+
+        // -(UAScopedSubscriptionListEditor * _Nonnull)editSubscriptionLists __attribute__((warn_unused_result("")));
+        [Export("editSubscriptionLists")]
+        UAScopedSubscriptionListEditor EditSubscriptionLists();
+
+        // -(void)editSubscriptionLists:(void (^ _Nonnull)(UAScopedSubscriptionListEditor * _Nonnull))editorBlock;
+        [Export("editSubscriptionLists:")]
+        void EditSubscriptionLists(Action<UAScopedSubscriptionListEditor> editorBlock);
+
+        // -(void)fetchSubscriptionListsWithCompletionHandler:(void (^ _Nonnull)(NSDictionary *))completionHandler;
+        [Export("fetchSubscriptionListsWithCompletionHandler:")]
+        void FetchSubscriptionLists(Action<NSDictionary> completionHandler);
+
+        // @property (readonly, nonatomic, class) NSInteger maxNamedUserIDLength;
         [Static]
-        [Export("screenKey")]
-        string ScreenKey { get; }
+        [Export("maxNamedUserIDLength")]
+        nint MaxNamedUserIDLength { get; }
+    }
+
+    // @protocol UALocaleManagerProtocol
+    [Protocol, Model]
+    interface UALocaleManagerProtocol
+    {
+        // @required -(void)clearLocale;
+        [Abstract]
+        [Export("clearLocale")]
+        void ClearLocale();
+
+        // @required @property (copy, nonatomic) NSLocale * _Nonnull currentLocale;
+        [Abstract]
+        [Export("currentLocale", ArgumentSemantic.Copy)]
+        NSLocale CurrentLocale { get; set; }
+    }
+
+    interface IUALocaleManagerProtocol { };
+
+    // @interface UALocaleManager : NSObject <LocaleManagerProtocol>
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface UALocaleManager : IUALocaleManagerProtocol
+    {
+        // -(void)clearLocale;
+        [Export("clearLocale")]
+        void ClearLocale();
+
+        // @property (copy, nonatomic) NSLocale * _Nonnull currentLocale;
+        [Export("currentLocale", ArgumentSemantic.Copy)]
+        NSLocale CurrentLocale { get; set; }
+
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull localeUpdatedEvent;
+        [Static]
+        [Export("localeUpdatedEvent")]
+        string LocaleUpdatedEvent { get; }
+
+        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull localeEventKey;
+        [Static]
+        [Export("localeEventKey")]
+        string LocaleEventKey { get; }
+
+    }
+
+    // @interface UAirshipNotificationsAirshipReady : NSObject
+    [BaseType(typeof(NSObject))]
+    interface UAirshipNotificationsAirshipReady
+    {
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull name;
+        [Static]
+        [Export("name")]
+        string Name { get; }
+
+        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull channelIDKey;
+        [Static]
+        [Export("channelIDKey")]
+        string ChannelIDKey { get; }
+
+        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull appKey;
+        [Static]
+        [Export("appKey")]
+        string AppKey { get; }
+
+        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull payloadVersionKey;
+        [Static]
+        [Export("payloadVersionKey")]
+        string PayloadVersionKey { get; }
+    }
+
+    // @interface UAirshipNotificationPrivacyManagerUpdated : NSObject
+    [BaseType(typeof(NSObject))]
+    interface UAirshipNotificationPrivacyManagerUpdated
+    {
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull name;
+        [Static]
+        [Export("name")]
+        string Name { get; }
+    }
+
+    // @interface UAirshipNotificationChannelCreated : NSObject
+    [BaseType(typeof(NSObject))]
+    interface UAirshipNotificationChannelCreated
+    {
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull name;
+        [Static]
+        [Export("name")]
+        string Name { get; }
+
+        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull channelIDKey;
+        [Static]
+        [Export("channelIDKey")]
+        string ChannelIDKey { get; }
+
+        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull isExistingChannelKey;
+        [Static]
+        [Export("isExistingChannelKey")]
+        string IsExistingChannelKey { get; }
+    }
+
+    // @interface UAirshipNotificationContactConflict : NSObject
+    [BaseType(typeof(NSObject))]
+    interface UAirshipNotificationContactConflict
+    {
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull name;
+        [Static]
+        [Export("name")]
+        string Name { get; }
 
         // @property (readonly, copy, nonatomic, class) NSString * _Nonnull eventKey;
         [Static]
         [Export("eventKey")]
         string EventKey { get; }
+    }
 
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull customEventAdded;
+    // @interface UAirshipNotificationLocaleUpdated : NSObject
+    [BaseType(typeof(NSObject))]
+    interface UAirshipNotificationLocaleUpdated
+    {
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull name;
         [Static]
-        [Export("customEventAdded")]
-        string CustomEventAdded { get; }
+        [Export("name")]
+        string Name { get; }
 
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull regionEventAdded;
+        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull localeKey;
         [Static]
-        [Export("regionEventAdded")]
-        string RegionEventAdded { get; }
+        [Export("localeKey")]
+        string LocaleKey { get; }
+    }
 
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull screenTracked;
+    // @interface UAirshipNotificationReceivedNotificationResponse : NSObject
+    [BaseType(typeof(NSObject))]
+    interface UAirshipNotificationReceivedNotificationResponse
+    {
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull name;
         [Static]
-        [Export("screenTracked")]
-        string ScreenTracked { get; }
+        [Export("name")]
+        string Name { get; }
+    }
 
-        // @property (copy, nonatomic) NSString * _Nullable conversionSendID;
-        [NullAllowed, Export("conversionSendID")]
-        string ConversionSendID { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable conversionPushMetadata;
-        [NullAllowed, Export("conversionPushMetadata")]
-        string ConversionPushMetadata { get; set; }
-
-        // @property (readonly, copy, nonatomic) NSString * _Nullable sessionID;
-        [NullAllowed, Export("sessionID")]
-        string SessionID { get; }
-
-        // @property (getter = isComponentEnabled, nonatomic) BOOL componentEnabled;
-        [Export("componentEnabled")]
-        bool ComponentEnabled { [Bind("isComponentEnabled")] get; set; }
-
-        // -(void)addEvent:(id<UAEvent> _Nonnull)event;
-        [Export("addEvent:")]
-        void AddEvent(IUAEvent @event);
-
-        // -(void)associateDeviceIdentifiers:(UAAssociatedIdentifiers * _Nonnull)associatedIdentifiers;
-        [Export("associateDeviceIdentifiers:")]
-        void AssociateDeviceIdentifiers(UAAssociatedIdentifiers associatedIdentifiers);
-
-        // -(UAAssociatedIdentifiers * _Nonnull)currentAssociatedDeviceIdentifiers __attribute__((warn_unused_result("")));
-        [Export("currentAssociatedDeviceIdentifiers")]
-        UAAssociatedIdentifiers CurrentAssociatedDeviceIdentifiers();
-
-        // -(void)trackScreen:(NSString * _Nullable)screen;
-        [Export("trackScreen:")]
-        void TrackScreen([NullAllowed] string screen);
-
-        // -(void)scheduleUpload;
-        [Export("scheduleUpload")]
-        void ScheduleUpload();
-
-        // -(void)registerSDKExtension:(enum UASDKExtension)ext version:(NSString * _Nonnull)version;
-        [Export("registerSDKExtension:version:")]
-        void RegisterSDKExtension(UASDKExtension ext, string version);
-
-        // -(void)airshipReady;
-        [Export("airshipReady")]
-        void AirshipReady();
+    // @interface UAirshipNotificationRecievedNotification : NSObject
+    [BaseType(typeof(NSObject))]
+    interface UAirshipNotificationRecievedNotification
+    {
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull name;
+        [Static]
+        [Export("name")]
+        string Name { get; }
     }
 
     // @interface UAAppIntegration : NSObject
@@ -514,6 +1105,10 @@ namespace UrbanAirship
         [Static]
         [Export("mutations")]
         UAAttributeMutations Mutations();
+
+        // -(void)applyMutationsWithEditor:(UAAttributesEditor * _Nonnull)editor;
+        [Export("applyMutationsWithEditor:")]
+        void Apply(UAAttributesEditor editor);
     }
 
     // @interface UAAttributes : NSObject
@@ -807,191 +1402,7 @@ namespace UrbanAirship
         UACircularRegion CircularRegion(double radius, double latitude, double longitude);
     }
 
-    // @interface UAConfig : NSObject <NSCopying>
-    [BaseType(typeof(NSObject))]
-    interface UAConfig : INSCopying
-    {
-        // @property (copy, nonatomic) NSString * _Nullable developmentAppKey;
-        [NullAllowed, Export("developmentAppKey")]
-        string DevelopmentAppKey { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable developmentAppSecret;
-        [NullAllowed, Export("developmentAppSecret")]
-        string DevelopmentAppSecret { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable productionAppKey;
-        [NullAllowed, Export("productionAppKey")]
-        string ProductionAppKey { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable productionAppSecret;
-        [NullAllowed, Export("productionAppSecret")]
-        string ProductionAppSecret { get; set; }
-
-        // @property (nonatomic) enum UALogLevel developmentLogLevel;
-        [Export("developmentLogLevel", ArgumentSemantic.Assign)]
-        UALogLevel DevelopmentLogLevel { get; set; }
-
-        // @property (nonatomic) enum UALogLevel productionLogLevel;
-        [Export("productionLogLevel", ArgumentSemantic.Assign)]
-        UALogLevel ProductionLogLevel { get; set; }
-
-        // @property (nonatomic) BOOL autoPauseInAppAutomationOnLaunch;
-        [Export("autoPauseInAppAutomationOnLaunch")]
-        bool AutoPauseInAppAutomationOnLaunch { get; set; }
-
-        // @property (nonatomic) enum UACloudSite site;
-        [Export("site", ArgumentSemantic.Assign)]
-        UACloudSite Site { get; set; }
-
-        // @property (nonatomic) UAFeatures enabledFeatures;
-        [Export("enabledFeatures", ArgumentSemantic.Assign)]
-        UAFeatures EnabledFeatures { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nonnull defaultAppKey;
-        [Export("defaultAppKey")]
-        string DefaultAppKey { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nonnull defaultAppSecret;
-        [Export("defaultAppSecret")]
-        string DefaultAppSecret { get; set; }
-
-        // @property (nonatomic) BOOL inProduction;
-        [Export("inProduction")]
-        bool InProduction { get; set; }
-
-        // @property (nonatomic) BOOL detectProvisioningMode;
-        [Export("detectProvisioningMode")]
-        bool DetectProvisioningMode { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable profilePath;
-        [NullAllowed, Export("profilePath")]
-        string ProfilePath { get; set; }
-
-        // @property (nonatomic) BOOL isAutomaticSetupEnabled;
-        [Export("isAutomaticSetupEnabled")]
-        bool IsAutomaticSetupEnabled { get; set; }
-
-        // @property (copy, nonatomic) NSArray<NSString *> * _Nonnull URLAllowList;
-        [Export("URLAllowList", ArgumentSemantic.Copy)]
-        string[] URLAllowList { get; set; }
-
-        // @property (copy, nonatomic) NSArray<NSString *> * _Nonnull URLAllowListScopeJavaScriptInterface;
-        [Export("URLAllowListScopeJavaScriptInterface", ArgumentSemantic.Copy)]
-        string[] URLAllowListScopeJavaScriptInterface { get; set; }
-
-        // @property (copy, nonatomic) NSArray<NSString *> * _Nonnull URLAllowListScopeOpenURL;
-        [Export("URLAllowListScopeOpenURL", ArgumentSemantic.Copy)]
-        string[] URLAllowListScopeOpenURL { get; set; }
-
-        // @property (nonatomic) BOOL suppressAllowListError;
-        [Export("suppressAllowListError")]
-        bool SuppressAllowListError { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable itunesID;
-        [NullAllowed, Export("itunesID")]
-        string ItunesID { get; set; }
-
-        // @property (nonatomic) BOOL isAnalyticsEnabled;
-        [Export("isAnalyticsEnabled")]
-        bool IsAnalyticsEnabled { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable messageCenterStyleConfig;
-        [NullAllowed, Export("messageCenterStyleConfig")]
-        string MessageCenterStyleConfig { get; set; }
-
-        // @property (nonatomic) BOOL clearUserOnAppRestore;
-        [Export("clearUserOnAppRestore")]
-        bool ClearUserOnAppRestore { get; set; }
-
-        // @property (nonatomic) BOOL clearNamedUserOnAppRestore;
-        [Export("clearNamedUserOnAppRestore")]
-        bool ClearNamedUserOnAppRestore { get; set; }
-
-        // @property (nonatomic) BOOL isChannelCaptureEnabled;
-        [Export("isChannelCaptureEnabled")]
-        bool IsChannelCaptureEnabled { get; set; }
-
-        // @property (nonatomic) BOOL isChannelCreationDelayEnabled;
-        [Export("isChannelCreationDelayEnabled")]
-        bool IsChannelCreationDelayEnabled { get; set; }
-
-        // @property (nonatomic) BOOL isExtendedBroadcastsEnabled;
-        [Export("isExtendedBroadcastsEnabled")]
-        bool IsExtendedBroadcastsEnabled { get; set; }
-
-        // @property (nonatomic) BOOL requestAuthorizationToUseNotifications;
-        [Export("requestAuthorizationToUseNotifications")]
-        bool RequestAuthorizationToUseNotifications { get; set; }
-
-        // @property (nonatomic) BOOL requireInitialRemoteConfigEnabled;
-        [Export("requireInitialRemoteConfigEnabled")]
-        bool RequireInitialRemoteConfigEnabled { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable initialConfigURL;
-        [NullAllowed, Export("initialConfigURL")]
-        string InitialConfigURL { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable deviceAPIURL;
-        [NullAllowed, Export("deviceAPIURL")]
-        string DeviceAPIURL { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable analyticsURL;
-        [NullAllowed, Export("analyticsURL")]
-        string AnalyticsURL { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable remoteDataAPIURL;
-        [NullAllowed, Export("remoteDataAPIURL")]
-        string RemoteDataAPIURL { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable chatURL;
-        [NullAllowed, Export("chatURL")]
-        string ChatURL { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable chatWebSocketURL;
-        [NullAllowed, Export("chatWebSocketURL")]
-        string ChatWebSocketURL { get; set; }
-
-        // @property (readonly, copy, nonatomic) NSString * _Nonnull appKey;
-        [Export("appKey")]
-        string AppKey { get; }
-
-        // @property (readonly, copy, nonatomic) NSString * _Nonnull appSecret;
-        [Export("appSecret")]
-        string AppSecret { get; }
-
-        // @property (readonly, nonatomic) enum UALogLevel logLevel;
-        [Export("logLevel")]
-        UALogLevel LogLevel { get; }
-
-        // +(UAConfig * _Nonnull)defaultConfig __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("defaultConfig")]
-        UAConfig DefaultConfig();
-
-        // +(UAConfig * _Nonnull)configWithContentsOfFile:(NSString * _Nullable)path __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("configWithContentsOfFile:")]
-        UAConfig Config([NullAllowed] string path);
-
-        // +(UAConfig * _Nonnull)config __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("config")]
-        UAConfig Config();
-
-        // -(instancetype _Nonnull)initWithContentsOfFile:(NSString * _Nullable)path;
-        [Export("initWithContentsOfFile:")]
-        IntPtr Constructor([NullAllowed] string path);
-
-        // -(BOOL)validate __attribute__((warn_unused_result("")));
-        [Export("validate")]
-        bool Validate();
-
-        // +(BOOL)isProductionProvisioningProfile:(NSString * _Nonnull)profilePath __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("isProductionProvisioningProfile:")]
-        bool IsProductionProvisioningProfile(string profilePath);
-    }
-
+    
     // @interface UAConnectionType : NSObject
     [BaseType(typeof(NSObject))]
     interface UAConnectionType
@@ -1010,88 +1421,6 @@ namespace UrbanAirship
         [Static]
         [Export("wifi")]
         string Wifi { get; }
-    }
-
-    // @interface UAContact : NSObject <UAComponent, UAContactProtocol>
-    [BaseType(typeof(NSObject))]
-    [DisableDefaultCtor]
-    interface UAContact : IUAComponent
-    {
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull contactConflictEvent;
-        [Static]
-        [Export("contactConflictEvent")]
-        string ContactConflictEvent { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull contactConflictEventKey;
-        [Static]
-        [Export("contactConflictEventKey")]
-        string ContactConflictEventKey { get; }
-
-        // @property (readonly, nonatomic, class) NSInteger maxNamedUserIDLength;
-        [Static]
-        [Export("maxNamedUserIDLength")]
-        nint MaxNamedUserIDLength { get; }
-
-        // -(void)getNamedUserIDWithCompletionHandler:(void (^ _Nonnull)(NSString * _Nullable))completionHandler;
-        [Export("getNamedUserIDWithCompletionHandler:")]
-        void GetNamedUserID(Action<string> completionHandler);
-
-        // @property (readonly, nonatomic, strong, class) UAContact * _Nonnull shared;
-        [Static]
-        [Export("shared", ArgumentSemantic.Strong)]
-        UAContact Shared { get; }
-
-        // -(void)identify:(NSString * _Nonnull)namedUserID;
-        [Export("identify:")]
-        void Identify(string namedUserID);
-
-        // -(void)reset;
-        [Export("reset")]
-        void Reset();
-
-        // -(UATagGroupsEditor * _Nonnull)editTagGroups __attribute__((warn_unused_result("")));
-        [Export("editTagGroups")]
-        UATagGroupsEditor EditTagGroups();
-
-        // -(void)editTagGroups:(void (^ _Nonnull)(UATagGroupsEditor * _Nonnull))editorBlock;
-        [Export("editTagGroups:")]
-        void EditTagGroups(Action<UATagGroupsEditor> editorBlock);
-
-        // -(UAAttributesEditor * _Nonnull)editAttributes __attribute__((warn_unused_result("")));
-        [Export("editAttributes")]
-        UAAttributesEditor EditAttributes();
-
-        // -(void)editAttributes:(void (^ _Nonnull)(UAAttributesEditor * _Nonnull))editorBlock;
-        [Export("editAttributes:")]
-        void EditAttributes(Action<UAAttributesEditor> editorBlock);
-
-        // -(void)registerEmail:(NSString * _Nonnull)address options:(UAEmailRegistrationOptions * _Nonnull)options;
-        [Export("registerEmail:options:")]
-        void RegisterEmail(string address, UAEmailRegistrationOptions options);
-
-        // -(void)registerSMS:(NSString * _Nonnull)msisdn options:(UASMSRegistrationOptions * _Nonnull)options;
-        [Export("registerSMS:options:")]
-        void RegisterSMS(string msisdn, UASMSRegistrationOptions options);
-
-        // -(void)registerOpen:(NSString * _Nonnull)address options:(UAOpenRegistrationOptions * _Nonnull)options;
-        [Export("registerOpen:options:")]
-        void RegisterOpen(string address, UAOpenRegistrationOptions options);
-
-        // -(void)associateChannel:(NSString * _Nonnull)channelID type:(enum UAChannelType)type;
-        [Export("associateChannel:type:")]
-        void AssociateChannel(string channelID, UAChannelType type);
-
-        // -(UAScopedSubscriptionListEditor * _Nonnull)editSubscriptionLists __attribute__((warn_unused_result("")));
-        [Export("editSubscriptionLists")]
-        UAScopedSubscriptionListEditor EditSubscriptionLists();
-
-        // -(void)editSubscriptionLists:(void (^ _Nonnull)(UAScopedSubscriptionListEditor * _Nonnull))editorBlock;
-        [Export("editSubscriptionLists:")]
-        void EditSubscriptionLists(Action<UAScopedSubscriptionListEditor> editorBlock);
-
-        // -(void)fetchSubscriptionListsWithCompletionHandler:(void (^ _Nonnull)(NSDictionary *))completionHandler;
-        [Export("fetchSubscriptionListsWithCompletionHandler:")]
-        void FetchSubscriptionLists(Action<NSDictionary> completionHandler);
     }
 
     // @interface UACustomEvent : NSObject <UAEvent>
@@ -1452,32 +1781,6 @@ namespace UrbanAirship
         new string Build();
     }
 
-    // @interface UALocaleManager : NSObject <LocaleManagerProtocol>
-    [BaseType(typeof(NSObject))]
-    [DisableDefaultCtor]
-    interface UALocaleManager : IUALocaleManagerProtocol
-    {
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull localeUpdatedEvent;
-        [Static]
-        [Export("localeUpdatedEvent")]
-        string LocaleUpdatedEvent { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull localeEventKey;
-        [Static]
-        [Export("localeEventKey")]
-        string LocaleEventKey { get; }
-
-        // @property (copy, nonatomic) NSLocale * _Nonnull currentLocale;
-        [Export("currentLocale", ArgumentSemantic.Copy)]
-        NSLocale CurrentLocale { get; set; }
-
-        // -(void)clearLocale;
-        [Export("clearLocale")]
-        void ClearLocale();
-    }
-
-    interface IUALocaleManagerProtocol { };
-
     // @interface UAMediaEventTemplate : NSObject
     [BaseType(typeof(NSObject))]
     [DisableDefaultCtor]
@@ -1702,194 +2005,6 @@ namespace UrbanAirship
         // @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull values;
         [Export("values", ArgumentSemantic.Copy)]
         NSNumber[] Values { get; }
-    }
-
-    // @interface UAPush : NSObject <UAComponent, UAPushProtocol>
-    [BaseType(typeof(NSObject))]
-    [DisableDefaultCtor]
-    interface UAPush : IUAComponent
-    {
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull notificationStatusUpdateEvent;
-        [Static]
-        [Export("notificationStatusUpdateEvent")]
-        string NotificationStatusUpdateEvent { get; }
-
-        // @property (readonly, nonatomic, strong, class) UAPush * _Nonnull shared;
-        [Static]
-        [Export("shared", ArgumentSemantic.Strong)]
-        UAPush Shared { get; }
-
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull receivedNotificationResponseEvent;
-        [Static]
-        [Export("receivedNotificationResponseEvent")]
-        string ReceivedNotificationResponseEvent { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull receivedNotificationResponseEventResponseKey;
-        [Static]
-        [Export("receivedNotificationResponseEventResponseKey")]
-        string ReceivedNotificationResponseEventResponseKey { get; }
-
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull receivedForegroundNotificationEvent;
-        [Static]
-        [Export("receivedForegroundNotificationEvent")]
-        string ReceivedForegroundNotificationEvent { get; }
-
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull receivedBackgroundNotificationEvent;
-        [Static]
-        [Export("receivedBackgroundNotificationEvent")]
-        string ReceivedBackgroundNotificationEvent { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull quietTimeStartKey;
-        [Static]
-        [Export("quietTimeStartKey")]
-        string QuietTimeStartKey { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull quietTimeEndKey;
-        [Static]
-        [Export("quietTimeEndKey")]
-        string QuietTimeEndKey { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull areNotificationsAllowed;
-        [Static]
-        [Export("areNotificationsAllowed")]
-        string AreNotificationsAllowed { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull isOptedIn;
-        [Static]
-        [Export("isOptedIn")]
-        string IsOptedIn { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull isPushPrivacyFeatureEnabled;
-        [Static]
-        [Export("isPushPrivacyFeatureEnabled")]
-        string IsPushPrivacyFeatureEnabled { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull isPushTokenRegistered;
-        [Static]
-        [Export("isPushTokenRegistered")]
-        string IsPushTokenRegistered { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull isUserNotificationsEnabled;
-        [Static]
-        [Export("isUserNotificationsEnabled")]
-        string IsUserNotificationsEnabled { get; }
-
-        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull isUserOptedIn;
-        [Static]
-        [Export("isUserOptedIn")]
-        string IsUserOptedIn { get; }
-
-        // @property (getter = isComponentEnabled, nonatomic) BOOL componentEnabled;
-        [Export("componentEnabled")]
-        bool ComponentEnabled { [Bind("isComponentEnabled")] get; set; }
-
-        // @property (nonatomic) BOOL backgroundPushNotificationsEnabled;
-        [Export("backgroundPushNotificationsEnabled")]
-        bool BackgroundPushNotificationsEnabled { get; set; }
-
-        // @property (nonatomic) BOOL userPushNotificationsEnabled;
-        [Export("userPushNotificationsEnabled")]
-        bool UserPushNotificationsEnabled { get; set; }
-
-        // @property (nonatomic) BOOL requestExplicitPermissionWhenEphemeral;
-        [Export("requestExplicitPermissionWhenEphemeral")]
-        bool RequestExplicitPermissionWhenEphemeral { get; set; }
-
-        // @property (readonly, copy, nonatomic) NSString * _Nullable deviceToken;
-        [NullAllowed, Export("deviceToken")]
-        string DeviceToken { get; }
-
-        // @property (nonatomic) UANotificationOptions notificationOptions;
-        [Export("notificationOptions", ArgumentSemantic.Assign)]
-        UANotificationOptions NotificationOptions { get; set; }
-
-        // @property (copy, nonatomic) NSSet<UNNotificationCategory *> * _Nonnull customCategories;
-        [Export("customCategories", ArgumentSemantic.Copy)]
-        NSSet<UNNotificationCategory> CustomCategories { get; set; }
-
-        // @property (readonly, copy, nonatomic) NSSet<UNNotificationCategory *> * _Nonnull combinedCategories;
-        [Export("combinedCategories", ArgumentSemantic.Copy)]
-        NSSet<UNNotificationCategory> CombinedCategories { get; }
-
-        // @property (nonatomic) BOOL requireAuthorizationForDefaultCategories;
-        [Export("requireAuthorizationForDefaultCategories")]
-        bool RequireAuthorizationForDefaultCategories { get; set; }
-
-        [Wrap("WeakPushNotificationDelegate")]
-        [NullAllowed]
-        IUAPushNotificationDelegate PushNotificationDelegate { get; set; }
-
-        // @property (nonatomic, weak) id<UAPushNotificationDelegate> _Nullable pushNotificationDelegate;
-        [NullAllowed, Export("pushNotificationDelegate", ArgumentSemantic.Weak)]
-        NSObject WeakPushNotificationDelegate { get; set; }
-
-        [Wrap("WeakRegistrationDelegate")]
-        [NullAllowed]
-        IUARegistrationDelegate RegistrationDelegate { get; set; }
-
-        // @property (nonatomic, weak) id<UARegistrationDelegate> _Nullable registrationDelegate;
-        [NullAllowed, Export("registrationDelegate", ArgumentSemantic.Weak)]
-        NSObject WeakRegistrationDelegate { get; set; }
-
-        // @property (readonly, nonatomic, strong) UNNotificationResponse * _Nullable launchNotificationResponse;
-        [NullAllowed, Export("launchNotificationResponse", ArgumentSemantic.Strong)]
-        UNNotificationResponse LaunchNotificationResponse { get; }
-
-        // @property (readonly, nonatomic) UAAuthorizedNotificationSettings authorizedNotificationSettings;
-        [Export("authorizedNotificationSettings")]
-        UAAuthorizedNotificationSettings AuthorizedNotificationSettings { get; }
-
-        // @property (readonly, nonatomic) UAAuthorizationStatus authorizationStatus;
-        [Export("authorizationStatus")]
-        UAAuthorizationStatus AuthorizationStatus { get; }
-
-        // @property (readonly, nonatomic) BOOL userPromptedForNotifications;
-        [Export("userPromptedForNotifications")]
-        bool UserPromptedForNotifications { get; }
-
-        // @property (nonatomic) UNNotificationPresentationOptions defaultPresentationOptions;
-        [Export("defaultPresentationOptions", ArgumentSemantic.Assign)]
-        UNNotificationPresentationOptions DefaultPresentationOptions { get; set; }
-
-        // -(void)enableUserPushNotificationsWithCompletionHandler:(void (^ _Nonnull)(BOOL))completionHandler;
-        [Export("enableUserPushNotificationsWithCompletionHandler:")]
-        void EnableUserPushNotifications(Action<bool> completionHandler);
-
-        // @property (readonly, nonatomic) BOOL isPushNotificationsOptedIn;
-        [Export("isPushNotificationsOptedIn")]
-        bool IsPushNotificationsOptedIn { get; }
-
-        // @property (nonatomic) NSInteger badgeNumber;
-        [Export("badgeNumber")]
-        nint BadgeNumber { get; set; }
-
-        // @property (nonatomic) BOOL autobadgeEnabled;
-        [Export("autobadgeEnabled")]
-        bool AutobadgeEnabled { get; set; }
-
-        // -(void)resetBadge;
-        [Export("resetBadge")]
-        void ResetBadge();
-
-        // @property (readonly, copy, nonatomic) NSDictionary * _Nullable quietTime;
-        [NullAllowed, Export("quietTime", ArgumentSemantic.Copy)]
-        NSDictionary QuietTime { get; }
-
-        // @property (nonatomic, strong) NSTimeZone * _Nullable timeZone;
-        [NullAllowed, Export("timeZone", ArgumentSemantic.Strong)]
-        NSTimeZone TimeZone { get; set; }
-
-        // @property (nonatomic) BOOL quietTimeEnabled;
-        [Export("quietTimeEnabled")]
-        bool QuietTimeEnabled { get; set; }
-
-        // -(void)setQuietTimeStartHour:(NSInteger)startHour startMinute:(NSInteger)startMinute endHour:(NSInteger)endHour endMinute:(NSInteger)endMinute;
-        [Export("setQuietTimeStartHour:startMinute:endHour:endMinute:")]
-        void SetQuietTimeStartHour(nint startHour, nint startMinute, nint endHour, nint endMinute);
-
-        // -(void)updateRegistration;
-        [Export("updateRegistration")]
-        void UpdateRegistration();
     }
 
     // @protocol UAPushNotificationDelegate <NSObject>
@@ -2387,9 +2502,36 @@ namespace UrbanAirship
 
     interface IUANavigationDelegate { };
 
+    // @protocol UAURLAllowListProtocol
+    [Protocol, Model]
+    interface UAURLAllowListProtocol
+    {
+        // @required -(BOOL)isAllowed:(NSURL * _Nullable)url __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("isAllowed:")]
+        bool IsAllowed([NullAllowed] NSUrl url);
+
+        // @required -(BOOL)isAllowed:(NSURL * _Nullable)url scope:(id)scope __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("isAllowed:scope:")]
+        bool IsAllowed([NullAllowed] NSUrl url, NSObject scope);
+
+        // @required -(BOOL)addEntry:(NSString * _Nonnull)patternString scope:(id)scope;
+        [Abstract]
+        [Export("addEntry:scope:")]
+        bool AddEntry(string patternString, NSObject scope);
+
+        // @required -(BOOL)addEntry:(NSString * _Nonnull)patternString;
+        [Abstract]
+        [Export("addEntry:")]
+        bool AddEntry(string patternString);
+    }
+
+    interface IUAURLAllowListProtocol { };
+
     // @interface UAURLAllowList : NSObject <UAURLAllowListProtocol>
     [BaseType(typeof(NSObject))]
-    interface UAURLAllowList
+    interface UAURLAllowList : IUAURLAllowListProtocol
     {
         // +(UAURLAllowList * _Nonnull)allowListWithConfig:(UARuntimeConfig * _Nonnull)config __attribute__((warn_unused_result("")));
         [Static]
@@ -2438,11 +2580,6 @@ namespace UrbanAirship
     [BaseType(typeof(NSObject))]
     interface UAUtils
     {
-        // +(BOOL)float:(CGFloat)float1 isEqualToFloat:(CGFloat)float2 withAccuracy:(CGFloat)accuracy __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("float:isEqualToFloat:withAccuracy:")]
-        bool Float(nfloat float1, nfloat float2, nfloat accuracy);
-
         // +(NSString * _Nullable)deviceModelName __attribute__((warn_unused_result("")));
         [Static]
         [Export("deviceModelName")]
@@ -2471,39 +2608,11 @@ namespace UrbanAirship
         [Export("compareVersion:toVersion:")]
         NSComparisonResult CompareVersion(string fromVersion, string toVersion);
 
-        // +(NSDateFormatter * _Nonnull)ISODateFormatterUTC __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("ISODateFormatterUTC")]
-        NSDateFormatter ISODateFormatterUTC();
-
-        // +(NSDateFormatter * _Nonnull)ISODateFormatterUTCWithDelimiter __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("ISODateFormatterUTCWithDelimiter")]
-        NSDateFormatter ISODateFormatterUTCWithDelimiter();
-
-        // +(NSDate * _Nullable)parseISO8601DateFromString:(NSString * _Nonnull)from __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("parseISO8601DateFromString:")]
-        [return: NullAllowed]
-        NSDate ParseISO8601DateFromString(string from);
-
-        // +(UIWindow * _Nullable)mainWindow __attribute__((warn_unused_result(""))) __attribute__((availability(macos_app_extension, unavailable))) __attribute__((availability(tvos_app_extension, unavailable))) __attribute__((availability(watchos_app_extension, unavailable))) __attribute__((availability(ios_app_extension, unavailable)));
-        [Static]
-        [Export("mainWindow")]
-        [return: NullAllowed]
-        UIWindow MainWindow();
-
         // +(UIWindow * _Nullable)mainWindow:(UIWindowScene * _Nonnull)scene __attribute__((warn_unused_result(""))) __attribute__((availability(tvos_app_extension, unavailable))) __attribute__((availability(tvos, introduced=13.0))) __attribute__((availability(ios, introduced=13)));
         [Static]
         [Export("mainWindow:")]
         [return: NullAllowed]
         UIWindow MainWindow(UIWindowScene scene);
-
-        // +(UIWindow * _Nullable)windowForView:(UIView * _Nonnull)view __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("windowForView:")]
-        [return: NullAllowed]
-        UIWindow WindowForView(UIView view);
 
         // +(UIBackgroundFetchResult)mergeFetchResults:(NSArray<NSNumber *> * _Nonnull)results __attribute__((warn_unused_result("")));
         [Static]
@@ -2546,16 +2655,6 @@ namespace UrbanAirship
         [Export("parseURL:")]
         [return: NullAllowed]
         NSUrl ParseURL(string value);
-
-        // +(NSString * _Nonnull)permissionString:(enum UAPermission)permission __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("permissionString:")]
-        string PermissionString(UAPermission permission);
-
-        // +(NSString * _Nonnull)permissionStatusString:(enum UAPermissionStatus)status __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("permissionStatusString:")]
-        string PermissionStatusString(UAPermissionStatus status);
     }
 
     // @interface UAVersionMatcher : NSObject
@@ -2700,49 +2799,6 @@ namespace UrbanAirship
     [BaseType(typeof(NSObject))]
     interface UAAppStateTracker
     {
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull didBecomeActiveNotification;
-        [Static]
-        [Export("didBecomeActiveNotification")]
-        string DidBecomeActiveNotification { get; }
-
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull willEnterForegroundNotification;
-        [Static]
-        [Export("willEnterForegroundNotification")]
-        string WillEnterForegroundNotification { get; }
-
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull didEnterBackgroundNotification;
-        [Static]
-        [Export("didEnterBackgroundNotification")]
-        string DidEnterBackgroundNotification { get; }
-
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull willResignActiveNotification;
-        [Static]
-        [Export("willResignActiveNotification")]
-        string WillResignActiveNotification { get; }
-
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull willTerminateNotification;
-        [Static]
-        [Export("willTerminateNotification")]
-        string WillTerminateNotification { get; }
-
-        // @property (readonly, nonatomic, class) NSNotification _Nonnull didTransitionToBackground;
-        [Static]
-        [Export("didTransitionToBackground")]
-        string DidTransitionToBackground { get; }
-
-        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull didTransitionToForeground;
-        [Static]
-        [Export("didTransitionToForeground")]
-        string DidTransitionToForeground { get; }
-
-        // @property (readonly, nonatomic, strong, class) UAAppStateTracker * _Nonnull shared;
-        [Static]
-        [Export("shared", ArgumentSemantic.Strong)]
-        UAAppStateTracker Shared { get; }
-
-        // @property (readonly, nonatomic) enum UAApplicationState state;
-        [Export("state")]
-        UAApplicationState State { get; }
     }
 
     // @interface UAAssociatedChannel
@@ -2764,159 +2820,6 @@ namespace UrbanAirship
         IntPtr Constructor(UAChannelType channelType, string channelID);
     }
 
-    // @protocol UAChannelProtocol
-    [Protocol, Model]
-    [BaseType(typeof(NSObject))]
-    interface UAChannelProtocol
-    {
-        // @required @property (readonly, copy, nonatomic) NSString * _Nullable identifier;
-        [Abstract]
-        [NullAllowed, Export("identifier")]
-        string Identifier { get; }
-
-        // @required @property (nonatomic) BOOL isChannelTagRegistrationEnabled;
-        [Abstract]
-        [Export("isChannelTagRegistrationEnabled")]
-        bool IsChannelTagRegistrationEnabled { get; set; }
-
-        // @required -(UATagEditor * _Nonnull)editTags __attribute__((warn_unused_result("")));
-        [Abstract]
-        [Export("editTags")]
-        UATagEditor EditTags();
-
-        // @required -(void)editTags:(void (^ _Nonnull)(UATagEditor * _Nonnull))editorBlock;
-        [Abstract]
-        [Export("editTags:")]
-        void EditTags(Action<UATagEditor> editorBlock);
-
-        // @required -(UATagGroupsEditor * _Nonnull)editTagGroups __attribute__((warn_unused_result("")));
-        [Abstract]
-        [Export("editTagGroups")]
-        UATagGroupsEditor EditTagGroups();
-
-        // @required -(void)editTagGroups:(void (^ _Nonnull)(UATagGroupsEditor * _Nonnull))editorBlock;
-        [Abstract]
-        [Export("editTagGroups:")]
-        void EditTagGroups(Action<UATagGroupsEditor> editorBlock);
-
-        // @required -(UASubscriptionListEditor * _Nonnull)editSubscriptionLists __attribute__((warn_unused_result("")));
-        [Abstract]
-        [Export("editSubscriptionLists")]
-        UASubscriptionListEditor EditSubscriptionLists();
-
-        // @required -(void)editSubscriptionLists:(void (^ _Nonnull)(UASubscriptionListEditor * _Nonnull))editorBlock;
-        [Abstract]
-        [Export("editSubscriptionLists:")]
-        void EditSubscriptionLists(Action<UASubscriptionListEditor> editorBlock);
-
-        // @required -(void)fetchSubscriptionListsWithCompletionHandler:(void (^ _Nonnull)(NSArray *))completionHandler;
-        [Abstract]
-        [Export("fetchSubscriptionListsWithCompletionHandler:")]
-        void FetchSubscriptionLists(Action<string[]> completionHandler);
-
-        // @required -(UAAttributesEditor * _Nonnull)editAttributes __attribute__((warn_unused_result("")));
-        [Abstract]
-        [Export("editAttributes")]
-        UAAttributesEditor EditAttributes();
-
-        // @required -(void)editAttributes:(void (^ _Nonnull)(UAAttributesEditor * _Nonnull))editorBlock;
-        [Abstract]
-        [Export("editAttributes:")]
-        void EditAttributes(Action<UAAttributesEditor> editorBlock);
-
-        // @required -(void)enableChannelCreation;
-        [Abstract]
-        [Export("enableChannelCreation")]
-        void EnableChannelCreation();
-    }
-
-    // @protocol UAPushProtocol
-    [Protocol, Model]
-    interface UAPushProtocol
-    {
-        // @required @property (readonly, nonatomic) BOOL isPushNotificationsOptedIn;
-        [Abstract]
-        [Export("isPushNotificationsOptedIn")]
-        bool IsPushNotificationsOptedIn { get; }
-
-        // @required @property (nonatomic) BOOL backgroundPushNotificationsEnabled;
-        [Abstract]
-        [Export("backgroundPushNotificationsEnabled")]
-        bool BackgroundPushNotificationsEnabled { get; set; }
-
-        // @required @property (nonatomic) BOOL userPushNotificationsEnabled;
-        [Abstract]
-        [Export("userPushNotificationsEnabled")]
-        bool UserPushNotificationsEnabled { get; set; }
-
-        // @required @property (nonatomic) BOOL requestExplicitPermissionWhenEphemeral;
-        [Abstract]
-        [Export("requestExplicitPermissionWhenEphemeral")]
-        bool RequestExplicitPermissionWhenEphemeral { get; set; }
-
-        // @required @property (readonly, copy, nonatomic) NSString * _Nullable deviceToken;
-        [Abstract]
-        [NullAllowed, Export("deviceToken")]
-        string DeviceToken { get; }
-
-        // @required @property (nonatomic) UANotificationOptions notificationOptions;
-        [Abstract]
-        [Export("notificationOptions")]
-        UANotificationOptions NotificationOptions { get; set; }
-
-        // @required @property (nonatomic) BOOL requireAuthorizationForDefaultCategories;
-        [Abstract]
-        [Export("requireAuthorizationForDefaultCategories")]
-        bool RequireAuthorizationForDefaultCategories { get; set; }
-
-        [Wrap("WeakPushNotificationDelegate"), Abstract]
-        [NullAllowed]
-        UAPushNotificationDelegate PushNotificationDelegate { get; set; }
-
-        // @required @property (nonatomic, weak) id<UAPushNotificationDelegate> _Nullable pushNotificationDelegate;
-        [Abstract]
-        [NullAllowed, Export("pushNotificationDelegate", ArgumentSemantic.Weak)]
-        NSObject WeakPushNotificationDelegate { get; set; }
-
-        [Wrap("WeakRegistrationDelegate"), Abstract]
-        [NullAllowed]
-        UARegistrationDelegate RegistrationDelegate { get; set; }
-
-        // @required @property (nonatomic, weak) id<UARegistrationDelegate> _Nullable registrationDelegate;
-        [Abstract]
-        [NullAllowed, Export("registrationDelegate", ArgumentSemantic.Weak)]
-        NSObject WeakRegistrationDelegate { get; set; }
-
-        // @required @property (readonly, nonatomic, strong) UNNotificationResponse * _Nullable launchNotificationResponse;
-        [Abstract]
-        [NullAllowed, Export("launchNotificationResponse", ArgumentSemantic.Strong)]
-        UNNotificationResponse LaunchNotificationResponse { get; }
-
-        // @required @property (readonly, nonatomic) UAAuthorizedNotificationSettings authorizedNotificationSettings;
-        [Abstract]
-        [Export("authorizedNotificationSettings")]
-        UAAuthorizedNotificationSettings AuthorizedNotificationSettings { get; }
-
-        // @required @property (readonly, nonatomic) UAAuthorizationStatus authorizationStatus;
-        [Abstract]
-        [Export("authorizationStatus")]
-        UAAuthorizationStatus AuthorizationStatus { get; }
-
-        // @required @property (readonly, nonatomic) BOOL userPromptedForNotifications;
-        [Abstract]
-        [Export("userPromptedForNotifications")]
-        bool UserPromptedForNotifications { get; }
-
-        // @required @property (nonatomic) UNNotificationPresentationOptions defaultPresentationOptions;
-        [Abstract]
-        [Export("defaultPresentationOptions")]
-        UNNotificationPresentationOptions DefaultPresentationOptions { get; set; }
-
-        // @required @property (nonatomic) NSInteger badgeNumber;
-        [Abstract]
-        [Export("badgeNumber")]
-        nint BadgeNumber { get; set; }
-    }
 
     // @interface UAContactConflictEvent
     [DisableDefaultCtor]
@@ -2926,6 +2829,23 @@ namespace UrbanAirship
         // @property (readonly, copy, nonatomic) NSString * _Nullable conflictingNamedUserID;
         [NullAllowed, Export("conflictingNamedUserID")]
         string ConflictingNamedUserID { get; }
+
+        // @property (readonly, copy, nonatomic) NSDictionary<NSString *,UAChannelScopes *> * _Nonnull subscriptionLists;
+        [Export("subscriptionLists", ArgumentSemantic.Copy)]
+        NSDictionary SubscriptionLists { get; }      
+
+        // @property (readonly, copy, nonatomic) NSDictionary<NSString *,NSArray<NSString *> *> * _Nonnull tags;
+        [Export("tags", ArgumentSemantic.Copy)]
+        NSDictionary<NSString, NSArray<NSString>> Tags { get; }
+
+        // @property (readonly, copy, nonatomic) NSDictionary<NSString *,NSObject *> * _Nonnull attributes;
+        [Export("attributes", ArgumentSemantic.Copy)]
+        NSDictionary<NSString, NSObject> Attributes { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<UAAssociatedChannel *> * _Nonnull channels;
+        [Export("channels", ArgumentSemantic.Copy)]
+        UAAssociatedChannel[] Channels { get; }
+
     }
 
     // @interface UAEmailRegistrationOptions
@@ -2947,41 +2867,7 @@ namespace UrbanAirship
         [Static]
         [Export("optionsWithProperties:doubleOptIn:")]
         UAEmailRegistrationOptions OptionsWithProperties([NullAllowed] NSDictionary properties, bool doubleOptIn);
-    }
 
-    // @interface UAJSONUtils
-    [BaseType(typeof(NSObject))]
-    interface UAJSONUtils
-    {
-        // +(NSData * _Nullable)dataWithObject:(id _Nonnull)obj options:(id)options error:(id)error __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("dataWithObject:options:error:")]
-        [return: NullAllowed]
-        NSData DataWithObject(NSObject obj, NSObject options, NSObject error);
-
-        // +(NSString * _Nullable)stringWithObject:(id _Nonnull)obj options:(id)options error:(id)error __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("stringWithObject:options:error:")]
-        [return: NullAllowed]
-        string StringWithObject(NSObject obj, NSObject options, NSObject error);
-
-        // +(NSString * _Nullable)stringWithObject:(id _Nonnull)obj __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("stringWithObject:")]
-        [return: NullAllowed]
-        string StringWithObject(NSObject obj);
-
-        // +(id _Nullable)objectWithString:(NSString * _Nonnull)string __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("objectWithString:")]
-        [return: NullAllowed]
-        NSObject ObjectWithString(string @string);
-
-        // +(id _Nullable)objectWithString:(NSString * _Nonnull)string options:(id)options error:(id)error __attribute__((warn_unused_result("")));
-        [Static]
-        [Export("objectWithString:options:error:")]
-        [return: NullAllowed]
-        NSObject ObjectWithString(string @string, NSObject options, NSObject error);
     }
 
     // @interface UAJavaScriptCommand : NSObject

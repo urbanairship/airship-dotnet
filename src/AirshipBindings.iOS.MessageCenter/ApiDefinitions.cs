@@ -10,7 +10,18 @@ using UIKit;
 using UserNotifications;
 using WebKit;
 
-namespace UrbanAirship {
+namespace UrbanAirship
+{
+
+    // @interface UAirshipNotificationMessageCenterListUpdated
+    [BaseType(typeof(NSObject))]
+    interface UAirshipNotificationMessageCenterListUpdated
+    {
+        // @property (readonly, nonatomic, class) NSNotificationName _Nonnull name;
+        [Static]
+        [Export("name")]
+        string Name { get; }
+    }
 
     // @interface UAMessageCenter
     [DisableDefaultCtor]
@@ -27,11 +38,15 @@ namespace UrbanAirship {
 
         // @property (nonatomic, strong) UAMessageCenterInbox * _Nonnull inbox;
         [Export("inbox", ArgumentSemantic.Strong)]
-        UAMessageCenterInbox Inbox { get; set; }
+        IUAMessageCenterInboxProtocol Inbox { get; set; }
 
         // -(void)setThemeFromPlist:(NSString * _Nonnull)plist error:(NSError * _Nonnull)error;
         [Export("setThemeFromPlist:error:")]
         void SetThemeFromPlist(string plist, NSError error);
+
+        // @property (nonatomic, strong) id<UAMessageCenterPredicate> _Nullable predicate;
+        [NullAllowed, Export("predicate", ArgumentSemantic.Strong)]
+        IUAMessageCenterPredicate Predicate { get; set; }
 
         // @property (class, nonatomic, readonly, null_unspecified) UAMessageCenter *shared;
         [Static]
@@ -84,56 +99,9 @@ namespace UrbanAirship {
 
     interface IUAMessageCenterDisplayDelegate { }
 
-    // @interface UAMessageCenterInbox
-    [DisableDefaultCtor]
-    [BaseType(typeof(NSObject))]
-    interface UAMessageCenterInbox
-    {
-        // -(void)getMessagesWithCompletionHandler:(void (^ _Nonnull)(int))completionHandler;
-        [Export("getMessagesWithCompletionHandler:")]
-        void GetMessages(Action<UAMessageCenterMessage[]> completionHandler);
-
-        // -(void)getUserWithCompletionHandler:(void (^ _Nonnull)(UAMessageCenterUser * _Nullable))completionHandler;
-        [Export("getUserWithCompletionHandler:")]
-        void GetUser(Action<UAMessageCenterUser> completionHandler);
-
-        // -(void)getUnreadCountWithCompletionHandler:(id)completionHandler;
-        [Export("getUnreadCountWithCompletionHandler:")]
-        void GetUnreadCount(Action<int> completionHandler);
-
-        // -(void)refreshMessagesWithCompletionHandler:(Bool)completionHandler;
-        [Export("refreshMessagesWithCompletionHandler:")]
-        void RefreshMessages(Action<bool> completionHandler);
-
-        // -(void)markReadWithMessages:(nonnull NSArray *)messages completionHandler:(void (^ _Nonnull)(void))completionHandler;
-        [Export("markReadWithMessages:completionHandler:")]
-        void MarkReadWithMessages(UAMessageCenterMessage[] messages, Action completionHandler);
-
-        // -(void)markReadWithMessageIDs:(nonnull NSArray *)messageIDs completionHandler:(void (^ _Nonnull)(void))completionHandler;
-        [Export("markReadWithMessageIDs:completionHandler:")]
-        void MarkReadWithMessageIDs(string[] messageIDs, Action completionHandler);
-
-        // -(void)deleteWithMessages:(nonnull NSArray *)messages completionHandler:(void (^ _Nonnull)(void))completionHandler;
-        [Export("deleteWithMessages:completionHandler:")]
-        void DeleteWithMessages(UAMessageCenterMessage[] messages, Action completionHandler);
-
-        // -(void)deleteWithMessageIDs:(nonnull NSArray *)messageIDs completionHandler:(void (^ _Nonnull)(void))completionHandler;
-        [Export("deleteWithMessageIDs:completionHandler:")]
-        void DeleteWithMessageIDs(string[] messageIDs, Action completionHandler);
-
-        // -(void)messageForBodyURL:(NSURL * _Nonnull)bodyURL completionHandler:(void (^ _Nonnull)(UAMessageCenterMessage * _Nullable))completionHandler;
-        [Export("messageForBodyURL:completionHandler:")]
-        void MessageForBodyURL(NSUrl bodyURL, Action<UAMessageCenterMessage> completionHandler);
-
-        // -(void)messageForID:(NSString * _Nonnull)messageID completionHandler:(void (^ _Nonnull)(UAMessageCenterMessage * _Nullable))completionHandler;
-        [Export("messageForID:completionHandler:")]
-        void MessageForID(string messageID, Action<UAMessageCenterMessage> completionHandler);
-    }
-
-    // @protocol UAMessageCenterInboxBaseProtocol
+    // @protocol UAMessageCenterInboxProtocol
     [Protocol, Model]
-    [BaseType(typeof(NSObject))]
-    interface UAMessageCenterInboxBaseProtocol
+    interface UAMessageCenterInboxProtocol
     {
         // @required -(void)getMessagesWithCompletionHandler:(void (^ _Nonnull)(int))completionHandler;
         [Abstract]
@@ -150,30 +118,31 @@ namespace UrbanAirship {
         [Export("getUnreadCountWithCompletionHandler:")]
         void GetUnreadCount(Action<int> completionHandler);
 
-        // @required -(void)refreshMessagesWithCompletionHandler:(Bool)completionHandler;
+        // -(void)refreshMessagesWithCompletionHandler:(Bool)completionHandler;
         [Abstract]
         [Export("refreshMessagesWithCompletionHandler:")]
         void RefreshMessages(Action<bool> completionHandler);
 
-        // @required -(void)markReadWithMessages:(nonnull NSArray *)messages completionHandler:(void (^ _Nonnull)(void))completionHandler;
+
+        // @required -(void)markReadWithMessages:(id)messages completionHandler:(void (^ _Nonnull)(void))completionHandler;
         [Abstract]
         [Export("markReadWithMessages:completionHandler:")]
-        void MarkRead(UAMessageCenterMessage[] messages, Action completionHandler);
+        void MarkReadWithMessages(UAMessageCenterMessage[] messages, Action completionHandler);
 
-        // @required -(void)markReadWithMessageIDs:(nonnull NSArray *)messageIDs completionHandler:(void (^ _Nonnull)(void))completionHandler;
+        // @required -(void)markReadWithMessageIDs:(id)messageIDs completionHandler:(void (^ _Nonnull)(void))completionHandler;
         [Abstract]
         [Export("markReadWithMessageIDs:completionHandler:")]
-        void MarkRead(string[] messageIDs, Action completionHandler);
+        void MarkReadWithMessageIDs(string[] messageID, Action completionHandler);
 
-        // @required -(void)deleteWithMessages:(nonnull NSArray *)messages completionHandler:(void (^ _Nonnull)(void))completionHandler;
+        // @required -(void)deleteWithMessages:(id)messages completionHandler:(void (^ _Nonnull)(void))completionHandler;
         [Abstract]
         [Export("deleteWithMessages:completionHandler:")]
-        void Delete(UAMessageCenterMessage[] messages, Action completionHandler);
+        void DeleteWithMessages(UAMessageCenterMessage[] messages, Action completionHandler);
 
-        // @required -(void)deleteWithMessageIDs:(nonnull NSArray *)messageIDs completionHandler:(void (^ _Nonnull)(void))completionHandler;
+        // @required -(void)deleteWithMessageIDs:(id)messageIDs completionHandler:(void (^ _Nonnull)(void))completionHandler;
         [Abstract]
         [Export("deleteWithMessageIDs:completionHandler:")]
-        void Delete(string[] messageIDs, Action completionHandler);
+        void DeleteWithMessageIDs(string[] messageIDs, Action completionHandler);
 
         // @required -(void)messageForBodyURL:(NSURL * _Nonnull)bodyURL completionHandler:(void (^ _Nonnull)(UAMessageCenterMessage * _Nullable))completionHandler;
         [Abstract]
@@ -185,6 +154,9 @@ namespace UrbanAirship {
         [Export("messageForID:completionHandler:")]
         void MessageForID(string messageID, Action<UAMessageCenterMessage> completionHandler);
     }
+
+    interface IUAMessageCenterInboxProtocol { };
+
 
     // @interface UAMessageCenterMessage
     [DisableDefaultCtor]
@@ -239,6 +211,17 @@ namespace UrbanAirship {
         IntPtr Constructor(UAMessageCenterMessage message, UAMessageCenterUser user);
     }
 
+    // @protocol UAMessageCenterPredicate
+    [Protocol, Model]
+    interface UAMessageCenterPredicate
+    {
+        // @required -(id)evaluateWithMessage:(UAMessageCenterMessage * _Nonnull)message __attribute__((warn_unused_result("")));
+        [Abstract]
+        [Export("evaluateWithMessage:")]
+        NSObject EvaluateWithMessage(UAMessageCenterMessage message);
+    }
+     interface IUAMessageCenterPredicate { };
+
     // @interface UAMessageCenterUser
     [DisableDefaultCtor]
     [BaseType(typeof(NSObject))]
@@ -262,5 +245,11 @@ namespace UrbanAirship {
         [Export("makeWithThemePlist:controller:error:dismissAction:")]
         [return: NullAllowed]
         UIViewController MakeWithThemePlist([NullAllowed] string themePlist, UAMessageCenterController controller, NSError error, [NullAllowed] Action dismissAction);
+
+        // +(UIViewController * _Nullable)makeWithThemePlist:(NSString * _Nullable)themePlist predicate:(id<UAMessageCenterPredicate> _Nullable)predicate controller:(UAMessageCenterController * _Nonnull)controller error:(id)error dismissAction:(void (^ _Nullable)(void))dismissAction __attribute__((warn_unused_result("")));
+        [Static]
+        [Export("makeWithThemePlist:predicate:controller:error:dismissAction:")]
+        [return: NullAllowed]
+        UIViewController MakeWithThemePlist([NullAllowed] string themePlist, [NullAllowed] IUAMessageCenterPredicate predicate, UAMessageCenterController controller, NSObject error, [NullAllowed] Action dismissAction);
     }
 }

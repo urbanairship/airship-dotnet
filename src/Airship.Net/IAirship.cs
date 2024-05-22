@@ -204,6 +204,7 @@ namespace AirshipDotNet
 
         /// <summary>
         /// Add/remove the push notification status listener.
+        /// Android only.
         /// </summary>
         event EventHandler<PushNotificationStatusEventArgs> OnPushNotificationStatusUpdate;
 
@@ -341,12 +342,12 @@ namespace AirshipDotNet
         /// Gets or sets whether In-App Automation is paused.
         /// </summary>
         /// <value>Whether In-App Automation is paused.</value>
-        bool InAppAutomationPaused { get; set; }
+        //bool InAppAutomationPaused { get; set; }
 
         /// <summary>
         /// Gets or sets the In-App Automation display interval.
         /// </summary>
         /// <value>The display interval.</value>
-        TimeSpan InAppAutomationDisplayInterval { get; set; }
+        //TimeSpan InAppAutomationDisplayInterval { get; set; }
     }
 }
