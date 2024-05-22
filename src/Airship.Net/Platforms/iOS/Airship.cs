@@ -60,7 +60,6 @@ namespace AirshipDotNet
             add
             {
                 onDeepLinkReceived += value;
-                //FIXME:
                 UAirship.WeakDeepLinkDelegate = this;
             }
             remove
@@ -69,8 +68,7 @@ namespace AirshipDotNet
 
                 if (onDeepLinkReceived == null)
                 {
-                    // FIXME:
-                    //UAirship.Shared.WeakDeepLinkDelegate = null;
+                    UAirship.WeakDeepLinkDelegate = null;
                 }
             }
         }
