@@ -1,5 +1,12 @@
 # Airship DotNet Changelog
 
+## Version 19.4.0 - June 19, 2024
+Minor release that updates the Airship SDK to iOS 17.10.1 and Android 17.8.1,
+
+### Changes
+- Updated iOS SDK to 17.10.1
+- Updated Android SDK to 17.8.1
+
 ## Version 19.3.0 - Apr 8, 2024
 Minor release that updates the Airship SDK to iOS 17.10.0 and Android 17.7.4,
 
