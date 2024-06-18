@@ -46,7 +46,7 @@
 
 	<!-- Dependencies -->
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.60" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Airship.Net\Airship.Net.csproj" />
