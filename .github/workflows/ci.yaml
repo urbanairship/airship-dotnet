@@ -68,7 +68,7 @@ jobs:
 
       - name: Restore workloads
         run: |
-          dotnet workload install android ios maui-android maui-ios maui-maccatalyst
+          dotnet workload install android ios maccatalyst maui-android maui-ios maui-maccatalyst
 
       - name: Build
         run: ./gradlew build pack buildSample
