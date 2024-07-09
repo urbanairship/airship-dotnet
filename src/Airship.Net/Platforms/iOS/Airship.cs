@@ -202,6 +202,35 @@ namespace AirshipDotNet
 
         public IEnumerable<string> Tags => UAirship.Channel.Tags;
 
+        public void FetchChannelSubscriptionList(Action<string[]> list)
+        {
+            UAirship.Channel.FetchSubscriptionLists((lists) =>
+            {
+                list(lists);
+            });
+        }
+
+        public void FetchContactSubscriptionList(Action<Dictionary<string, object>> list)
+        {
+            UAirship.Contact.FetchSubscriptionLists((lists) =>
+            {
+                var dictionary = new Dictionary<string, object>();
+                if (lists is not null)
+                {
+                    foreach (KeyValuePair<NSObject, NSObject> kvp in lists)
+                    {
+                        string key = kvp.Key.ToString();
+                        object value = (object)kvp.Value;
+                        if (key is not null && value is not null)
+                        {
+                            dictionary.Add(key, value);
+                        }
+                    }
+                }
+                list(dictionary);
+            });
+        }
+
         public string? ChannelId => UAirship.Channel.Identifier;
 
         public void GetNamedUser(Action<string> namedUser)

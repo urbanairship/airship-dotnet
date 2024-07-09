@@ -12,6 +12,12 @@ using UrbanAirship.Push;
 using AttributeEditor = AirshipDotNet.Attributes.AttributeEditor;
 using ChannelSubscriptionListEditor = AirshipDotNet.Channel.SubscriptionListEditor;
 using ContactSubscriptionListEditor = AirshipDotNet.Contact.SubscriptionListEditor;
+using System.Collections.Generic;
+using Microsoft.Maui.ApplicationModel;
+using Java.Time;
+using static Android.Provider.CalendarContract;
+using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace AirshipDotNet
 {
@@ -192,8 +198,44 @@ namespace AirshipDotNet
             return features;
         }
 
-
         public IEnumerable<string> Tags => UAirship.Shared().Channel.Tags;
+
+        public void FetchChannelSubscriptionList(Action<string[]> list)
+        {
+            PendingResult subscriptionsPendingResult = UAirship.Shared().Channel.FetchSubscriptionListsPendingResult();
+            var result = subscriptionsPendingResult.Result;
+            if (result is not null && result is HashSet)
+            {
+                // FIXME: Find a way to convert a HashSet to a string[]
+                HashSet hashSet = (HashSet)result;
+                string[]? subscriptionlist = (string[]?)hashSet;
+                list(subscriptionlist ?? new string[0]);
+                return;
+            }
+            list(new string[0]);
+        }
+
+        public void FetchContactSubscriptionList(Action<Dictionary<string, object>> list)
+        {
+            PendingResult subscriptionsPendingResult = UAirship.Shared().Contact.FetchSubscriptionListsPendingResult();
+            var result = subscriptionsPendingResult.Result;
+            Dictionary<string, object> dictionary = new Dictionary<string, object>();
+            if (result is not null)
+            {
+                HashMap map = (HashMap)result;
+                foreach (string key in map.KeySet())
+                {
+                    Console.WriteLine(key);
+                    // FIXME: Find a way to get the value
+                    //var value = result[key];
+                    //if (value is not null)
+                    //{
+                    //dictionary.Add(key, (object)value);
+                    //}
+                }
+            }
+            list(dictionary);
+        }
 
         public string? ChannelId => UAirship.Shared().Channel.Id;
 
