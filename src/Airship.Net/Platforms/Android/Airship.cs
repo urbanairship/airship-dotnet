@@ -203,7 +203,8 @@ namespace AirshipDotNet
         public void FetchChannelSubscriptionList(Action<object> list)
         {
             PendingResult subscriptionsPendingResult = UAirship.Shared().Channel.FetchSubscriptionListsPendingResult();
-            list(subscriptionsPendingResult.Result);
+            var result = subscriptionsPendingResult.Result;
+            list(result);
         }
 
         public void FetchContactSubscriptionList(Action<Dictionary<string, object>> list)
