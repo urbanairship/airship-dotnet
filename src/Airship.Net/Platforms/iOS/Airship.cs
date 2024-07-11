@@ -202,7 +202,7 @@ namespace AirshipDotNet
 
         public IEnumerable<string> Tags => UAirship.Channel.Tags;
 
-        public void FetchChannelSubscriptionList(Action<string[]> list)
+        public void FetchChannelSubscriptionList(Action<object> list)
         {
             UAirship.Channel.FetchSubscriptionLists((lists) =>
             {

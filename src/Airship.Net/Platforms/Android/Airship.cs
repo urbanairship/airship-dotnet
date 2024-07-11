@@ -200,19 +200,10 @@ namespace AirshipDotNet
 
         public IEnumerable<string> Tags => UAirship.Shared().Channel.Tags;
 
-        public void FetchChannelSubscriptionList(Action<string[]> list)
+        public void FetchChannelSubscriptionList(Action<object> list)
         {
             PendingResult subscriptionsPendingResult = UAirship.Shared().Channel.FetchSubscriptionListsPendingResult();
-            var result = subscriptionsPendingResult.Result;
-            if (result is not null && result is HashSet)
-            {
-                // FIXME: Find a way to convert a HashSet to a string[]
-                HashSet hashSet = (HashSet)result;
-                string[]? subscriptionlist = (string[]?)hashSet;
-                list(subscriptionlist ?? new string[0]);
-                return;
-            }
-            list(new string[0]);
+            list(subscriptionsPendingResult.Result);
         }
 
         public void FetchContactSubscriptionList(Action<Dictionary<string, object>> list)
@@ -225,13 +216,11 @@ namespace AirshipDotNet
                 HashMap map = (HashMap)result;
                 foreach (string key in map.KeySet())
                 {
-                    Console.WriteLine(key);
-                    // FIXME: Find a way to get the value
-                    //var value = result[key];
-                    //if (value is not null)
-                    //{
-                    //dictionary.Add(key, (object)value);
-                    //}
+                    var value = map.Get(key);
+                    if (value is not null)
+                    {
+                        dictionary.Add(key, value);
+                    }
                 }
             }
             list(dictionary);

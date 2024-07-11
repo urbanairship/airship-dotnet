@@ -178,7 +178,7 @@ namespace AirshipDotNet
         /// Gets the channel subscription list.
         /// </summary>
         /// <value>The channel subscription list.</value>
-        void FetchChannelSubscriptionList(Action<string[]> list);
+        void FetchChannelSubscriptionList(Action<object> list);
 
         /// <summary>
         /// Gets the contact subscription list.
