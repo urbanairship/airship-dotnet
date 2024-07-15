@@ -209,7 +209,7 @@ namespace AirshipDotNet
                 var list = new List<string>();
                 if (lists is not null)
                 {
-                    foreach (string subscription in list)
+                    foreach (string subscription in lists)
                     {
                         list.Add(subscription.ToString());
                     }
