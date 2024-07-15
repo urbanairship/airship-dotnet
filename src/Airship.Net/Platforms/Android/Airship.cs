@@ -12,13 +12,6 @@ using UrbanAirship.Push;
 using AttributeEditor = AirshipDotNet.Attributes.AttributeEditor;
 using ChannelSubscriptionListEditor = AirshipDotNet.Channel.SubscriptionListEditor;
 using ContactSubscriptionListEditor = AirshipDotNet.Contact.SubscriptionListEditor;
-using System.Collections.Generic;
-using Microsoft.Maui.ApplicationModel;
-using Java.Time;
-using static Android.Provider.CalendarContract;
-using System.Collections;
-using System.Collections.ObjectModel;
-using Android.Util;
 
 namespace AirshipDotNet
 {
@@ -241,7 +234,6 @@ namespace AirshipDotNet
 
             subscriptionsPendingResult.AddResultCallback(new ResultCallback((result) =>
             {
-                Console.WriteLine("-- ON RESULT!!! " + result + ", (" + result.GetType() + ")");
                 var list = new List<string>();
                 if (result is HashSet)
                 {
