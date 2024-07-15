@@ -175,16 +175,16 @@ namespace AirshipDotNet
         IEnumerable<string> Tags { get; }
 
         /// <summary>
-        /// Gets the channel subscription list.
+        /// Gets the channel subscription lists.
         /// </summary>
-        /// <value>The channel subscription list.</value>
-        void FetchChannelSubscriptionList(Action<object> list);
+        /// <value>The channel subscription lists.</value>
+        void FetchChannelSubscriptionLists(Action<List<string>> subscriptions);
 
         /// <summary>
-        /// Gets the contact subscription list.
+        /// Gets the contact subscription lists.
         /// </summary>
-        /// <value>The contact subscription list.</value>
-        void FetchContactSubscriptionList(Action<Dictionary<string, object>> list);
+        /// <value>The contact subscription lists.</value>
+        void FetchContactSubscriptionLists(Action<Dictionary<string, List<string>>> subscriptions);
 
         /// <summary>
         /// Get the channel ID for the device.

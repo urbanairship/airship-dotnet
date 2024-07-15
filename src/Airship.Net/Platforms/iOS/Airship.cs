@@ -202,34 +202,58 @@ namespace AirshipDotNet
 
         public IEnumerable<string> Tags => UAirship.Channel.Tags;
 
-        public void FetchChannelSubscriptionList(Action<object> list)
+        public void FetchChannelSubscriptionLists(Action<List<string>> subscriptions)
         {
             UAirship.Channel.FetchSubscriptionLists((lists) =>
             {
-                list(lists);
+                var list = new List<string>();
+                if (lists is not null)
+                {
+                    foreach (string subscription in list)
+                    {
+                        list.Add(subscription.ToString());
+                    }
+                }
+                subscriptions(list);
             });
         }
 
-        public void FetchContactSubscriptionList(Action<Dictionary<string, object>> list)
+        public void FetchContactSubscriptionLists(Action<Dictionary<string, List<String>>> subscriptions)
         {
             UAirship.Contact.FetchSubscriptionLists((lists) =>
             {
-                var dictionary = new Dictionary<string, object>();
+                var dictionary = new Dictionary<string, List<string>>();
                 if (lists is not null)
                 {
                     foreach (KeyValuePair<NSObject, NSObject> kvp in lists)
                     {
                         string key = kvp.Key.ToString();
-                        object value = (object)kvp.Value;
-                        if (key is not null && value is not null)
+                        var scopes = ((UAChannelScopes)kvp.Value).Values;
+
+                        if (key is not null && scopes is not null)
                         {
-                            dictionary.Add(key, value);
+                            var list = new List<string>();
+                            foreach (var scope in scopes)
+                            {
+                                list.Add(ScopeOrdinalToString(scope));
+                            }
+                            dictionary.Add(key, list);
                         }
                     }
                 }
-                list(dictionary);
+                subscriptions(dictionary);
             });
         }
+
+        private string ScopeOrdinalToString(NSNumber ordinal)
+            => ordinal.LongValue switch
+            {
+                0 => "app",
+                1 => "web",
+                2 => "email",
+                3 => "sms",
+                _ => "unknown",
+            };
 
         public string? ChannelId => UAirship.Channel.Identifier;
 

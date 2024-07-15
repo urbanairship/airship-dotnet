@@ -18,6 +18,7 @@ using Java.Time;
 using static Android.Provider.CalendarContract;
 using System.Collections;
 using System.Collections.ObjectModel;
+using Android.Util;
 
 namespace AirshipDotNet
 {
@@ -200,31 +201,84 @@ namespace AirshipDotNet
 
         public IEnumerable<string> Tags => UAirship.Shared().Channel.Tags;
 
-        public void FetchChannelSubscriptionList(Action<object> list)
+        private class ResultCallback : Java.Lang.Object, IResultCallback
         {
-            PendingResult subscriptionsPendingResult = UAirship.Shared().Channel.FetchSubscriptionListsPendingResult();
-            var result = subscriptionsPendingResult.Result;
-            list(result);
+            Action<Java.Lang.Object?> action;
+
+            internal ResultCallback(Action<Java.Lang.Object?> action)
+            {
+                this.action = action;
+            }
+
+            public void OnResult(Java.Lang.Object? result)
+            {
+                action.Invoke(result);
+            }
         }
 
-        public void FetchContactSubscriptionList(Action<Dictionary<string, object>> list)
+        private List<string> CastHashSetToList(HashSet set)
         {
-            PendingResult subscriptionsPendingResult = UAirship.Shared().Contact.FetchSubscriptionListsPendingResult();
-            var result = subscriptionsPendingResult.Result;
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
-            if (result is not null)
+            var list = new List<string>();
+
+            var value = set.Iterator();
+            if (value is not null)
             {
-                HashMap map = (HashMap)result;
-                foreach (string key in map.KeySet())
+                while (value.HasNext)
                 {
-                    var value = map.Get(key);
-                    if (value is not null)
+                    var nextValue = (string?)value.Next();
+                    if (nextValue is not null)
                     {
-                        dictionary.Add(key, value);
+                        list.Add(nextValue);
                     }
                 }
             }
-            list(dictionary);
+            return list;
+        }
+
+        public void FetchChannelSubscriptionLists(Action<List<string>> subscriptions)
+        {
+            PendingResult subscriptionsPendingResult = UAirship.Shared().Channel.FetchSubscriptionListsPendingResult();
+
+            subscriptionsPendingResult.AddResultCallback(new ResultCallback((result) =>
+            {
+                Console.WriteLine("-- ON RESULT!!! " + result + ", (" + result.GetType() + ")");
+                var list = new List<string>();
+                if (result is HashSet)
+                {
+                    list = CastHashSetToList((HashSet)result);
+                }
+
+                subscriptions(list);
+            }));
+        }
+
+        public void FetchContactSubscriptionLists(Action<Dictionary<string, List<string>>> subscriptions)
+        {
+            PendingResult subscriptionsPendingResult = UAirship.Shared().Contact.FetchSubscriptionListsPendingResult();
+
+            subscriptionsPendingResult.AddResultCallback(new ResultCallback((result) =>
+            {
+                Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
+                if (result is not null)
+                {
+                    var typedResult = (HashMap)result;
+                    foreach (string? key in typedResult.KeySet())
+                    {
+                        if (key is not null)
+                        {
+                            var typedValue = typedResult.Get(key);
+
+                            if (typedValue is not null && typedValue is HashSet)
+                            {
+                                var list = CastHashSetToList((HashSet)typedValue);
+                                dictionary.Add(key, list);
+                            }
+           
+                        }
+                    }
+                }
+                subscriptions(dictionary);
+            }));
         }
 
         public string? ChannelId => UAirship.Shared().Channel.Id;
