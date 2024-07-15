@@ -8,8 +8,8 @@
     <AirshipAndroidVersion>17.8.1</AirshipAndroidVersion>
     <AirshipAndroidNugetVersion>17.8.1</AirshipAndroidNugetVersion>
 
-    <AirshipIosVersion>17.10.0</AirshipIosVersion>
-    <AirshipIosNugetVersion>17.10.0</AirshipIosNugetVersion>
+    <AirshipIosVersion>17.10.1</AirshipIosVersion>
+    <AirshipIosNugetVersion>17.10.1</AirshipIosNugetVersion>
 
     <!-- Airship.Net version -->
     <AirshipCrossPlatformVersion>19.4.0</AirshipCrossPlatformVersion>
