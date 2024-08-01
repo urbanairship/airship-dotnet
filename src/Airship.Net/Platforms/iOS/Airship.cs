@@ -202,6 +202,59 @@ namespace AirshipDotNet
 
         public IEnumerable<string> Tags => UAirship.Channel.Tags;
 
+        public void FetchChannelSubscriptionLists(Action<List<string>> subscriptions)
+        {
+            UAirship.Channel.FetchSubscriptionLists((lists) =>
+            {
+                var list = new List<string>();
+                if (lists is not null)
+                {
+                    foreach (string subscription in lists)
+                    {
+                        list.Add(subscription.ToString());
+                    }
+                }
+                subscriptions(list);
+            });
+        }
+
+        public void FetchContactSubscriptionLists(Action<Dictionary<string, List<String>>> subscriptions)
+        {
+            UAirship.Contact.FetchSubscriptionLists((lists) =>
+            {
+                var dictionary = new Dictionary<string, List<string>>();
+                if (lists is not null)
+                {
+                    foreach (KeyValuePair<NSObject, NSObject> kvp in lists)
+                    {
+                        string key = kvp.Key.ToString();
+                        var scopes = ((UAChannelScopes)kvp.Value).Values;
+
+                        if (key is not null && scopes is not null)
+                        {
+                            var list = new List<string>();
+                            foreach (var scope in scopes)
+                            {
+                                list.Add(ScopeOrdinalToString(scope));
+                            }
+                            dictionary.Add(key, list);
+                        }
+                    }
+                }
+                subscriptions(dictionary);
+            });
+        }
+
+        private string ScopeOrdinalToString(NSNumber ordinal)
+            => ordinal.LongValue switch
+            {
+                0 => "app",
+                1 => "web",
+                2 => "email",
+                3 => "sms",
+                _ => "unknown",
+            };
+
         public string? ChannelId => UAirship.Channel.Identifier;
 
         public void GetNamedUser(Action<string> namedUser)

@@ -192,8 +192,86 @@ namespace AirshipDotNet
             return features;
         }
 
-
         public IEnumerable<string> Tags => UAirship.Shared().Channel.Tags;
+
+        private class ResultCallback : Java.Lang.Object, IResultCallback
+        {
+            Action<Java.Lang.Object?> action;
+
+            internal ResultCallback(Action<Java.Lang.Object?> action)
+            {
+                this.action = action;
+            }
+
+            public void OnResult(Java.Lang.Object? result)
+            {
+                action.Invoke(result);
+            }
+        }
+
+        private List<string> CastHashSetToList(HashSet set)
+        {
+            var list = new List<string>();
+
+            var value = set.Iterator();
+            if (value is not null)
+            {
+                while (value.HasNext)
+                {
+                    var nextValue = (string?)value.Next();
+                    if (nextValue is not null)
+                    {
+                        list.Add(nextValue);
+                    }
+                }
+            }
+            return list;
+        }
+
+        public void FetchChannelSubscriptionLists(Action<List<string>> subscriptions)
+        {
+            PendingResult subscriptionsPendingResult = UAirship.Shared().Channel.FetchSubscriptionListsPendingResult();
+
+            subscriptionsPendingResult.AddResultCallback(new ResultCallback((result) =>
+            {
+                var list = new List<string>();
+                if (result is HashSet)
+                {
+                    list = CastHashSetToList((HashSet)result);
+                }
+
+                subscriptions(list);
+            }));
+        }
+
+        public void FetchContactSubscriptionLists(Action<Dictionary<string, List<string>>> subscriptions)
+        {
+            PendingResult subscriptionsPendingResult = UAirship.Shared().Contact.FetchSubscriptionListsPendingResult();
+
+            subscriptionsPendingResult.AddResultCallback(new ResultCallback((result) =>
+            {
+                Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
+                if (result is not null)
+                {
+                    var typedResult = (HashMap)result;
+                    foreach (string? key in typedResult.KeySet())
+                    {
+                        if (key is not null)
+                        {
+                            var typedValue = typedResult.Get(key);
+
+                            if (typedValue is not null && typedValue is HashSet)
+                            {
+                                var list = CastHashSetToList((HashSet)typedValue);
+                                dictionary.Add(key, list);
+                            }
+           
+                        }
+                    }
+                }
+                subscriptions(dictionary);
+            }));
+        }
 
         public string? ChannelId => UAirship.Shared().Channel.Id;
 
