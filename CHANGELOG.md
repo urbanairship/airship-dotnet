@@ -1,5 +1,11 @@
 # Airship DotNet Changelog
 
+## Version 19.4.1 - Dec 6, 2024
+Minor release that updates the Airship.Net package to no longer depend on MAUI.
+
+### Changes
+- Removed unnecessary MAUI dependency from Airship.Net
+
 ## Version 19.4.0 - July 29, 2024
 Minor release that updates the Airship SDK to iOS 17.10.1 and Android 17.8.1.
 
