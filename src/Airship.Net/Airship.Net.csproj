@@ -32,6 +32,11 @@
 	  <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<Compile Remove="Platforms/Android/**" Condition="'$(TargetFramework)' != 'net8.0-android'" />
+		<Compile Remove="Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net8.0-ios'" />
+	</ItemGroup>
+
 	<!-- Dependencies -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj" />
