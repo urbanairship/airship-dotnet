@@ -1,5 +1,6 @@
 ﻿/* Copyright Airship and Contributors */
 
+using System.Collections.Generic;
 using AirshipDotNet.Attributes;
 using AirshipDotNet.Channel;
 using AirshipDotNet.Contact;
@@ -172,6 +173,18 @@ namespace AirshipDotNet
         /// </summary>
         /// <value>The tags.</value>
         IEnumerable<string> Tags { get; }
+
+        /// <summary>
+        /// Gets the channel subscription lists.
+        /// </summary>
+        /// <value>The channel subscription lists.</value>
+        void FetchChannelSubscriptionLists(Action<List<string>> subscriptions);
+
+        /// <summary>
+        /// Gets the contact subscription lists.
+        /// </summary>
+        /// <value>The contact subscription lists.</value>
+        void FetchContactSubscriptionLists(Action<Dictionary<string, List<string>>> subscriptions);
 
         /// <summary>
         /// Get the channel ID for the device.
