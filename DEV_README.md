@@ -4,14 +4,14 @@
 
 ### Requirements
 
-* Visual Studio for Mac ([stable](https://visualstudio.microsoft.com/vs/mac/) or [preview](https://visualstudio.microsoft.com/vs/mac/preview/))
-* A supported Xcode version (at the time of writing, VS 2022 recommends Xcode 15.1+)
-* OpenJDK 11
-  * Using [Homebrew](https://brew.sh/): `brew install openjdk@11`
-  * Or [SDKMAN!](https://sdkman.io/): `sdk install java 11.0.18-zulu`
-* Android SDK: API 31+ platform, emulator, build tools, command line tools, etc.
-* .NET8 SDK (install via VS)
-* .NET Workloads (install via VS): maui, android, ios
+* VSCode and the [.NET MAUI](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.dotnet-maui) plugin, or another .NET IDE such as Rider
+* A [supported](https://github.com/dotnet/maui/wiki/Release-Versions) Xcode version
+* OpenJDK 17
+  * Using [Homebrew](https://brew.sh/): `brew install openjdk@17`
+  * Or [SDKMAN!](https://sdkman.io/): `sdk install java 17.0.10-zulu`
+* Android SDK: API 34+ platform, emulator, build tools, command line tools, etc.
+* .NET8 SDK (installed via VSCode extension)
+* .NET Workloads (install via dotnet cli): maui, android, ios
 * Doxygen & Graphviz (`brew install doxygen graphviz`)
 * Carthage (`brew install carthage`)
 
