@@ -8,19 +8,19 @@
 
     <TabBar>
 
-        <ShellContent
+        <ShellContent x:Name="home"
             Title="Home"
             Icon="icon_home.png"
             ContentTemplate="{DataTemplate local:HomePage}"
             Route="Home" />
 
-        <ShellContent
+        <ShellContent x:Name="inbox"
             Title="Message Center"
             Icon="icon_inbox.png"
             ContentTemplate="{DataTemplate local:MessageCenterPage}"
             Route="Inbox" />
 
-        <ShellContent
+        <ShellContent x:Name="settings"
             Title="Settings"
             Icon="icon_settings.png"
             ContentTemplate="{DataTemplate local:PushSettingsViewController}"
