@@ -26,12 +26,11 @@ namespace UrbanAirship
 			UAirship.Shared(new AirshipReadyCallback((UAirship airship) =>
 			{
 				// Register Airship Xamarin component
-				Object[] crossPlatformVersions = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(UACrossPlatformVersionAttribute), false);
-				if (crossPlatformVersions.Length >= 1)
-				{
-					var version = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(UACrossPlatformVersionAttribute), false)[0] as UACrossPlatformVersionAttribute;
-					airship.Analytics.RegisterSDKExtension(AnalyticsClass.ExtensionXamarin, version!.Version.ToString());
-				}
+				var crossPlatformVersions = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(UACrossPlatformVersionAttribute), false);
+				if (crossPlatformVersions.Length < 1) return;
+				
+				var version = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(UACrossPlatformVersionAttribute), false)[0] as UACrossPlatformVersionAttribute;
+				airship.Analytics.RegisterSDKExtension(Extension.DotNet!, version!.Version);
 			}));
 		}
 		public static void TakeOff(Application application, Action<UAirship> callback)
@@ -54,19 +53,10 @@ namespace UrbanAirship
 			return Shared(new AirshipReadyCallback (callback));
 		}
 
-		internal class AirshipReadyCallback : Java.Lang.Object, IOnReadyCallback
+		internal class AirshipReadyCallback(Action<UAirship> callback) : Java.Lang.Object, IOnReadyCallback
 		{
-			Action<UAirship> callback;
-			public AirshipReadyCallback(Action<UAirship> callback)
-			{
-				this.callback = callback;
-			}
-
 			public void OnAirshipReady (UAirship airship) {
-				if (callback != null)
-				{
-					callback.Invoke(airship);
-				}
+				callback.Invoke(airship);
 			}
 		}
 	}

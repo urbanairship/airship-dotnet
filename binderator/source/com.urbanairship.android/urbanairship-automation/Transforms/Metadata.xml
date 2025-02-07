@@ -19,5 +19,8 @@
   <remove-node path="/api/package[@name='com.urbanairship.automation']/interface[@name='ScheduleInfo']/method[@name='getData']" />
   <remove-node path="/api/package[@name='com.urbanairship.automation']/class[@name='ActionScheduleEdits']/method[@name='getData']" />
   <remove-node path="/api/package[@name='com.urbanairship.automation']/class[@name='ActionScheduleInfo']/method[@name='getData']" />
+
+  <!-- Remove FrequencyLimitDao_Impl.insert -->
+  <remove-node path="/api/package[@name='com.urbanairship.automation.limits.storage']/class[@name='FrequencyLimitDao_Impl']/method[@name='insert' and count(parameter)=2 and parameter[1][@type='java.lang.Object'] and parameter[2][@type='kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt;']]" />
 </metadata>
 

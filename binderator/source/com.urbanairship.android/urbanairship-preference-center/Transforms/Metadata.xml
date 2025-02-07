@@ -1,4 +1,11 @@
 ﻿<metadata>
     <attr path="/api/package[@name='com.urbanairship.preferencecenter']" name="managedName">UrbanAirship.PreferenceCenter</attr>
+
+    <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='Button.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='Button.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
+    <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='Condition.State.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='Condition.State.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
 </metadata>
 

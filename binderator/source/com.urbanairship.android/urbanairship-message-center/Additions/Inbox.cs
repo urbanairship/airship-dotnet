@@ -17,7 +17,7 @@ namespace UrbanAirship.MessageCenter
 			add
 			{
 				Listener listener = new Listener(value);
-				AddListener(listener);
+				// AddListener(listener);
 				eventHandlers.Add(value, listener);
 			}
 
@@ -25,7 +25,7 @@ namespace UrbanAirship.MessageCenter
 			{
 				if (eventHandlers.ContainsKey(value))
 				{
-					RemoveListener(eventHandlers[value]);
+					// RemoveListener(eventHandlers[value]);
 					eventHandlers.Remove(value);
 				}
 			}
@@ -33,16 +33,16 @@ namespace UrbanAirship.MessageCenter
 
 		public ICancelable FetchMessages(Action<bool> callback)
 		{
-			return FetchMessages(new FetchMessagesCallback (callback));
+			return FetchMessages(callback);
 		}
 
 		public ICancelable FetchMessages(Action<bool> callback, Looper looper)
 		{
-			return FetchMessages(looper, new FetchMessagesCallback (callback));
+			return FetchMessages(callback, looper);
 		}
 
 		public IList<Message> GetMessages(Func<Message, bool> predicate) {
-			return GetMessages (new Predicate (predicate));
+			return GetMessages(predicate);
 		}
 
         internal class Listener : Java.Lang.Object, IInboxListener

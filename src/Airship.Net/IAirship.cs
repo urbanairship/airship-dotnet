@@ -15,9 +15,9 @@ namespace AirshipDotNet
     /// </summary>
     public class ChannelEventArgs : EventArgs
     {
-        public string ChannelId { get; private set; }
+        public string? ChannelId { get; private set; }
 
-        public ChannelEventArgs(string channelId)
+        public ChannelEventArgs(string? channelId)
         {
             ChannelId = channelId;
         }
@@ -123,7 +123,8 @@ namespace AirshipDotNet
         TagsAndAttributes = 1 << 5,
         Contacts = 1 << 6,
         // RETIRED: Location = 1 << 7,
-        All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts
+        FeatureFlags = 1 << 8,
+        All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts | FeatureFlags
     }
 
     /// <summary>
@@ -190,13 +191,13 @@ namespace AirshipDotNet
         /// Get the channel ID for the device.
         /// </summary>
         /// <value>The channel identifier.</value>
-        string ChannelId { get; }
+        string? ChannelId { get; }
 
         /// <summary>
         /// Gets the named user ID.
         /// </summary>
         /// <value>The named user ID.</value>
-        void GetNamedUser(Action<string> namedUser);
+        void GetNamedUser(Action<string?> namedUser);
 
         /// <summary>
         /// Reset Contacts.

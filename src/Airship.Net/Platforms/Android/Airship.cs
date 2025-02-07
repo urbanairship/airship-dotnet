@@ -12,13 +12,14 @@ using UrbanAirship.Push;
 using AttributeEditor = AirshipDotNet.Attributes.AttributeEditor;
 using ChannelSubscriptionListEditor = AirshipDotNet.Channel.SubscriptionListEditor;
 using ContactSubscriptionListEditor = AirshipDotNet.Contact.SubscriptionListEditor;
+using System.Collections.Generic;
 
 namespace AirshipDotNet
 {
     /// <summary>
     /// Provides cross-platform access to a common subset of functionality between the iOS and Android SDKs
     /// </summary>
-    public class Airship : Java.Lang.Object, IDeepLinkListener, IAirship, IInboxListener, MessageCenterClass.IOnShowMessageCenterListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener
+    public class Airship : Java.Lang.Object, IDeepLinkListener, IAirship, IInboxListener, MessageCenterClass.IOnShowMessageCenterListener, IAirshipChannelListener, IPushNotificationStatusListener
     {
         private static readonly Lazy<Airship> sharedAirship = new(() =>
         {
@@ -87,7 +88,8 @@ namespace AirshipDotNet
             add
             {
                 onMessageCenterDisplay += value;
-                MessageCenterClass.Shared().SetOnShowMessageCenterListener(this);
+                // TODO(SDK19): fix me
+                //MessageCenterClass.Shared().SetOnShowMessageCenterListener(this);
             }
 
             remove
@@ -96,7 +98,8 @@ namespace AirshipDotNet
 
                 if (onMessageCenterDisplay == null)
                 {
-                    MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
+                    // TODO(SDK19): fix me
+                    // MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
                 }
             }
         }
@@ -111,7 +114,7 @@ namespace AirshipDotNet
 
         public Features EnabledFeatures
         {
-            get => FeaturesFromUAFeatures(UAirship.Shared().PrivacyManager.EnabledFeatures);
+            get => FeaturesFromUAFeatures(UAirship.Shared().PrivacyManager.EnabledFeatures.ToArray<PrivacyManager.Feature>()!);
             set => UAirship.Shared().PrivacyManager.SetEnabledFeatures(UaFeaturesFromFeatures(value));
         }
 
@@ -123,70 +126,79 @@ namespace AirshipDotNet
 
         public bool IsAnyFeatureEnabled() => EnabledFeatures != Features.None;
 
-        private static int[] UaFeaturesFromFeatures(Features features)
+        private static PrivacyManager.Feature[] UaFeaturesFromFeatures(Features features)
         {
-            List<int> uAFeatures = new();
+            List<PrivacyManager.Feature> uAFeatures = new();
 
             if (features.HasFlag(Features.InAppAutomation))
             {
-                uAFeatures.Add(PrivacyManager.FeatureInAppAutomation);
+                uAFeatures.Add(PrivacyManager.Feature.InAppAutomation);
             }
             if (features.HasFlag(Features.MessageCenter))
             {
-                uAFeatures.Add(PrivacyManager.FeatureMessageCenter);
+                uAFeatures.Add(PrivacyManager.Feature.MessageCenter);
             }
             if (features.HasFlag(Features.Push))
             {
-                uAFeatures.Add(PrivacyManager.FeaturePush);
+                uAFeatures.Add(PrivacyManager.Feature.Push);
             }
             if (features.HasFlag(Features.Analytics))
             {
-                uAFeatures.Add(PrivacyManager.FeatureAnalytics);
+                uAFeatures.Add(PrivacyManager.Feature.Analytics);
             }
             if (features.HasFlag(Features.TagsAndAttributes))
             {
-                uAFeatures.Add(PrivacyManager.FeatureTagsAndAttributes);
+                uAFeatures.Add(PrivacyManager.Feature.TagsAndAttributes);
             }
             if (features.HasFlag(Features.Contacts))
             {
-                uAFeatures.Add(PrivacyManager.FeatureContacts);
+                uAFeatures.Add(PrivacyManager.Feature.Contacts);
+            }
+            if (features.HasFlag(Features.FeatureFlags))
+            {
+                uAFeatures.Add(PrivacyManager.Feature.FeatureFlags);
             }
 
             return uAFeatures.ToArray();
         }
 
-        private static Features FeaturesFromUAFeatures(int uAFeatures)
+        private static Features FeaturesFromUAFeatures(PrivacyManager.Feature[] uAFeatures)
         {
             Features features = Features.None;
 
-            if ((uAFeatures & PrivacyManager.FeatureInAppAutomation) == PrivacyManager.FeatureInAppAutomation)
+            if (uAFeatures.Contains(PrivacyManager.Feature.InAppAutomation))
             {
                 features |= Features.InAppAutomation;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureMessageCenter) == PrivacyManager.FeatureMessageCenter)
+            if (uAFeatures.Contains(PrivacyManager.Feature.MessageCenter))
             {
                 features |= Features.MessageCenter;
             }
 
-            if ((uAFeatures & PrivacyManager.FeaturePush) == PrivacyManager.FeaturePush)
+            if (uAFeatures.Contains(PrivacyManager.Feature.Push))
             {
                 features |= Features.Push;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureAnalytics) == PrivacyManager.FeatureAnalytics)
+            if (uAFeatures.Contains(PrivacyManager.Feature.Analytics))
             {
                 features |= Features.Analytics;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureTagsAndAttributes) == PrivacyManager.FeatureTagsAndAttributes)
+            if (uAFeatures.Contains(PrivacyManager.Feature.TagsAndAttributes))
             {
                 features |= Features.TagsAndAttributes;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureContacts) == PrivacyManager.FeatureContacts)
+            if (uAFeatures.Contains(PrivacyManager.Feature.Contacts))
             {
                 features |= Features.Contacts;
+            }
+
+            if (uAFeatures.Contains(PrivacyManager.Feature.FeatureFlags))
+            {
+                features |= Features.FeatureFlags;
             }
 
             return features;
@@ -265,7 +277,7 @@ namespace AirshipDotNet
                                 var list = CastHashSetToList((HashSet)typedValue);
                                 dictionary.Add(key, list);
                             }
-           
+
                         }
                     }
                 }
@@ -275,7 +287,7 @@ namespace AirshipDotNet
 
         public string? ChannelId => UAirship.Shared().Channel.Id;
 
-        public void GetNamedUser(Action<string> namedUser) => namedUser(UAirship.Shared().Contact.NamedUserId);
+        public void GetNamedUser(Action<string?> namedUser) => namedUser(UAirship.Shared().Contact.NamedUserId);
 
         public void ResetContact() => UAirship.Shared().Contact.Reset();
 
@@ -366,38 +378,83 @@ namespace AirshipDotNet
 
         public void DeleteMessage(string messageId) => MessageCenterClass.Shared().Inbox.DeleteMessages(new List<String> { messageId });
 
-        public void MessageCenterUnreadCount(Action<int> messageCount) => messageCount(MessageCenterClass.Shared().Inbox.UnreadCount);
+        public void MessageCenterUnreadCount(Action<int> messageCount)
+        {
+            var pendingResult = MessageCenterClass.Shared().Inbox.GetUnreadMessagesPendingResult(null);
+            pendingResult.AddResultCallback(
+                new ResultCallback((result) =>
+                {
+                    if (result is IList)
+                    {
+                        var typedResult = (IList)result;
+                        messageCount(typedResult.Size());
+                    }
+                })
+            );
+        }
 
-        public void MessageCenterCount(Action<int> messageCount) => messageCount(MessageCenterClass.Shared().Inbox.Count);
+        public void MessageCenterCount(Action<int> messageCount)
+        {
+            var pendingResult = MessageCenterClass.Shared().Inbox.GetMessagesPendingResult(null);
+            pendingResult.AddResultCallback(
+                new ResultCallback((result) =>
+                {
+                    if (result is IList)
+                    {
+                        var typedResult = (IList)result;
+                        messageCount(typedResult.Size());
+                    }
+                })
+            );
+        }
 
         public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
             var messagesList = new List<MessageCenter.Message>();
-            var messages = MessageCenterClass.Shared().Inbox.Messages;
-            foreach (var message in messages)
-            {
-                var extras = new Dictionary<string, string>();
-                foreach (var key in message.Extras.KeySet())
+            var messagesResult = MessageCenterClass.Shared().Inbox.GetMessagePendingResult(null);
+
+            messagesResult.AddResultCallback(
+                new ResultCallback((result) =>
                 {
-                    extras.Add(key, message.Extras.Get(key).ToString());
-                }
+                    if (result is IList)
+                    {
+                        var typedResult = (IList)result;
 
-                DateTime? sentDate = FromDate(message.SentDate);
-                DateTime? expirationDate = FromDate(message.ExpirationDate);
+                        foreach (Message? message in typedResult.ToEnumerable<Message>())
+                        {
+                            if (message == null) continue;
 
-                var inboxMessage = new MessageCenter.Message(
-                    message.MessageId,
-                    message.Title,
-                    sentDate,
-                    expirationDate,
-                    message.IsRead,
-                    message.ListIconUrl,
-                    extras);
+                            Dictionary<string, string> extras = new();
 
-                messagesList.Add(inboxMessage);
-            }
+                            var messageExtras = message.Extras;
+                            if (messageExtras != null)
+                            {
+                                foreach (var key in messageExtras.Keys) 
+                                {
+                                    extras.Add(key, messageExtras[key].ToString());
+                                }
+                            }
 
-            listMessages(messagesList);
+                            DateTime? sentDate = FromDate(message.SentDate);
+                            DateTime? expirationDate = FromDate(message.ExpirationDate);
+
+                            var inboxMessage = new MessageCenter.Message(
+                                message.Id,
+                                message.Title,
+                                sentDate,
+                                expirationDate,
+                                message.IsRead,
+                                message.ListIconUrl,
+                                extras
+                            );
+
+                            messagesList.Add(inboxMessage);
+                        }
+
+                        listMessages(messagesList);
+                    }
+                })
+            );
         }
 
         private Date FromDateTime(DateTime? dateTime)
@@ -607,8 +664,8 @@ namespace AirshipDotNet
 
         public bool InAppAutomationEnabled
         {
-            get => InAppAutomation.Shared().Enabled;
-            set => InAppAutomation.Shared().Enabled = value;
+            get => true; // InAppAutomation.Shared().Enabled;
+            set { } // InAppAutomation.Shared().Enabled = value;
         }
 
         public bool InAppAutomationPaused
@@ -619,8 +676,8 @@ namespace AirshipDotNet
 
         public TimeSpan InAppAutomationDisplayInterval
         {
-            get => TimeSpan.FromMilliseconds(InAppAutomation.Shared().InAppMessageManager!.DisplayInterval);
-            set => InAppAutomation.Shared().InAppMessageManager!.SetDisplayInterval((long)value.TotalMilliseconds, TimeUnit.Milliseconds!);
+            get => TimeSpan.Zero; // TimeSpan.FromMilliseconds(InAppAutomation.Shared().InAppMessageManager!.DisplayInterval);
+            set { } // InAppAutomation.Shared().InAppMessageManager!.SetDisplayInterval((long)value.TotalMilliseconds, TimeUnit.Milliseconds!);
         }
 
         public bool OnDeepLink(string deepLink)
