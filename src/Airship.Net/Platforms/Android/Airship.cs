@@ -111,7 +111,7 @@ namespace AirshipDotNet
 
         public Features EnabledFeatures
         {
-            get => FeaturesFromUAFeatures(UAirship.Shared().PrivacyManager.EnabledFeatures);
+            get => FeaturesFromUAFeatures(UAirship.Shared().PrivacyManager.EnabledFeatures.ToArray<PrivacyManager.Feature>()!);
             set => UAirship.Shared().PrivacyManager.SetEnabledFeatures(UaFeaturesFromFeatures(value));
         }
 
@@ -123,68 +123,68 @@ namespace AirshipDotNet
 
         public bool IsAnyFeatureEnabled() => EnabledFeatures != Features.None;
 
-        private static int[] UaFeaturesFromFeatures(Features features)
+        private static PrivacyManager.Feature[] UaFeaturesFromFeatures(Features features)
         {
-            List<int> uAFeatures = new();
+            List<PrivacyManager.Feature> uAFeatures = new();
 
             if (features.HasFlag(Features.InAppAutomation))
             {
-                uAFeatures.Add(PrivacyManager.FeatureInAppAutomation);
+                uAFeatures.Add(PrivacyManager.Feature.InAppAutomation);
             }
             if (features.HasFlag(Features.MessageCenter))
             {
-                uAFeatures.Add(PrivacyManager.FeatureMessageCenter);
+                uAFeatures.Add(PrivacyManager.Feature.MessageCenter);
             }
             if (features.HasFlag(Features.Push))
             {
-                uAFeatures.Add(PrivacyManager.FeaturePush);
+                uAFeatures.Add(PrivacyManager.Feature.Push);
             }
             if (features.HasFlag(Features.Analytics))
             {
-                uAFeatures.Add(PrivacyManager.FeatureAnalytics);
+                uAFeatures.Add(PrivacyManager.Feature.Analytics);
             }
             if (features.HasFlag(Features.TagsAndAttributes))
             {
-                uAFeatures.Add(PrivacyManager.FeatureTagsAndAttributes);
+                uAFeatures.Add(PrivacyManager.Feature.TagsAndAttributes);
             }
             if (features.HasFlag(Features.Contacts))
             {
-                uAFeatures.Add(PrivacyManager.FeatureContacts);
+                uAFeatures.Add(PrivacyManager.Feature.Contacts);
             }
 
             return uAFeatures.ToArray();
         }
 
-        private static Features FeaturesFromUAFeatures(int uAFeatures)
+        private static Features FeaturesFromUAFeatures(PrivacyManager.Feature[] uAFeatures)
         {
             Features features = Features.None;
 
-            if ((uAFeatures & PrivacyManager.FeatureInAppAutomation) == PrivacyManager.FeatureInAppAutomation)
+            if (uAFeatures.Contains(PrivacyManager.Feature.InAppAutomation))
             {
                 features |= Features.InAppAutomation;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureMessageCenter) == PrivacyManager.FeatureMessageCenter)
+            if (uAFeatures.Contains(PrivacyManager.Feature.MessageCenter))
             {
                 features |= Features.MessageCenter;
             }
 
-            if ((uAFeatures & PrivacyManager.FeaturePush) == PrivacyManager.FeaturePush)
+            if (uAFeatures.Contains(PrivacyManager.Feature.Push))
             {
                 features |= Features.Push;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureAnalytics) == PrivacyManager.FeatureAnalytics)
+            if (uAFeatures.Contains(PrivacyManager.Feature.Analytics))
             {
                 features |= Features.Analytics;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureTagsAndAttributes) == PrivacyManager.FeatureTagsAndAttributes)
+            if (uAFeatures.Contains(PrivacyManager.Feature.TagsAndAttributes))
             {
                 features |= Features.TagsAndAttributes;
             }
 
-            if ((uAFeatures & PrivacyManager.FeatureContacts) == PrivacyManager.FeatureContacts)
+            if (uAFeatures.Contains(PrivacyManager.Feature.Contacts))
             {
                 features |= Features.Contacts;
             }
@@ -607,8 +607,18 @@ namespace AirshipDotNet
 
         public bool InAppAutomationEnabled
         {
-            get => InAppAutomation.Shared().Enabled;
-            set => InAppAutomation.Shared().Enabled = value;
+            get => IsFeatureEnabled(Features.InAppAutomation);
+            set
+            {
+                if (value)
+                {
+                    EnableFeatures(Features.InAppAutomation);
+                }
+                else
+                {
+                    DisableFeatures(Features.InAppAutomation);
+                }
+            }
         }
 
         public bool InAppAutomationPaused
@@ -619,8 +629,8 @@ namespace AirshipDotNet
 
         public TimeSpan InAppAutomationDisplayInterval
         {
-            get => TimeSpan.FromMilliseconds(InAppAutomation.Shared().InAppMessageManager!.DisplayInterval);
-            set => InAppAutomation.Shared().InAppMessageManager!.SetDisplayInterval((long)value.TotalMilliseconds, TimeUnit.Milliseconds!);
+            get => TimeSpan.FromMilliseconds(InAppAutomation.Shared().InAppMessaging!.DisplayInterval);
+            set => InAppAutomation.Shared().InAppMessaging!.DisplayInterval = (long)value.TotalMilliseconds;
         }
 
         public bool OnDeepLink(string deepLink)
