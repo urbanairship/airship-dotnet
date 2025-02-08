@@ -1,5 +1,11 @@
 # Airship DotNet Changelog
 
+## Version 19.5.0 - Feb 7, 2025
+Minor release that updates the Android SDK to 18.7.0, including AndroidX library updates.
+
+### Changes
+- Updated Android SDK to 18.7.0
+
 ## Version 19.4.1 - Dec 12, 2024
 Minor release that updates the Airship.Net package to no longer depend on MAUI and adds methods to fetch channel and contact subscription lists to the cross-platform library.
 

@@ -30,7 +30,7 @@ namespace UrbanAirship
 				if (crossPlatformVersions.Length >= 1)
 				{
 					var version = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(UACrossPlatformVersionAttribute), false)[0] as UACrossPlatformVersionAttribute;
-					airship.Analytics.RegisterSDKExtension(AnalyticsClass.ExtensionXamarin, version!.Version.ToString());
+					airship.Analytics.RegisterSDKExtension(Extension.DotNet!, version!.Version.ToString());
 				}
 			}));
 		}
