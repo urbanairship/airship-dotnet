@@ -3,9 +3,13 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using Android.OS;
+using Java.Lang;
+using Java.Util;
+using Object = Java.Lang.Object;
 
 namespace UrbanAirship.MessageCenter
 {
@@ -31,75 +35,63 @@ namespace UrbanAirship.MessageCenter
 			}
 		}
 
-		public ICancelable FetchMessages(Action<bool> callback)
-		{
-			return FetchMessages(new FetchMessagesCallback (callback));
-		}
+		public ICancelable FetchMessages(Action<bool> callback) => FetchMessages(new FetchMessagesCallback(callback));
 
-		public ICancelable FetchMessages(Action<bool> callback, Looper looper)
+		public ICancelable FetchMessages(Looper looper, Action<bool> callback)
 		{
 			return FetchMessages(looper, new FetchMessagesCallback (callback));
 		}
 
-		public IList<Message> GetMessages(Func<Message, bool> predicate) {
-			return GetMessages (new Predicate (predicate));
-		}
-
-        internal class Listener : Java.Lang.Object, IInboxListener
+		public void GetMessages(Func<Message, bool> predicate, Action<List<Message>> callback)
 		{
-			Action listener;
-
-			public Listener(Action listener)
-			{
-				this.listener = listener;
-			}
-
-			public void OnInboxUpdated()
-			{
-				if (listener != null)
-				{
-					listener.Invoke();
-				}
-			}
+			var pendingMessages = GetMessagesPendingResult(new Predicate(predicate));
+			pendingMessages.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke(CastToList(result)))
+			);
 		}
-
-		internal class FetchMessagesCallback : Java.Lang.Object, IFetchMessagesCallback
-		{
-			Action<bool> callback;
-			public FetchMessagesCallback(Action<bool> callback)
-			{
-				this.callback = callback;
-			}
-
-			public void OnFinished (bool success) {
-				if (callback != null)
-				{
-					callback.Invoke (success);
-				}
-			}
-		}
-
-		public class Predicate : Java.Lang.Object, IPredicate
-		{
-			Func<Message, bool> predicate;
-
-			public Predicate(Func<Message, bool> predicate)
-			{
-				this.predicate = predicate;
-			}
-
-			public bool Apply (Message message) {
-				if (predicate != null)
-				{
-					return predicate.Invoke (message);
-				}
-				return true;
-			}
-
-            public bool Apply(Java.Lang.Object p0)
-            {
-                throw new NotImplementedException();
-            }
+		
+		internal class Listener(Action listener) : Java.Lang.Object, IInboxListener
+        {
+	        public void OnInboxUpdated() => listener.Invoke();
         }
+
+		internal class FetchMessagesCallback(Action<bool> callback) : Java.Lang.Object, IFetchMessagesCallback
+		{
+			public void OnFinished (bool success) => callback.Invoke (success);
+		}
+
+		public class Predicate(Func<Message, bool> predicate) : Java.Lang.Object, IPredicate
+		{
+			public bool Apply(Message message) => predicate.Invoke (message);
+
+			public bool Apply(Java.Lang.Object p0) => throw new NotImplementedException();
+		}
+		
+		private class ResultCallback : Java.Lang.Object, IResultCallback
+		{
+			private Action<Java.Lang.Object?> action;
+
+			internal ResultCallback(Action<Java.Lang.Object?> action)
+			{
+				this.action = action;
+			}
+
+			public void OnResult(Java.Lang.Object? result) => action.Invoke(result);
+		}
+		
+		private List<Message> CastToList(Object? result)
+		{
+			var list = new List<Message>();
+
+			if (result is IEnumerable items)
+			{
+				foreach (var item in items)
+				{
+					list.Add((Message)item);
+				}
+			}
+			
+			return list;
+		}
 	}
 }
