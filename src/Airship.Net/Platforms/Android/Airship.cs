@@ -87,7 +87,8 @@ namespace AirshipDotNet
             add
             {
                 onMessageCenterDisplay += value;
-                MessageCenterClass.Shared().SetOnShowMessageCenterListener(this);
+                // TODO(SDK19): why is this not accessible?
+                //MessageCenterClass.Shared().SetOnShowMessageCenterListener(this);
             }
 
             remove
@@ -96,7 +97,8 @@ namespace AirshipDotNet
 
                 if (onMessageCenterDisplay == null)
                 {
-                    MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
+                    // TODO(SDK19): why is this not accessible?
+                    // MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
                 }
             }
         }
@@ -366,38 +368,46 @@ namespace AirshipDotNet
 
         public void DeleteMessage(string messageId) => MessageCenterClass.Shared().Inbox.DeleteMessages(new List<String> { messageId });
 
-        public void MessageCenterUnreadCount(Action<int> messageCount) => messageCount(MessageCenterClass.Shared().Inbox.UnreadCount);
+        public void MessageCenterUnreadCount(Action<int> messageCount) => MessageCenterClass.Shared().Inbox.UnreadCount(messageCount);
 
-        public void MessageCenterCount(Action<int> messageCount) => messageCount(MessageCenterClass.Shared().Inbox.Count);
+        public void MessageCenterCount(Action<int> messageCount) => MessageCenterClass.Shared().Inbox.Count(messageCount);
 
         public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
-            var messagesList = new List<MessageCenter.Message>();
-            var messages = MessageCenterClass.Shared().Inbox.Messages;
-            foreach (var message in messages)
+            Console.WriteLine("--- INBOX MESSAGES!!!");
+            
+            MessageCenterClass.Shared().Inbox.GetMessages(messages =>
             {
-                var extras = new Dictionary<string, string>();
-                foreach (var key in message.Extras.KeySet())
+                Console.WriteLine("--- GOT PENDING RESULT!!!");
+                
+                var messagesList = new List<MessageCenter.Message>();
+
+                foreach (var message in messages)
                 {
-                    extras.Add(key, message.Extras.Get(key).ToString());
+                    Console.WriteLine("--- MESSAGE: " + message.Id);
+                    var extras = new Dictionary<string, string?>();
+                    foreach (var key in message.Extras.Keys)
+                    {
+                        extras.Add(key, message.Extras[key]);
+                    }
+
+                    DateTime? sentDate = FromDate(message.SentDate);
+                    DateTime? expirationDate = FromDate(message.ExpirationDate);
+
+                    var inboxMessage = new MessageCenter.Message(
+                        message.Id,
+                        message.Title,
+                        sentDate,
+                        expirationDate,
+                        message.IsRead,
+                        message.ListIconUrl,
+                        extras);
+
+                    messagesList.Add(inboxMessage);
                 }
-
-                DateTime? sentDate = FromDate(message.SentDate);
-                DateTime? expirationDate = FromDate(message.ExpirationDate);
-
-                var inboxMessage = new MessageCenter.Message(
-                    message.MessageId,
-                    message.Title,
-                    sentDate,
-                    expirationDate,
-                    message.IsRead,
-                    message.ListIconUrl,
-                    extras);
-
-                messagesList.Add(inboxMessage);
-            }
-
-            listMessages(messagesList);
+                
+                listMessages(messagesList);
+            });
         }
 
         private Date FromDateTime(DateTime? dateTime)

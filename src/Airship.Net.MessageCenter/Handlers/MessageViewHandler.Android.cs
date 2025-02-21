@@ -1,11 +1,11 @@
 ﻿using AirshipDotNet.MessageCenter.Controls;
-using Android.Runtime;
-using Android.Webkit;
+using AndroidX.AppCompat.App;
+using AndroidX.Lifecycle;
+using Com.Urbanairship.Messagecenter.UI.View;
+using Java.Lang;
 using Microsoft.Maui.Handlers;
-using UrbanAirship;
-using UrbanAirship.MessageCenter;
-using UrbanAirship.MessageCenter.WebKit;
-using WebView = Android.Webkit.WebView;
+using MessageView = Com.Urbanairship.Messagecenter.UI.View.MessageView;
+using Object = Java.Lang.Object;
 
 namespace AirshipDotNet.MessageCenter.Handlers;
 
@@ -13,25 +13,53 @@ namespace AirshipDotNet.MessageCenter.Handlers;
 /// Handler responsible for displaying a single Message Center message via the platform MessageWebView.
 /// </summary>
 [Preserve(AllMembers = true)]
-public partial class MessageViewHandler : ViewHandler<IMessageView, MessageWebView>
+public partial class MessageViewHandler() : ViewHandler<IMessageView, MessageView>(MessageViewMapper)
 {
-    private UrbanAirship.MessageCenter.Message? message;
-    private ICancelable? fetchMessageRequest;
-
+    private MessageViewModel? viewModel = null;
+    
     public static PropertyMapper<IMessageView, MessageViewHandler> MessageViewMapper = new(ViewHandler.ViewMapper)
     {
         [nameof(IMessageView.MessageId)] = MapMessageId
     };
 
-    public MessageViewHandler(): base(MessageViewMapper)
+    protected override MessageView CreatePlatformView()
     {
-    }
+        // Get the ViewModel
+        var activity = (AppCompatActivity) Platform.CurrentActivity!;
+        var factory = MessageViewModel.Factory();
+        var modelType = Class.FromType(typeof(MessageViewModel));
+        viewModel = (MessageViewModel) new ViewModelProvider(activity, factory).Get(modelType);
+        
+        // Create the MessageView
+        var messageView = new MessageView(Context);
 
-    protected override MessageWebView CreatePlatformView()
+        // Render VM States
+        viewModel.StatesLiveData.Observe(activity, new StateObserver(state => messageView.Render(state)));
+
+        // Listen for message loads to mark messages read
+        messageView.Listener = new MessageViewListener(viewModel);
+        
+        return messageView;
+    }
+    
+    private class StateObserver(Action<MessageViewState> action) : Object, IObserver
     {
-        var webView = new MessageWebView(Context);
-        webView.SetWebViewClient(new WebViewClient(this));
-        return webView;
+        public void OnChanged(Object? value)
+        {
+            if (value is MessageViewState state)
+            {
+                action(state);
+            }
+        }
+    } 
+    
+    private class MessageViewListener(MessageViewModel viewModel) : Object, MessageView.IListener
+    {
+        public void OnMessageLoaded(UrbanAirship.MessageCenter.Message message) => 
+            viewModel.MarkMessagesRead(message);
+
+        public void OnMessageLoadError(MessageViewState.Error.Type error) { /* Noop */ }
+        public void OnRetryClicked() { /* Noop */ }
     }
 
     private static void MapMessageId(MessageViewHandler handler, IMessageView entry)
@@ -42,93 +70,6 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, MessageWebVi
         }
     }
 
-    protected void LoadMessage(string? messageId)
-    {
-        if (messageId == null) return;
-
-        fetchMessageRequest?.Cancel();
-
-        message = MessageCenterClass.Shared().Inbox.GetMessage(messageId);
-        if (message == null)
-        {
-            fetchMessageRequest = MessageCenterClass.Shared().Inbox.FetchMessages(success => {
-                message = MessageCenterClass.Shared().Inbox.GetMessage(messageId);
-                if (!success)
-                {
-                    VirtualView.OnLoadFailed(messageId, true, MessageFailureStatus.FetchFailed);
-                    return;
-                }
-                else if (message == null || message.IsExpired)
-                { 
-                    VirtualView.OnLoadFailed(messageId, false, MessageFailureStatus.Unavailable);
-                    return;
-                }
-
-                PlatformView.LoadMessage(message);
-
-                VirtualView.OnLoadStarted(messageId);
-            });
-        }
-        else
-        {
-            if (message.IsExpired)
-            {
-                VirtualView.OnLoadFailed(messageId, false, MessageFailureStatus.Unavailable);
-                return;
-            }
-
-            PlatformView.LoadMessage(message);
-
-            VirtualView.OnLoadStarted(messageId);
-        }
-    }
-
-    private class WebViewClient : MessageWebViewClient
-    {
-        private MessageViewHandler handler;
-        private bool error = false;
-
-        public WebViewClient(MessageViewHandler handler)
-        {
-            this.handler = handler;
-        }
-
-        public override void OnPageFinished(WebView? view, string? url)
-        {
-            base.OnPageFinished(view, url);
-
-            if (handler.message == null) return;
-
-            if (error)
-            {
-                handler.VirtualView.OnLoadFailed(handler.message.MessageId, false, MessageFailureStatus.LoadFailed);
-                return;
-            }
-
-            handler.message.MarkRead();
-
-            handler.VirtualView.OnLoadFinished(handler.message.MessageId);
-        }
-
-        [Obsolete]
-        public override void OnReceivedError(WebView? view, [GeneratedEnum] ClientError errorCode, string? description, string? failingUrl)
-        {
-            base.OnReceivedError(view, errorCode, description, failingUrl);
-
-            if (handler.message != null && failingUrl != null && failingUrl.Equals(handler.message.MessageBodyUrl))
-            {
-                error = true;
-            }
-        }
-
-        protected override void OnClose(WebView webView)
-        {
-            base.OnClose(webView);
-            if (handler.message != null)
-            {
-                handler.VirtualView.OnClosed(handler.message.MessageId);
-            }
-        }
-    }
+    protected void LoadMessage(string messageId) => viewModel?.LoadMessage(messageId);
 }
 
