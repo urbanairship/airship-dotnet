@@ -2,20 +2,15 @@
  Copyright Airship and Contributors
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
 using Android.OS;
-using Java.Lang;
-using Java.Util;
-using Object = Java.Lang.Object;
+using IList = Java.Util.IList;
 
 namespace UrbanAirship.MessageCenter
 {
     public partial class Inbox
 	{
-		private Dictionary<Action, Listener> eventHandlers = new Dictionary<Action, Listener>();
+		private readonly Dictionary<Action, Listener> eventHandlers = new();
+		
 		public event Action OnInboxUpdated
 		{
 			add
@@ -42,6 +37,14 @@ namespace UrbanAirship.MessageCenter
 			return FetchMessages(looper, new FetchMessagesCallback (callback));
 		}
 
+		public void GetMessages(Action<List<Message>> callback)
+		{
+			var pendingMessages = GetMessagesPendingResult(null);
+			pendingMessages.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke(CastToList(result)))
+			);
+		}
+		
 		public void GetMessages(Func<Message, bool> predicate, Action<List<Message>> callback)
 		{
 			var pendingMessages = GetMessagesPendingResult(new Predicate(predicate));
@@ -49,6 +52,22 @@ namespace UrbanAirship.MessageCenter
 				new ResultCallback((result) => callback.Invoke(CastToList(result)))
 			);
 		}
+		
+		public void GetMessage(string messageId, Action<Message?> callback)
+		{
+			var pendingMessage = GetMessagePendingResult(messageId);
+			pendingMessage.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke((Message?)result))
+			);
+		}
+		
+		public void UnreadCount(Action<int> callback) => UnreadCountPendingResult.AddResultCallback(
+			new ResultCallback((result) => callback.Invoke((int)result!))
+		);
+
+		public void Count(Action<int> callback) => CountPendingResult.AddResultCallback(
+			new ResultCallback((result) => callback.Invoke((int)result!))
+		);
 		
 		internal class Listener(Action listener) : Java.Lang.Object, IInboxListener
         {
@@ -69,28 +88,21 @@ namespace UrbanAirship.MessageCenter
 		
 		private class ResultCallback : Java.Lang.Object, IResultCallback
 		{
-			private Action<Java.Lang.Object?> action;
+			private readonly Action<Java.Lang.Object?> action;
 
-			internal ResultCallback(Action<Java.Lang.Object?> action)
-			{
-				this.action = action;
-			}
+			internal ResultCallback(Action<Java.Lang.Object?> action) => this.action = action;
 
 			public void OnResult(Java.Lang.Object? result) => action.Invoke(result);
 		}
 		
-		private List<Message> CastToList(Object? result)
+		private List<Message> CastToList(Java.Lang.Object? result)
 		{
 			var list = new List<Message>();
 
-			if (result is IEnumerable items)
-			{
-				foreach (var item in items)
-				{
-					list.Add((Message)item);
-				}
-			}
-			
+			var enumerable = (result as IList)?.ToEnumerable();
+			if (enumerable == null) return list;
+
+			list.AddRange(enumerable.Cast<Message>());
 			return list;
 		}
 	}
