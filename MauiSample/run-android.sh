@@ -47,10 +47,22 @@ if ! adb install -r bin/Debug/net8.0-android/com.urbanairship.sample-Signed.apk;
     exit 1
 fi
 
+# Clear previous logs
+adb logcat -c
+
 echo -e "${YELLOW}🚀 Launching app...${NC}"
+
+# Launch the app
 if ! adb shell monkey -p com.urbanairship.sample -c android.intent.category.LAUNCHER 1 > /dev/null 2>&1; then
     echo -e "${RED}❌ Error: Failed to launch app${NC}"
     exit 1
 fi
 
 echo -e "${GREEN}🎉 App deployed and running successfully!${NC}"
+echo ""
+echo -e "${GREEN}📋 Streaming device logs (Press Ctrl+C to stop)...${NC}"
+echo "========================================"
+echo ""
+
+# Stream logs with color and filtering for our app and Airship
+adb logcat -v color com.urbanairship.sample:V Airship:V UALib:V *:S
