@@ -15,6 +15,11 @@
 * Doxygen & Graphviz (`brew install doxygen graphviz`)
 * Carthage (`brew install carthage`)
 
+### Platform-Specific Setup
+
+* **iOS Development:** See [DEV_IOS_SETUP.md](DEV_IOS_SETUP.md) for a complete guide from fresh clone to running the iOS sample app
+* **Android Development:** See [DEV_ANDROID_SETUP.md](DEV_ANDROID_SETUP.md) for a complete guide from fresh clone to running the Android sample app
+
 ### Etc.
 
 [dotnet-maui-check](https://github.com/Redth/dotnet-maui-check) is a tool that can help verify your environment, but it's not been updated in a while and may raise warnings incorrectly. If you do want to give it a shot, you can skip problematic checks with: `maui-check -s xcode -s androidemulator`.
