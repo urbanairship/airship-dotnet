@@ -368,9 +368,9 @@ namespace AirshipDotNet
 
         public void DeleteMessage(string messageId) => MessageCenterClass.Shared().Inbox.DeleteMessages(new List<String> { messageId });
 
-        public void MessageCenterUnreadCount(Action<int> messageCount) => MessageCenterClass.Shared().Inbox.UnreadCount(messageCount);
+        public void MessageCenterUnreadCount(Action<int> messageCount) => MessageCenterClass.Shared().Inbox.GetUnreadCount(messageCount);
 
-        public void MessageCenterCount(Action<int> messageCount) => MessageCenterClass.Shared().Inbox.Count(messageCount);
+        public void MessageCenterCount(Action<int> messageCount) => MessageCenterClass.Shared().Inbox.GetCount(messageCount);
 
         public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
