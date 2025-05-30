@@ -26,6 +26,17 @@ if [[ ! -f "$PROJECT_DIR/MauiSample.csproj" ]]; then
     exit 1
 fi
 
+# Check UseProjectReferences setting
+USE_PROJECT_REFS=$(grep -o '<UseProjectReferences>.*</UseProjectReferences>' MauiSample.csproj | sed 's/<[^>]*>//g')
+
+if [[ "$USE_PROJECT_REFS" = "true" ]]; then
+    echo "✅ Using project references (development mode)"
+    echo "   SDK changes will be built automatically with the sample app"
+else
+    echo "⚠️  Using NuGet packages"
+    echo "   To use project references for development, set UseProjectReferences=true in MauiSample.csproj"
+fi
+
 # Get booted iPhone/iPad simulators only (excluding Apple TV, Apple Watch, etc.)
 BOOTED_IOS_DEVICES=$(xcrun simctl list devices | grep -E "iPhone|iPad" | grep "(Booted)" | awk -F'[()]' '{print $(NF-1)}')
 
@@ -51,6 +62,10 @@ fi
 echo "🏗️  Building iOS app..."
 cd "$PROJECT_DIR"
 
+# Clean previous builds to ensure fresh build
+echo "🧹 Cleaning previous builds..."
+dotnet clean -f net8.0-ios
+
 # Build the app
 dotnet build -f net8.0-ios \
     -p:RuntimeIdentifier=iossimulator-arm64 \
@@ -63,6 +78,10 @@ if [[ $? -ne 0 ]]; then
     echo "   3. Provisioning profile 'dotnet-maui-sample-profile' available"
     exit 1
 fi
+
+# Uninstall existing app to ensure clean state
+echo "🗑️  Uninstalling existing app..."
+xcrun simctl uninstall "$DEVICE_ID" com.urbanairship.richpush 2>/dev/null || true
 
 echo "📱 Installing app to simulator (Device: $DEVICE_ID)..."
 xcrun simctl install "$DEVICE_ID" "$PROJECT_DIR/bin/Debug/net8.0-ios/iossimulator-arm64/MauiSample.app"

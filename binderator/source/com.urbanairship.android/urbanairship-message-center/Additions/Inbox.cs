@@ -61,11 +61,31 @@ namespace UrbanAirship.MessageCenter
 			);
 		}
 		
-		public void UnreadCount(Action<int> callback) => UnreadCountPendingResult.AddResultCallback(
+		public void GetUnreadCount(Action<int> callback) => UnreadCountPendingResult.AddResultCallback(
 			new ResultCallback((result) => callback.Invoke((int)result!))
 		);
 
-		public void Count(Action<int> callback) => CountPendingResult.AddResultCallback(
+		public void GetCount(Action<int> callback) => CountPendingResult.AddResultCallback(
+			new ResultCallback((result) => callback.Invoke((int)result!))
+		);
+		
+		public void GetUnreadMessages(Action<List<Message>> callback)
+		{
+			var pendingMessages = GetUnreadMessagesPendingResult(null);
+			pendingMessages.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke(CastToList(result)))
+			);
+		}
+		
+		public void GetReadMessages(Action<List<Message>> callback)
+		{
+			var pendingMessages = GetReadMessagesPendingResult(null);
+			pendingMessages.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke(CastToList(result)))
+			);
+		}
+		
+		public void GetReadCount(Action<int> callback) => ReadCountPendingResult.AddResultCallback(
 			new ResultCallback((result) => callback.Invoke((int)result!))
 		);
 		
