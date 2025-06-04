@@ -3,6 +3,7 @@
 */
 
 using Android.OS;
+using UrbanAirship;
 using IList = Java.Util.IList;
 
 namespace UrbanAirship.MessageCenter
@@ -62,11 +63,11 @@ namespace UrbanAirship.MessageCenter
 		}
 		
 		public void GetUnreadCount(Action<int> callback) => UnreadCountPendingResult.AddResultCallback(
-			new ResultCallback((result) => callback.Invoke((int)result!))
+			new ResultCallback((result) => callback.Invoke(((Java.Lang.Integer)result!).IntValue()))
 		);
 
 		public void GetCount(Action<int> callback) => CountPendingResult.AddResultCallback(
-			new ResultCallback((result) => callback.Invoke((int)result!))
+			new ResultCallback((result) => callback.Invoke(((Java.Lang.Integer)result!).IntValue()))
 		);
 		
 		public void GetUnreadMessages(Action<List<Message>> callback)
@@ -86,7 +87,7 @@ namespace UrbanAirship.MessageCenter
 		}
 		
 		public void GetReadCount(Action<int> callback) => ReadCountPendingResult.AddResultCallback(
-			new ResultCallback((result) => callback.Invoke((int)result!))
+			new ResultCallback((result) => callback.Invoke(((Java.Lang.Integer)result!).IntValue()))
 		);
 		
 		internal class Listener(Action listener) : Java.Lang.Object, IInboxListener
@@ -104,15 +105,6 @@ namespace UrbanAirship.MessageCenter
 			public bool Apply(Message message) => predicate.Invoke (message);
 
 			public bool Apply(Java.Lang.Object p0) => throw new NotImplementedException();
-		}
-		
-		private class ResultCallback : Java.Lang.Object, IResultCallback
-		{
-			private readonly Action<Java.Lang.Object?> action;
-
-			internal ResultCallback(Action<Java.Lang.Object?> action) => this.action = action;
-
-			public void OnResult(Java.Lang.Object? result) => action.Invoke(result);
 		}
 		
 		private List<Message> CastToList(Java.Lang.Object? result)

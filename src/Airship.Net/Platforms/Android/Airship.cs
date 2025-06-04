@@ -153,6 +153,10 @@ namespace AirshipDotNet
             {
                 uAFeatures.Add(PrivacyManager.Feature.Contacts);
             }
+            if (features.HasFlag(Features.FeatureFlags))
+            {
+                uAFeatures.Add(PrivacyManager.Feature.FeatureFlags);
+            }
 
             return uAFeatures.ToArray();
         }
@@ -191,25 +195,15 @@ namespace AirshipDotNet
                 features |= Features.Contacts;
             }
 
+            if (uAFeatures.Contains(PrivacyManager.Feature.FeatureFlags))
+            {
+                features |= Features.FeatureFlags;
+            }
+
             return features;
         }
 
         public IEnumerable<string> Tags => UAirship.Shared().Channel.Tags;
-
-        private class ResultCallback : Java.Lang.Object, IResultCallback
-        {
-            Action<Java.Lang.Object?> action;
-
-            internal ResultCallback(Action<Java.Lang.Object?> action)
-            {
-                this.action = action;
-            }
-
-            public void OnResult(Java.Lang.Object? result)
-            {
-                action.Invoke(result);
-            }
-        }
 
         private List<string> CastHashSetToList(HashSet set)
         {
@@ -374,17 +368,12 @@ namespace AirshipDotNet
 
         public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
-            Console.WriteLine("--- INBOX MESSAGES!!!");
-            
             MessageCenterClass.Shared().Inbox.GetMessages(messages =>
             {
-                Console.WriteLine("--- GOT PENDING RESULT!!!");
-                
                 var messagesList = new List<MessageCenter.Message>();
 
                 foreach (var message in messages)
                 {
-                    Console.WriteLine("--- MESSAGE: " + message.Id);
                     var extras = new Dictionary<string, string?>();
                     foreach (var key in message.Extras.Keys)
                     {
