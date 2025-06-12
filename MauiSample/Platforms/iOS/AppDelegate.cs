@@ -1,7 +1,7 @@
 ﻿using Foundation;
 using ObjCRuntime;
 using UIKit;
-using UrbanAirship;
+using Airship;
 using System.Diagnostics;
 
 namespace MauiSample;
@@ -16,7 +16,14 @@ public class AppDelegate : MauiUIApplicationDelegate
      
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        UAConfig config = UAConfig.DefaultConfig();
+        // SDK 19: Load config from AirshipConfig.plist using DefaultConfigWithError
+        NSError configError;
+        UAConfig config = UAConfig.DefaultConfigWithError(out configError);
+        
+        if (config == null || configError != null)
+        {
+            throw new InvalidOperationException($"Failed to load Airship configuration: {configError?.LocalizedDescription ?? "Unknown error"}");
+        }
 
         // Log config details using Console.WriteLine which works with --console flag
         Console.WriteLine("🚀🚀🚀 AIRSHIP CONFIG LOADED 🚀🚀🚀");
@@ -28,30 +35,40 @@ public class AppDelegate : MauiUIApplicationDelegate
         Console.WriteLine($"📱 Site: {config.Site} (numeric: {(int)config.Site})");
         Console.WriteLine("🚀🚀🚀 END CONFIG 🚀🚀🚀");
 
-        // Set log level for debugging config loading (optional)
-        // It will be set to the value in the loaded config upon takeOff
-        UAirship.LogLevel = UALogLevel.Verbose;
-
-        if (!config.Validate())
-        {
-            throw new RuntimeException("The AirshipConfig.plist must be a part of the app bundle and " +
-                "include a valid appkey and secret for the selected production level.");
-        }
+        // SDK 19: LogLevel is now set in the config, not directly
+        // Validation happens automatically
 
         WarnIfSimulator();
 
         // Bootstrap the Airship SDK
-        UAirship.TakeOff(config, launchOptions);
+        // SDK 19: TakeOff now requires an error parameter
+        NSError error;
+        bool success = UAirship.TakeOff(config, launchOptions as NSDictionary<NSString, NSObject>, out error);
+        
+        if (!success || error != null)
+        {
+            throw new InvalidOperationException($"Failed to initialize Airship: {error?.LocalizedDescription ?? "Unknown error"}");
+        }
 
         // Log the actual runtime state after TakeOff
         Console.WriteLine("✅✅✅ AIRSHIP INITIALIZED ✅✅✅");
-        Console.WriteLine($"✈️ UAirship.LogLevel after TakeOff: {UAirship.LogLevel} (numeric: {(int)UAirship.LogLevel})");
-        Console.WriteLine($"✈️ Is Flying: {UAirship.IsFlying}");
+        Console.WriteLine($"✈️ Log Level: {config.DevelopmentLogLevel} (development), {config.ProductionLogLevel} (production)");
+        Console.WriteLine($"✈️ Is Flying: {success}");
         Console.WriteLine($"✈️ Channel ID: {UAirship.Channel?.Identifier ?? "<not yet created>"}");
-        Console.WriteLine($"✈️ Shared Instance: {(UAirship.Shared != null ? "EXISTS" : "NULL")}");
         Console.WriteLine("✅✅✅ END INITIALIZATION ✅✅✅");
 
-        UAirship.Push.ResetBadge();
+        // SDK 19: ResetBadge is now ResetBadgeWithCompletionHandler
+        // TODO: Fix crash - "Unsupported type encoding: <v@?@"NSError">16"
+        // This appears to be a binding issue with the completion handler
+        /*
+        UAirship.Push.ResetBadgeWithCompletionHandler((error) => 
+        {
+            if (error != null)
+            {
+                Console.WriteLine($"Failed to reset badge: {error.LocalizedDescription}");
+            }
+        });
+        */
 
         return base.FinishedLaunching(application, launchOptions);
     }

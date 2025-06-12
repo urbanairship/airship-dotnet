@@ -1,0 +1,10 @@
+import com.airship.PublishExtension
+
+ext {
+    artifactId = "Airship.Net.iOS.ObjectiveC"
+    projectName = "Airship iOS SDK - ObjectiveC"
+    projectDescription = "Objective-C bindings for Airship SDK"
+    project = findProject(":src:AirshipBindings.iOS.ObjectiveC")
+}
+
+apply from: rootProject.file("../AirshipBindings.iOS.common/build.gradle")
