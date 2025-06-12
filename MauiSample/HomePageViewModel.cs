@@ -113,7 +113,8 @@ namespace MauiSample
 #if ANDROID
             PreferenceCenter.Shared().Open(prefCenterId);
 #elif IOS
-            UAPreferenceCenter.Shared.OpenPreferenceCenter(prefCenterId);
+            // SDK 19: Access PreferenceCenter through UAirship.PreferenceCenter
+            UAirship.PreferenceCenter.OpenPreferenceCenter(prefCenterId);
 #endif
         }
     }

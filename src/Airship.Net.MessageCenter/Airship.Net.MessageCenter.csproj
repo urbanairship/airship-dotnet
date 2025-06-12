@@ -52,9 +52,7 @@
 		<ProjectReference Include="..\Airship.Net\Airship.Net.csproj" />
 		<ProjectReference Condition="'$(TargetFramework)' == 'net8.0-android'" Include="..\..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
 		<ProjectReference Condition="'$(TargetFramework)' == 'net8.0-android'" Include="..\..\binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj" />
-		<ProjectReference Condition="'$(TargetFramework)' == 'net8.0-ios'" Include="..\AirshipBindings.iOS.Basement\AirshipBindings.iOS.Basement.csproj" />
-		<ProjectReference Condition="'$(TargetFramework)' == 'net8.0-ios'" Include="..\AirshipBindings.iOS.Core\AirshipBindings.iOS.Core.csproj" />
-		<ProjectReference Condition="'$(TargetFramework)' == 'net8.0-ios'" Include="..\AirshipBindings.iOS.MessageCenter\AirshipBindings.iOS.MessageCenter.csproj" />
+		<ProjectReference Condition="'$(TargetFramework)' == 'net8.0-ios'" Include="..\AirshipBindings.iOS.ObjectiveC\AirshipBindings.iOS.ObjectiveC.csproj" />
     </ItemGroup>
 
 </Project>

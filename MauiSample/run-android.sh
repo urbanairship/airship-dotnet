@@ -83,11 +83,20 @@ echo -e "${GREEN}📋 Streaming device logs (Press Ctrl+C to stop)...${NC}"
 echo "========================================"
 echo ""
 
-# Create log file with timestamp
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-LOG_FILE="android-log-$TIMESTAMP.log"
+# Create log directory with PST timestamp
+LOG_BASE_DIR="Sample Run Logs"
+mkdir -p "$LOG_BASE_DIR"
 
-echo -e "${YELLOW}📄 Also saving logs to: $LOG_FILE${NC}"
+# Get PST timestamp (TZ=America/Los_Angeles ensures PST/PDT)
+PST_TIMESTAMP=$(TZ=America/Los_Angeles date +"%Y-%m-%d_%H-%M-%S_PST")
+LOG_DIR="$LOG_BASE_DIR/$PST_TIMESTAMP"
+mkdir -p "$LOG_DIR"
+
+# Create log file
+LOG_FILE="$LOG_DIR/logcat.log"
+
+echo -e "${YELLOW}📋 Logging to directory: $LOG_DIR${NC}"
+echo -e "${YELLOW}   Device logs: logcat.log${NC}"
 echo ""
 
 # Stream logs with color and filtering for our app and Airship
