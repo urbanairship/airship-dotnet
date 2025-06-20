@@ -125,31 +125,22 @@ namespace AirshipDotNet
         {
             get
             {
-                // TODO: UAFeature is now a class, not an enum. Need to update this logic
-                // TEMPORARY WORKAROUND - See: /Context/SDK19-TEMPORARY-WORKAROUNDS.md section 5
-                // return FeaturesFromUAFeatures(UAirship.PrivacyManager.EnabledFeatures);
-                return Features.All;
+                return FeaturesFromUAFeature(UAirship.PrivacyManager.EnabledFeatures);
             }
             set
             {
-                // TODO: UAFeature is now a class, not an enum. Need to update this logic
-                // TEMPORARY WORKAROUND - See: /Context/SDK19-TEMPORARY-WORKAROUNDS.md section 5
-                // UAirship.PrivacyManager.EnabledFeatures = UaFeaturesFromFeatures(value);
+                UAirship.PrivacyManager.EnabledFeatures = UAFeatureFromFeatures(value);
             }
         }
 
         public void EnableFeatures(Features features)
         {
-            // TODO: SDK 19 Compatibility - UAFeature is now a class, not an enum
-            // Need to update this logic to work with new UAFeature class structure
-            // UAirship.PrivacyManager.EnableFeatures(UaFeaturesFromFeatures(features));
+            UAirship.PrivacyManager.EnableFeatures(UAFeatureFromFeatures(features));
         }
 
         public void DisableFeatures(Features features)
         {
-            // TODO: SDK 19 Compatibility - UAFeature is now a class, not an enum
-            // Need to update this logic to work with new UAFeature class structure
-            // UAirship.PrivacyManager.DisableFeatures(UaFeaturesFromFeatures(features));
+            UAirship.PrivacyManager.DisableFeatures(UAFeatureFromFeatures(features));
         }
 
         public bool IsFeatureEnabled(Features feature) => EnabledFeatures.HasFlag(feature);
@@ -222,13 +213,81 @@ namespace AirshipDotNet
         }
         */
 
+        private static UAFeature UAFeatureFromFeatures(Features features)
+        {
+            var featureList = new List<UAFeature>();
+
+            if (features.HasFlag(Features.InAppAutomation))
+            {
+                featureList.Add(UAFeature.InAppAutomation);
+            }
+            if (features.HasFlag(Features.MessageCenter))
+            {
+                featureList.Add(UAFeature.MessageCenter);
+            }
+            if (features.HasFlag(Features.Push))
+            {
+                featureList.Add(UAFeature.Push);
+            }
+            if (features.HasFlag(Features.Analytics))
+            {
+                featureList.Add(UAFeature.Analytics);
+            }
+            if (features.HasFlag(Features.TagsAndAttributes))
+            {
+                featureList.Add(UAFeature.TagsAndAttributes);
+            }
+            if (features.HasFlag(Features.Contacts))
+            {
+                featureList.Add(UAFeature.Contacts);
+            }
+
+            if (featureList.Count == 0)
+            {
+                return UAFeature.None;
+            }
+
+            return new UAFeature(featureList.ToArray());
+        }
+
+        private static Features FeaturesFromUAFeature(UAFeature uaFeature)
+        {
+            Features features = Features.None;
+
+            if (uaFeature.Contains(UAFeature.InAppAutomation))
+            {
+                features |= Features.InAppAutomation;
+            }
+            if (uaFeature.Contains(UAFeature.MessageCenter))
+            {
+                features |= Features.MessageCenter;
+            }
+            if (uaFeature.Contains(UAFeature.Push))
+            {
+                features |= Features.Push;
+            }
+            if (uaFeature.Contains(UAFeature.Analytics))
+            {
+                features |= Features.Analytics;
+            }
+            if (uaFeature.Contains(UAFeature.TagsAndAttributes))
+            {
+                features |= Features.TagsAndAttributes;
+            }
+            if (uaFeature.Contains(UAFeature.Contacts))
+            {
+                features |= Features.Contacts;
+            }
+
+            return features;
+        }
+
         public IEnumerable<string> Tags
         {
             get
             {
-                // SDK 19 doesn't have a direct Tags property, need to use EditTags
-                // This is a limitation of the new SDK
-                return new List<string>();
+                var tags = UAirship.Channel.Tags;
+                return tags ?? new string[0];
             }
         }
 
@@ -299,9 +358,6 @@ namespace AirshipDotNet
 
         private void DeviceTagHelper(bool clear, string[] addTags, string[] removeTags)
         {
-            // TODO: SDK 19 Compatibility - UAChannel.EditTagsWithBlock doesn't exist
-            // Need to use new EditTags API pattern
-            /*
             var editor = UAirship.Channel.EditTags;
             if (editor != null)
             {
@@ -309,11 +365,16 @@ namespace AirshipDotNet
                 {
                     editor.ClearTags();
                 }
-                editor.AddTags(addTags);
-                editor.RemoveTags(removeTags);
+                if (addTags != null && addTags.Length > 0)
+                {
+                    editor.AddTags(addTags);
+                }
+                if (removeTags != null && removeTags.Length > 0)
+                {
+                    editor.RemoveTags(removeTags);
+                }
                 editor.Apply();
             }
-            */
         }
 
         public void AddCustomEvent(CustomEvent customEvent)
@@ -436,81 +497,65 @@ namespace AirshipDotNet
 
         public void MarkMessageRead(string messageId)
         {
-            // TODO: SDK 19 Compatibility - UAirship.MessageCenter doesn't exist
-            /*
             string[] toRead = { messageId };
             UAirship.MessageCenter.Inbox.MarkReadWithMessageIDs(toRead, () => { });
-            */
         }
 
         public void DeleteMessage(string messageId)
         {
-            // TODO: SDK 19 Compatibility - UAirship.MessageCenter doesn't exist
-            /*
             string[] toDelete = { messageId };
             UAirship.MessageCenter.Inbox.DeleteWithMessageIDs(toDelete, () => { });
-            */
         }
 
         public void MessageCenterUnreadCount(Action<int> messageCount)
         {
-            // TODO: SDK 19 Compatibility - UAirship.MessageCenter doesn't exist
-            // UAirship.MessageCenter.Inbox.GetUnreadCountWithCompletionHandler(count => messageCount((int)count));
-            messageCount(0);
+            UAirship.MessageCenter.Inbox.GetUnreadCountWithCompletionHandler(count => messageCount((int)count));
         }
 
         public void MessageCenterCount(Action<int> messageCount)
         {
-            // TODO: SDK 19 Compatibility - UAirship.MessageCenter doesn't exist
-            /*
             UAirship.MessageCenter.Inbox.GetMessagesWithCompletionHandler(messages =>
             {
-                messageCount((int)messages.Count);
+                messageCount(messages?.Length ?? 0);
             });
-            */
-            messageCount(0);
         }
 
         public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
-            // TODO: SDK 19 Compatibility - UAirship.MessageCenter doesn't exist
-            /*
             var messagesList = new List<MessageCenter.Message>();
             UAirship.MessageCenter.Inbox.GetMessagesWithCompletionHandler(messages =>
             {
-                for (nuint i = 0; i < messages.Count; i++)
+                if (messages != null)
                 {
-                    var message = messages.GetItem<UAMessageCenterMessage>(i);
-                    var extras = new Dictionary<string, string>();
-                    foreach (var key in message.Extra.Keys)
+                    foreach (var message in messages)
                     {
-                        extras.Add(key.ToString(), message.Extra[key].ToString());
+                        var extras = new Dictionary<string, string?>();
+                        if (message.Extra != null)
+                        {
+                            foreach (var key in message.Extra.Keys)
+                            {
+                                extras.Add(key.ToString(), message.Extra[key]?.ToString());
+                            }
+                        }
+
+                        DateTime? sentDate = FromNSDate(message.SentDate);
+                        DateTime? expirationDate = FromNSDate(message.ExpirationDate);
+
+                        var inboxMessage = new MessageCenter.Message(
+                            message.Id,
+                            message.Title,
+                            sentDate,
+                            expirationDate,
+                            message.Unread,
+                            message.ListIcon,
+                            extras);
+
+                        messagesList.Add(inboxMessage);
                     }
-
-                    DateTime? sentDate = FromNSDate(message.SentDate);
-                    DateTime? expirationDate = FromNSDate(message.ExpirationDate);
-
-                    // TODO: Title and icon are available on the internal mcMessage property
-                    // but not exposed in the Objective-C bindings. Need @objc attribute added.
-                    string title = null;
-                    string iconUrl = null;
-
-                    var inboxMessage = new MessageCenter.Message(
-                        message.Id,
-                        title,
-                        sentDate,
-                        expirationDate,
-                        message.Unread,
-                        iconUrl,
-                        extras);
-
-                    messagesList.Add(inboxMessage);
                 }
 
                 listMessages(messagesList);
             });
-            */
-            listMessages(new List<MessageCenter.Message>());
         }
 
         private static NSDate? FromDateTime(DateTime? dateTime)
