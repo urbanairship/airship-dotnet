@@ -1635,23 +1635,6 @@ namespace Airship
 		void Apply ();
 	}
 
-	// @interface UAUtils : NSObject
-	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC7UAUtils")]
-	interface UAUtils
-	{
-		// +(NSString * _Nullable)authHeaderStringWithChannelID:(NSString * _Nonnull)channelID __attribute__((warn_unused_result("")));
-		[Static]
-		[Export ("authHeaderStringWithChannelID:")]
-		[return: NullAllowed]
-		string AuthHeaderStringWithChannelID (string channelID);
-
-		// +(NSString * _Nullable)authHeaderWithUsername:(NSString * _Nonnull)username password:(NSString * _Nonnull)password __attribute__((warn_unused_result("")));
-		[Static]
-		[Export ("authHeaderWithUsername:password:")]
-		[return: NullAllowed]
-		string AuthHeaderWithUsername (string username, string password);
-	}
-
 	// @interface UAirship : NSObject
 	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC8UAirship")]
 	interface UAirship
