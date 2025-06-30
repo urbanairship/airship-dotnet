@@ -12,8 +12,8 @@ public partial class PushSettingsViewController : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        enabledPushSwitch.On = Airship.Instance.UserNotificationsEnabled;
-        channelId.Detail = Airship.Instance.ChannelId != null ? Airship.Instance.ChannelId : "";
+        enabledPushSwitch.On = AirshipDotNet.Airship.Instance.UserNotificationsEnabled;
+        channelId.Detail = AirshipDotNet.Airship.Instance.ChannelId != null ? AirshipDotNet.Airship.Instance.ChannelId : "";
         UpdateNamedUser();
         UpdateTagsCell();
     }
@@ -25,14 +25,14 @@ public partial class PushSettingsViewController : ContentPage
 
     void enablePush_OnChanged(object sender, EventArgs e)
     {
-        Airship.Instance.UserNotificationsEnabled = enabledPushSwitch.On;
+        AirshipDotNet.Airship.Instance.UserNotificationsEnabled = enabledPushSwitch.On;
     }
 
     void CopyChannelID(object sender, EventArgs e)
     {
-        if (Airship.Instance.ChannelId != null)
+        if (AirshipDotNet.Airship.Instance.ChannelId != null)
         {
-            Clipboard.Default.SetTextAsync(Airship.Instance.ChannelId);
+            Clipboard.Default.SetTextAsync(AirshipDotNet.Airship.Instance.ChannelId);
             DisplayAlert("Alert", "Channel ID copied to clipboard!", "OK");
         }
     }
@@ -41,11 +41,11 @@ public partial class PushSettingsViewController : ContentPage
     {
         if (namedUserLabel.Text == null)
         {
-            Airship.Instance.ResetContact();
+            AirshipDotNet.Airship.Instance.ResetContact();
         }
         else
         {
-            Airship.Instance.IdentifyContact(namedUserLabel.Text);
+            AirshipDotNet.Airship.Instance.IdentifyContact(namedUserLabel.Text);
         }
         UpdateNamedUser();
         DisplayAlert("Alert", "Named user added successufully", "OK");
@@ -54,7 +54,7 @@ public partial class PushSettingsViewController : ContentPage
     void AddTag(object sender, EventArgs e)
     {
         string tagToAdd = tagLabel.Text;
-        Airship.Instance.EditDeviceTags()
+        AirshipDotNet.Airship.Instance.EditDeviceTags()
                 .AddTags(new string[] { tagToAdd })
                 .Apply();
         UpdateTagsCell();
@@ -63,7 +63,7 @@ public partial class PushSettingsViewController : ContentPage
     void UpdateTagsCell()
     {
         tagLabel.Text = "";
-        IEnumerable<string> tags = Airship.Instance.Tags;
+        IEnumerable<string> tags = AirshipDotNet.Airship.Instance.Tags;
 
         string str = "";
         foreach (string tag in tags)
@@ -76,7 +76,7 @@ public partial class PushSettingsViewController : ContentPage
     void UpdateNamedUser()
     {
         namedUserLabel.Text = "";
-        Airship.Instance.GetNamedUser(namedUser =>
+        AirshipDotNet.Airship.Instance.GetNamedUser(namedUser =>
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {

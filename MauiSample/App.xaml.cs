@@ -12,7 +12,7 @@ public partial class App : Application
 		MainPage = new AppShell();
 
         // Register deep link event handler
-        Airship.Instance.OnDeepLinkReceived += OnDeepLinkReceived;
+        AirshipDotNet.Airship.Instance.OnDeepLinkReceived += OnDeepLinkReceived;
     }
 
     private void OnDeepLinkReceived(object sender, DeepLinkEventArgs e)

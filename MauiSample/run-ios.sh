@@ -88,14 +88,22 @@ xcrun simctl install "$DEVICE_ID" "$PROJECT_DIR/bin/Debug/net8.0-ios/iossimulato
 
 echo "🚀 Launching app..."
 
-# Create log files with timestamp
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-CONSOLE_LOG="$SCRIPT_DIR/ios-console-log-$TIMESTAMP.log"
-SYSTEM_LOG="$SCRIPT_DIR/ios-system-log-$TIMESTAMP.log"
+# Create log directory with PST timestamp
+LOG_BASE_DIR="$SCRIPT_DIR/Sample Run Logs"
+mkdir -p "$LOG_BASE_DIR"
 
-echo "📋 Logging to:"
-echo "   Console output: $CONSOLE_LOG" 
-echo "   System logs: $SYSTEM_LOG"
+# Get PST timestamp (TZ=America/Los_Angeles ensures PST/PDT)
+PST_TIMESTAMP=$(TZ=America/Los_Angeles date +"%Y-%m-%d_%H-%M-%S_PST")
+LOG_DIR="$LOG_BASE_DIR/$PST_TIMESTAMP"
+mkdir -p "$LOG_DIR"
+
+# Create log files
+CONSOLE_LOG="$LOG_DIR/console.log"
+SYSTEM_LOG="$LOG_DIR/system.log"
+
+echo "📋 Logging to directory: $LOG_DIR"
+echo "   Console output: console.log" 
+echo "   System logs: system.log"
 echo "📋 Press Ctrl+C to stop..."
 echo "========================================"
 echo ""

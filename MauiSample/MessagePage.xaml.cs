@@ -37,7 +37,7 @@ public partial class MessagePage : ContentPage
     {
         LoadFinished?.Invoke(this, args);
 
-        Airship.Instance.MarkMessageRead(MessageId);
+        AirshipDotNet.Airship.Instance.MarkMessageRead(MessageId);
     }
 
     void MessageView_Closed(object sender, MessageClosedEventArgs args) =>

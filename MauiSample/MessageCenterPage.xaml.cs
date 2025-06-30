@@ -28,7 +28,7 @@ public partial class MessageCenterPage : ContentPage
 
     public void Refresh()
     {
-        Airship.Instance.InboxMessages(messages =>
+        AirshipDotNet.Airship.Instance.InboxMessages(messages =>
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
