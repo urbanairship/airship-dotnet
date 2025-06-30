@@ -7,10 +7,47 @@ using AirshipDotNet.Attributes;
 
 namespace AirshipDotNet
 {
+    // Internal delegate classes for SDK 19 compatibility
+    internal class AirshipDeepLinkDelegate : global::Airship.UADeepLinkDelegate
+    {
+        private readonly Action<string> handler;
+
+        public AirshipDeepLinkDelegate(Action<string> handler)
+        {
+            this.handler = handler;
+        }
+
+        public override void CompletionHandler(NSUrl deepLink, Action completionHandler)
+        {
+            handler?.Invoke(deepLink.AbsoluteString!);
+            completionHandler();
+        }
+    }
+
+    internal class AirshipMessageCenterDisplayDelegate : global::Airship.UAMessageCenterDisplayDelegate
+    {
+        private readonly Action<string?> handler;
+
+        public AirshipMessageCenterDisplayDelegate(Action<string?> handler)
+        {
+            this.handler = handler;
+        }
+
+        public override void DisplayMessageCenter()
+        {
+            handler?.Invoke(null);
+        }
+
+        public override void DisplayMessageCenterForMessageID(string messageID)
+        {
+            handler?.Invoke(messageID);
+        }
+    }
+
     /// <summary>
     /// Provides cross-platform access to a common subset of functionality between the iOS and Android SDKs
     /// </summary>
-    public class Airship : UADeepLinkDelegate, IAirship
+    public class Airship : NSObject, IAirship
     {
         private static readonly Lazy<Airship> sharedAirship = new(() =>
         {
@@ -21,19 +58,12 @@ namespace AirshipDotNet
 
         private void Initialize()
         {
-            // Load unreferenced modules
-            // AirshipAutomation.Init() - not available in SDK 19 ObjectiveC bindings
-
-            // TODO: SDK 19 Compatibility - UAirshipNotificationChannelCreated doesn't exist
-            // Channel creation notification has been removed in SDK 19
-            // Need to find alternative way to observe channel creation events
-            /*
+            // Channel creation notification
             NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)UAirshipNotificationChannelCreated.Name, (notification) =>
             {
-                string channelID = notification.UserInfo[UAirshipNotificationChannelCreated.ChannelIDKey].ToString();
+                string channelID = notification.UserInfo?[UAirshipNotificationChannelCreated.ChannelIDKey]?.ToString() ?? "";
                 OnChannelCreation?.Invoke(this, new ChannelEventArgs(channelID));
             });
-            */
 
             // Note: Push notification status update event is not directly available in SDK 19
             // This functionality may need to be implemented differently using the new SDK APIs
@@ -56,6 +86,7 @@ namespace AirshipDotNet
         public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate;
 
         private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
+        private AirshipDeepLinkDelegate? deepLinkDelegate;
 
         /// <summary>
         /// Add/remove the deep link listener.
@@ -65,10 +96,14 @@ namespace AirshipDotNet
             add
             {
                 onDeepLinkReceived += value;
-                // TODO: SDK 19 Compatibility - UAirship.WeakDeepLinkDelegate is now an instance property
-                // UAirship is now a static class and doesn't have WeakDeepLinkDelegate property
-                // Deep link handling needs to be implemented differently in SDK 19
-                // UAirship.WeakDeepLinkDelegate = this;
+                if (deepLinkDelegate == null)
+                {
+                    deepLinkDelegate = new AirshipDeepLinkDelegate((deepLink) =>
+                    {
+                        onDeepLinkReceived?.Invoke(this, new DeepLinkEventArgs(deepLink));
+                    });
+                    UAirship.DeepLinkDelegate = deepLinkDelegate;
+                }
             }
             remove
             {
@@ -76,9 +111,8 @@ namespace AirshipDotNet
 
                 if (onDeepLinkReceived == null)
                 {
-                    // TODO: SDK 19 Compatibility - UAirship.WeakDeepLinkDelegate is now an instance property
-                    // UAirship is now a static class and doesn't have WeakDeepLinkDelegate property
-                    // UAirship.WeakDeepLinkDelegate = null;
+                    UAirship.DeepLinkDelegate = null;
+                    deepLinkDelegate = null;
                 }
             }
         }
@@ -89,6 +123,7 @@ namespace AirshipDotNet
         public event EventHandler? OnMessageCenterUpdated;
 
         private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
+        private AirshipMessageCenterDisplayDelegate? messageCenterDisplayDelegate;
 
         /// <summary>
         /// Add/remove the Message Center display listener.
@@ -98,8 +133,14 @@ namespace AirshipDotNet
             add
             {
                 onMessageCenterDisplay += value;
-                // TODO: SDK 19 Compatibility - UAirship.MessageCenter doesn't exist
-                // UAirship.MessageCenter.WeakDisplayDelegate = this;
+                if (messageCenterDisplayDelegate == null)
+                {
+                    messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
+                    {
+                        onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
+                    });
+                    UAirship.MessageCenter.DisplayDelegate = messageCenterDisplayDelegate;
+                }
             }
             remove
             {
@@ -107,8 +148,8 @@ namespace AirshipDotNet
 
                 if (onMessageCenterDisplay == null)
                 {
-                    // TODO: SDK 19 Compatibility - UAirship.MessageCenter doesn't exist
-                    // UAirship.MessageCenter.WeakDisplayDelegate = null;
+                    UAirship.MessageCenter.DisplayDelegate = null;
+                    messageCenterDisplayDelegate = null;
                 }
             }
         }
@@ -293,32 +334,45 @@ namespace AirshipDotNet
 
         public void FetchChannelSubscriptionLists(Action<List<string>> subscriptions)
         {
-            // TODO: SDK 19 Compatibility - UAChannel.FetchSubscriptionListsWithCompletionHandler doesn't exist
-            // This method has been removed in SDK 19
-            // Channel subscription lists functionality may need to be accessed differently
-            /*
-            UAirship.Channel.FetchSubscriptionListsWithCompletionHandler((lists, error) =>
+            UAirship.Channel.FetchSubscriptionListsWithCompletion((lists, error) =>
             {
                 var list = new List<string>();
-                if (lists is not null)
+                if (lists != null)
                 {
                     for (nuint i = 0; i < lists.Count; i++)
                     {
-                        var subscription = lists.GetItem<NSString>(i);
-                        list.Add(subscription.ToString());
+                        var item = lists.GetItem<NSString>(i);
+                        list.Add(item.ToString());
                     }
                 }
                 subscriptions(list);
             });
-            */
-            subscriptions(new List<string>());
         }
 
         public void FetchContactSubscriptionLists(Action<Dictionary<string, List<String>>> subscriptions)
         {
-            // TODO: FetchSubscriptionListsWithCompletionHandler not exposed in SDK 19 ObjectiveC bindings
-            // This functionality needs to be added to the ObjectiveC framework
-            subscriptions(new Dictionary<string, List<string>>());
+            UAirship.Contact.FetchSubscriptionListsWithCompletionHandler((lists, error) =>
+            {
+                var result = new Dictionary<string, List<string>>();
+                if (lists != null)
+                {
+                    foreach (var kvp in lists)
+                    {
+                        var list = new List<string>();
+                        var scopes = kvp.Value as NSArray;
+                        if (scopes != null)
+                        {
+                            for (nuint i = 0; i < scopes.Count; i++)
+                            {
+                                var scope = scopes.GetItem<NSString>(i);
+                                list.Add(scope.ToString());
+                            }
+                        }
+                        result.Add(kvp.Key.ToString(), list);
+                    }
+                }
+                subscriptions(result);
+            });
         }
 
         private string ScopeOrdinalToString(NSNumber ordinal)
@@ -331,27 +385,24 @@ namespace AirshipDotNet
                 _ => "unknown",
             };
 
-        public string? ChannelId => UAirship.Channel.Identifier;
+        public string ChannelId => UAirship.Channel.Identifier ?? "";
 
         public void GetNamedUser(Action<string> namedUser)
         {
-            // TODO: GetNamedUserIDWithCompletionHandler not exposed in SDK 19 ObjectiveC bindings
-            // This functionality needs to be added to the ObjectiveC framework
-            namedUser("");
+            UAirship.Contact.GetNamedUserIDWithCompletionHandler((id, error) =>
+            {
+                namedUser(id ?? "");
+            });
         }
 
         public void ResetContact()
         {
-            // TODO: SDK 19 Compatibility - UAirship.Contact is now async
-            // Need to handle async Contact access properly
-            // UAirship.Contact.Reset();
+            UAirship.Contact.Reset();
         }
 
         public void IdentifyContact(string namedUserId)
         {
-            // TODO: SDK 19 Compatibility - UAirship.Contact is now async
-            // Need to handle async Contact access properly
-            // UAirship.Contact.Identify(namedUserId);
+            UAirship.Contact.Identify(namedUserId);
         }
 
         public Channel.TagEditor EditDeviceTags() => new(DeviceTagHelper);
@@ -419,7 +470,6 @@ namespace AirshipDotNet
 
             if (customEvent.PropertyList != null)
             {
-                NSMutableDictionary<NSString, NSObject> propertyDictionary = new();
                 foreach (dynamic property in customEvent.PropertyList)
                 {
                     if (string.IsNullOrEmpty(property.Name))
@@ -427,61 +477,52 @@ namespace AirshipDotNet
                         continue;
                     }
 
-                    NSString key = (NSString)property.Name;
-                    NSObject? value = NSObject.FromObject(property.Value);
-
-                    if (property is CustomEvent.Property<string[]> stringArrayProperty)
-                    {
-                        value = NSArray.FromObjects(stringArrayProperty.Value);
-                    }
-                    if (value != null)
-                    {
-                        propertyDictionary.SetValueForKey(value, key);
-                    }
-
-                }
-                // TODO: SDK 19 Compatibility - SetPropertyWithBool/Double/String methods don't exist
-                // UACustomEvent now uses a different API for setting properties
-                // The Properties property might be available, or need to use a different approach
-                /*
-                foreach (var kvp in propertyDictionary)
-                {
-                    var key = kvp.Key.ToString();
-                    var value = kvp.Value;
+                    string key = property.Name;
                     
-                    if (value is NSNumber number)
+                    if (property is CustomEvent.Property<string> stringProperty)
                     {
-                        if (number.ObjCType == "c") // bool
-                            uaEvent.SetPropertyWithBool(number.BoolValue, key);
-                        else
-                            uaEvent.SetPropertyWithDouble(number.DoubleValue, key);
+                        uaEvent.SetPropertyWithString(stringProperty.Value, key);
                     }
-                    else if (value is NSString str)
+                    else if (property is CustomEvent.Property<bool> boolProperty)
                     {
-                        uaEvent.SetPropertyWithString(str.ToString(), key);
+                        uaEvent.SetPropertyWithBool(boolProperty.Value, key);
+                    }
+                    else if (property is CustomEvent.Property<int> intProperty)
+                    {
+                        uaEvent.SetPropertyWithDouble(intProperty.Value, key);
+                    }
+                    else if (property is CustomEvent.Property<long> longProperty)
+                    {
+                        uaEvent.SetPropertyWithDouble(longProperty.Value, key);
+                    }
+                    else if (property is CustomEvent.Property<float> floatProperty)
+                    {
+                        uaEvent.SetPropertyWithDouble(floatProperty.Value, key);
+                    }
+                    else if (property is CustomEvent.Property<double> doubleProperty)
+                    {
+                        uaEvent.SetPropertyWithDouble(doubleProperty.Value, key);
+                    }
+                    else if (property is CustomEvent.Property<string[]> stringArrayProperty)
+                    {
+                        // Arrays need to be set as JSON values
+                        NSArray array = NSArray.FromObjects(stringArrayProperty.Value);
+                        NSError? error;
+                        uaEvent.SetPropertyWithValue(array, key, out error);
                     }
                 }
-                */
-                // For now, properties are not being set due to API changes
             }
 
-            // TODO: SDK 19 Compatibility - UAAnalytics.RecordCustomEvent doesn't exist
-            // The method has been renamed or moved in SDK 19
-            // Need to find the new API for recording custom events
-            // UAirship.Analytics.RecordCustomEvent(uaEvent);
+            UAirship.Analytics.RecordCustomEvent(uaEvent);
         }
 
         public void TrackScreen(string screen) => UAirship.Analytics.TrackScreen(screen);
 
         public void AssociateIdentifier(string key, string identifier)
         {
-            // TODO: SDK 19 Compatibility - UAAnalytics.AssociateDeviceIdentifier doesn't exist
-            // Need to find new API for associating device identifiers
-            /*
             UAAssociatedIdentifiers identifiers = UAirship.Analytics.CurrentAssociatedDeviceIdentifiers;
             identifiers.SetWithIdentifier(identifier, key);
             UAirship.Analytics.AssociateDeviceIdentifier(identifiers);
-            */
         }
 
 
@@ -641,12 +682,8 @@ namespace AirshipDotNet
 
         private void ApplyChannelAttributesOperations(List<AttributeEditor.IAttributeOperation> operations)
         {
-            // TODO: SDK 19 Compatibility - UAChannel.EditAttributesWithBlock doesn't exist
-            // Need to use new EditAttributes API pattern
-            /*
-            UAirship.Channel.EditAttributesWithBlock(editor =>
-            {
-                foreach (var operation in operations)
+            var editor = UAirship.Channel.EditAttributes;
+            foreach (var operation in operations)
             {
                 if (operation is AttributeEditor.SetAttributeOperation<string> stringOperation)
                 {
@@ -685,15 +722,10 @@ namespace AirshipDotNet
                 }
             }
             editor.Apply();
-            });
-            */
         }
 
         private void ApplyContactAttributesOperations(List<AttributeEditor.IAttributeOperation> operations)
         {
-            // TODO: SDK 19 Compatibility - UAirship.Contact is now async
-            // Need to handle async Contact access properly
-            /*
             var editor = UAirship.Contact.EditAttributes;
             foreach (var operation in operations)
             {
@@ -734,177 +766,130 @@ namespace AirshipDotNet
                 }
             }
             editor.Apply();
-            */
         }
 
         private void ContactTagGroupHelper(List<Channel.TagGroupsEditor.TagOperation> operations)
         {
-            // TODO: SDK 19 Compatibility - UAContact.EditTagGroupsWithBlock doesn't exist
-            // Need to use new EditTagGroups API pattern
-            /*
-            UAirship.Contact.EditTagGroupsWithBlock(editor =>
+            var editor = UAirship.Contact.EditTagGroups;
+            var contactActions = new Dictionary<Channel.TagGroupsEditor.OperationType, Action<string, string[]>>()
             {
-                var contactActions = new Dictionary<Channel.TagGroupsEditor.OperationType, Action<string, string[]>>()
-                {
-                    { Channel.TagGroupsEditor.OperationType.ADD, (group, t) => editor.AddTags(t, group) },
-                    { Channel.TagGroupsEditor.OperationType.REMOVE, (group, t) => editor.RemoveTags(t, group) },
-                    { Channel.TagGroupsEditor.OperationType.SET, (group, t) => editor.SetTags(t, group) }
-                };
+                { Channel.TagGroupsEditor.OperationType.ADD, (group, t) => editor.AddTags(t, group) },
+                { Channel.TagGroupsEditor.OperationType.REMOVE, (group, t) => editor.RemoveTags(t, group) },
+                { Channel.TagGroupsEditor.OperationType.SET, (group, t) => editor.SetTags(t, group) }
+            };
 
-                foreach (Channel.TagGroupsEditor.TagOperation operation in operations)
+            foreach (Channel.TagGroupsEditor.TagOperation operation in operations)
+            {
+                if (!Enum.IsDefined(typeof(Channel.TagGroupsEditor.OperationType), operation.operationType))
                 {
-                    if (!Enum.IsDefined(typeof(Channel.TagGroupsEditor.OperationType), operation.operationType))
-                    {
-                        continue;
-                    }
-
-                    string[] tagArray = new string[operation.tags.Count];
-                    operation.tags.CopyTo(tagArray, 0);
-                    contactActions[operation.operationType](operation.group, tagArray);
+                    continue;
                 }
 
-                editor.Apply();
-            });
-            */
+                string[] tagArray = new string[operation.tags.Count];
+                operation.tags.CopyTo(tagArray, 0);
+                contactActions[operation.operationType](operation.group, tagArray);
+            }
+
+            editor.Apply();
         }
 
         private void ChannelTagGroupHelper(List<Channel.TagGroupsEditor.TagOperation> operations, Action finished)
         {
-            // TODO: SDK 19 Compatibility - UAChannel doesn't have EditTagGroupsWithBlock
-            // Channel tag groups functionality may have been moved or removed
-            /*
-            UAirship.Channel.EditTagGroupsWithBlock(editor =>
+            var editor = UAirship.Channel.EditTagGroups;
+            var channelActions = new Dictionary<Channel.TagGroupsEditor.OperationType, Action<string, string[]>>()
             {
-                var channelActions = new Dictionary<Channel.TagGroupsEditor.OperationType, Action<string, string[]>>()
-                {
-                    { Channel.TagGroupsEditor.OperationType.ADD, (group, t) => editor.AddTags(t, group) },
-                    { Channel.TagGroupsEditor.OperationType.REMOVE, (group, t) => editor.RemoveTags(t, group) },
-                    { Channel.TagGroupsEditor.OperationType.SET, (group, t) => editor.SetTags(t, group) }
-                };
+                { Channel.TagGroupsEditor.OperationType.ADD, (group, t) => editor.AddTags(t, group) },
+                { Channel.TagGroupsEditor.OperationType.REMOVE, (group, t) => editor.RemoveTags(t, group) },
+                { Channel.TagGroupsEditor.OperationType.SET, (group, t) => editor.SetTags(t, group) }
+            };
 
-                foreach (Channel.TagGroupsEditor.TagOperation operation in operations)
+            foreach (Channel.TagGroupsEditor.TagOperation operation in operations)
+            {
+                if (!Enum.IsDefined(typeof(Channel.TagGroupsEditor.OperationType), operation.operationType))
                 {
-                    if (!Enum.IsDefined(typeof(Channel.TagGroupsEditor.OperationType), operation.operationType))
-                    {
-                        continue;
-                    }
-
-                    string[] tagArray = new string[operation.tags.Count];
-                    operation.tags.CopyTo(tagArray, 0);
-                    channelActions[operation.operationType](operation.group, tagArray);
+                    continue;
                 }
 
-                editor.Apply();
-                finished();
-            });
-            */
+                string[] tagArray = new string[operation.tags.Count];
+                operation.tags.CopyTo(tagArray, 0);
+                channelActions[operation.operationType](operation.group, tagArray);
+            }
+
+            editor.Apply();
             finished();
         }
 
         private void ApplyChannelSubscriptionListHelper(List<Channel.SubscriptionListEditor.SubscriptionListOperation> operations)
         {
-            // TODO: SDK 19 Compatibility - UAChannel.EditSubscriptionListsWithBlock doesn't exist
-            // Need to use new EditSubscriptionLists API pattern
-            /*
-            UAirship.Channel.EditSubscriptionListsWithBlock(editor =>
+            var editor = UAirship.Channel.EditSubscriptionLists;
+            foreach (var operation in operations)
             {
-                foreach (var operation in operations)
+                if (!Enum.IsDefined(typeof(Channel.SubscriptionListEditor.OperationType), operation.OperationType))
                 {
-                    if (!Enum.IsDefined(typeof(Channel.SubscriptionListEditor.OperationType), operation.OperationType))
-                    {
-                        continue;
-                    }
-
-                    switch (operation.OperationType)
-                    {
-                        case Channel.SubscriptionListEditor.OperationType.SUBSCRIBE:
-                            editor.Subscribe(operation.List);
-                            break;
-                        case Channel.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
-                            editor.Unsubscribe(operation.List);
-                            break;
-                    }
+                    continue;
                 }
 
-                editor.Apply();
-            });
-            */
+                switch (operation.OperationType)
+                {
+                    case Channel.SubscriptionListEditor.OperationType.SUBSCRIBE:
+                        editor.Subscribe(operation.List);
+                        break;
+                    case Channel.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
+                        editor.Unsubscribe(operation.List);
+                        break;
+                }
+            }
+
+            editor.Apply();
         }
 
         private void ApplyContactSubscriptionListHelper(List<Contact.SubscriptionListEditor.SubscriptionListOperation> operations)
         {
-            // TODO: SDK 19 Compatibility - UAContact.EditSubscriptionListsWithBlock doesn't exist
-            // Need to use new EditSubscriptionLists API pattern
-            /*
-            UAirship.Contact.EditSubscriptionListsWithBlock(editor =>
+            var editor = UAirship.Contact.EditSubscriptionLists;
+            foreach (var operation in operations)
             {
-
-                foreach (var operation in operations)
+                if (!Enum.IsDefined(typeof(Contact.SubscriptionListEditor.OperationType), operation.OperationType))
                 {
-                    if (!Enum.IsDefined(typeof(Contact.SubscriptionListEditor.OperationType), operation.OperationType))
-                    {
-                        continue;
-                    }
-
-                    string scope = operation.Scope;
-                    string[] scopes = { "app", "web", "email", "sms" };
-                    if (scopes.Any(scope.Contains))
-                    {
-                        UAChannelScope channelScope = UAChannelScope.App;
-                        if (operation.Scope == "app")
-                        {
-                            channelScope = UAChannelScope.App;
-                        }
-                        else if (operation.Scope == "web")
-                        {
-                            channelScope = UAChannelScope.Web;
-                        }
-                        else if (operation.Scope == "email")
-                        {
-                            channelScope = UAChannelScope.Email;
-                        }
-                        else if (operation.Scope == "sms")
-                        {
-                            channelScope = UAChannelScope.Sms;
-                        }
-
-                        switch (operation.OperationType)
-                        {
-                            case Contact.SubscriptionListEditor.OperationType.SUBSCRIBE:
-                                editor.Subscribe(operation.List, channelScope);
-                                break;
-                            case Contact.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
-                                editor.Unsubscribe(operation.List, channelScope);
-                                break;
-                        }
-                    }
+                    continue;
                 }
 
-                editor.Apply();
-            });
-            */
+                string scope = operation.Scope;
+                string[] scopes = { "app", "web", "email", "sms" };
+                if (scopes.Any(scope.Contains))
+                {
+                    UAChannelScope channelScope = UAChannelScope.App;
+                    if (operation.Scope == "app")
+                    {
+                        channelScope = UAChannelScope.App;
+                    }
+                    else if (operation.Scope == "web")
+                    {
+                        channelScope = UAChannelScope.Web;
+                    }
+                    else if (operation.Scope == "email")
+                    {
+                        channelScope = UAChannelScope.Email;
+                    }
+                    else if (operation.Scope == "sms")
+                    {
+                        channelScope = UAChannelScope.Sms;
+                    }
+
+                    switch (operation.OperationType)
+                    {
+                        case Contact.SubscriptionListEditor.OperationType.SUBSCRIBE:
+                            editor.Subscribe(operation.List, channelScope);
+                            break;
+                        case Contact.SubscriptionListEditor.OperationType.UNSUBSCRIBE:
+                            editor.Unsubscribe(operation.List, channelScope);
+                            break;
+                    }
+                }
+            }
+
+            editor.Apply();
         }
 
-        public void ReceivedDeepLink(NSUrl deepLink, Action completionHandler)
-        {
-            onDeepLinkReceived?.Invoke(this, new DeepLinkEventArgs(deepLink.AbsoluteString!));
-            completionHandler();
-        }
-
-        // TODO: SDK 19 Compatibility - IUAMessageCenterDisplayDelegate causes type encoding crash
-        // "Unsupported type encoding: <v@?@"NSError">16"
-        // Message center delegate functionality temporarily disabled
-        /*
-        // IUAMessageCenterDisplayDelegate implementation
-        public void DisplayMessageCenterForMessageID(string messageID) => onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageID));
-
-        public void DisplayMessageCenter() => onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs());
-
-        public void DismissMessageCenter()
-        {
-            // Handle message center dismissal if needed
-        }
-        */
 
         public bool InAppAutomationPaused
         {

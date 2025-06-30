@@ -64,7 +64,7 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
                 nativeBridgeDelegate = new(this);
                 navigationDelegate = new(this);
 
-                nativeBridge = new()
+                /* nativeBridge = new()
                 {
                     ForwardNavigationDelegate = navigationDelegate,
                     NativeBridgeDelegate = nativeBridgeDelegate,
