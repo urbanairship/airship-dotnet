@@ -51,12 +51,9 @@ public class AppDelegate : MauiUIApplicationDelegate
         Console.WriteLine("✅✅✅ END INITIALIZATION ✅✅✅");
 
 
-        UAirship.Push.ResetBadgeWithCompletionHandler((error) =>
+        UAirship.Push.ResetBadgeSync(() =>
         {
-            if (error != null)
-            {
-                Console.WriteLine($"Failed to reset badge: {error.LocalizedDescription}");
-            }
+            Console.WriteLine("Badge reset completed");
         });
 
         return base.FinishedLaunching(application, launchOptions);

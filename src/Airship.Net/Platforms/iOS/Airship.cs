@@ -334,7 +334,7 @@ namespace AirshipDotNet
 
         public void FetchChannelSubscriptionLists(Action<List<string>> subscriptions)
         {
-            UAirship.Channel.FetchSubscriptionListsWithCompletion((lists, error) =>
+            UAirship.Channel.FetchSubscriptionListsSync((lists, error) =>
             {
                 var list = new List<string>();
                 if (lists != null)
@@ -351,7 +351,7 @@ namespace AirshipDotNet
 
         public void FetchContactSubscriptionLists(Action<Dictionary<string, List<String>>> subscriptions)
         {
-            UAirship.Contact.FetchSubscriptionListsWithCompletionHandler((lists, error) =>
+            UAirship.Contact.FetchSubscriptionListsSync((lists, error) =>
             {
                 var result = new Dictionary<string, List<string>>();
                 if (lists != null)
@@ -389,7 +389,7 @@ namespace AirshipDotNet
 
         public void GetNamedUser(Action<string> namedUser)
         {
-            UAirship.Contact.GetNamedUserIDWithCompletionHandler((id, error) =>
+            UAirship.Contact.GetNamedUserIDSync((id, error) =>
             {
                 namedUser(id ?? "");
             });

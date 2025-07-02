@@ -64,10 +64,10 @@ cd "$PROJECT_DIR"
 
 # Clean previous builds to ensure fresh build
 echo "🧹 Cleaning previous builds..."
-dotnet clean -f net8.0-ios
+dotnet clean MauiSample.csproj -f net8.0-ios
 
 # Build the app
-dotnet build -f net8.0-ios \
+dotnet build MauiSample.csproj -f net8.0-ios \
     -p:RuntimeIdentifier=iossimulator-arm64 \
     -p:CodesignProvision="dotnet-maui-sample-profile"
 
