@@ -9,12 +9,13 @@ namespace UrbanAirship.MessageCenter
 {
 	public partial class User
 	{
-		private Dictionary<Action<bool>, Listener> eventHandlers = new Dictionary<Action<bool>, Listener>();
+		private Dictionary<Action<bool>, Listener> eventHandlers = new();
+		
 		public event Action<bool> OnUserUpdated
 		{
 			add
 			{
-				Listener listener = new Listener(value);
+				var listener = new Listener(value);
 				AddListener(listener);
 				eventHandlers.Add(value, listener);
 			}
@@ -29,23 +30,9 @@ namespace UrbanAirship.MessageCenter
 			}
 		}
 
-		internal class Listener : Java.Lang.Object, IListener
+		internal class Listener(Action<bool> listener) : Java.Lang.Object, IListener
 		{
-			Action<bool> listener;
-
-			public Listener(Action<bool> listener)
-			{
-				this.listener = listener;
-			}
-
-			public void OnUserUpdated(bool success)
-			{
-				if (listener != null)
-				{
-					listener.Invoke(success);
-				}
-			}
+			public void OnUserUpdated(bool success) => listener.Invoke(success);
 		}
-
 	}
 }

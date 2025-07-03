@@ -12,23 +12,23 @@ public partial class FeaturesViewController : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        enabledPushFeatureSwitch.On = Airship.Instance.IsFeatureEnabled(Features.Push);
-        enableMessageCenterFeatureSwitch.On = Airship.Instance.IsFeatureEnabled(Features.MessageCenter);
-        enableInAppAutomationFeatureSwitch.On = Airship.Instance.IsFeatureEnabled(Features.InAppAutomation);
-        EnableAnalyticsFeatureSwitch.On = Airship.Instance.IsFeatureEnabled(Features.Analytics);
-        enableTagsAndAttributesFeatureSwitch.On = Airship.Instance.IsFeatureEnabled(Features.TagsAndAttributes);
-        enableContactsFeatureSwitch.On = Airship.Instance.IsFeatureEnabled(Features.Contacts);
+        enabledPushFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.Push);
+        enableMessageCenterFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.MessageCenter);
+        enableInAppAutomationFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.InAppAutomation);
+        EnableAnalyticsFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.Analytics);
+        enableTagsAndAttributesFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.TagsAndAttributes);
+        enableContactsFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.Contacts);
     }
 
     void enablePushFeature_OnChanged(object sender, EventArgs e)
     {
         if (enabledPushFeatureSwitch.On)
         {
-            Airship.Instance.EnableFeatures(Features.Push);
+            AirshipDotNet.Airship.Instance.EnableFeatures(Features.Push);
         }
         else
         {
-            Airship.Instance.DisableFeatures(Features.Push);
+            AirshipDotNet.Airship.Instance.DisableFeatures(Features.Push);
         }
     }
 
@@ -36,11 +36,11 @@ public partial class FeaturesViewController : ContentPage
     {
         if (enableMessageCenterFeatureSwitch.On)
         {
-            Airship.Instance.EnableFeatures(Features.MessageCenter);
+            AirshipDotNet.Airship.Instance.EnableFeatures(Features.MessageCenter);
         }
         else
         {
-            Airship.Instance.DisableFeatures(Features.MessageCenter);
+            AirshipDotNet.Airship.Instance.DisableFeatures(Features.MessageCenter);
         }
     }
 
@@ -48,11 +48,11 @@ public partial class FeaturesViewController : ContentPage
     {
         if (enableInAppAutomationFeatureSwitch.On)
         {
-            Airship.Instance.EnableFeatures(Features.InAppAutomation);
+            AirshipDotNet.Airship.Instance.EnableFeatures(Features.InAppAutomation);
         }
         else
         {
-            Airship.Instance.DisableFeatures(Features.InAppAutomation);
+            AirshipDotNet.Airship.Instance.DisableFeatures(Features.InAppAutomation);
         }
     }
 
@@ -60,11 +60,11 @@ public partial class FeaturesViewController : ContentPage
     {
         if (EnableAnalyticsFeatureSwitch.On)
         {
-            Airship.Instance.EnableFeatures(Features.Analytics);
+            AirshipDotNet.Airship.Instance.EnableFeatures(Features.Analytics);
         }
         else
         {
-            Airship.Instance.DisableFeatures(Features.Analytics);
+            AirshipDotNet.Airship.Instance.DisableFeatures(Features.Analytics);
         }
     }
 
@@ -72,11 +72,11 @@ public partial class FeaturesViewController : ContentPage
     {
         if (enableTagsAndAttributesFeatureSwitch.On)
         {
-            Airship.Instance.EnableFeatures(Features.TagsAndAttributes);
+            AirshipDotNet.Airship.Instance.EnableFeatures(Features.TagsAndAttributes);
         }
         else
         {
-            Airship.Instance.DisableFeatures(Features.TagsAndAttributes);
+            AirshipDotNet.Airship.Instance.DisableFeatures(Features.TagsAndAttributes);
         }
     }
 
@@ -84,11 +84,11 @@ public partial class FeaturesViewController : ContentPage
     {
         if (enableContactsFeatureSwitch.On)
         {
-            Airship.Instance.EnableFeatures(Features.Contacts);
+            AirshipDotNet.Airship.Instance.EnableFeatures(Features.Contacts);
         }
         else
         {
-            Airship.Instance.DisableFeatures(Features.Contacts);
+            AirshipDotNet.Airship.Instance.DisableFeatures(Features.Contacts);
         }
     }
 

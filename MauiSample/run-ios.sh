@@ -26,6 +26,17 @@ if [[ ! -f "$PROJECT_DIR/MauiSample.csproj" ]]; then
     exit 1
 fi
 
+# Check UseProjectReferences setting
+USE_PROJECT_REFS=$(grep -o '<UseProjectReferences>.*</UseProjectReferences>' MauiSample.csproj | sed 's/<[^>]*>//g')
+
+if [[ "$USE_PROJECT_REFS" = "true" ]]; then
+    echo "✅ Using project references (development mode)"
+    echo "   SDK changes will be built automatically with the sample app"
+else
+    echo "⚠️  Using NuGet packages"
+    echo "   To use project references for development, set UseProjectReferences=true in MauiSample.csproj"
+fi
+
 # Get booted iPhone/iPad simulators only (excluding Apple TV, Apple Watch, etc.)
 BOOTED_IOS_DEVICES=$(xcrun simctl list devices | grep -E "iPhone|iPad" | grep "(Booted)" | awk -F'[()]' '{print $(NF-1)}')
 
@@ -51,8 +62,12 @@ fi
 echo "🏗️  Building iOS app..."
 cd "$PROJECT_DIR"
 
+# Clean previous builds to ensure fresh build
+echo "🧹 Cleaning previous builds..."
+dotnet clean MauiSample.csproj -f net8.0-ios
+
 # Build the app
-dotnet build -f net8.0-ios \
+dotnet build MauiSample.csproj -f net8.0-ios \
     -p:RuntimeIdentifier=iossimulator-arm64 \
     -p:CodesignProvision="dotnet-maui-sample-profile"
 
@@ -64,19 +79,31 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
+# Uninstall existing app to ensure clean state
+echo "🗑️  Uninstalling existing app..."
+xcrun simctl uninstall "$DEVICE_ID" com.urbanairship.richpush 2>/dev/null || true
+
 echo "📱 Installing app to simulator (Device: $DEVICE_ID)..."
 xcrun simctl install "$DEVICE_ID" "$PROJECT_DIR/bin/Debug/net8.0-ios/iossimulator-arm64/MauiSample.app"
 
 echo "🚀 Launching app..."
 
-# Create log files with timestamp
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-CONSOLE_LOG="$SCRIPT_DIR/ios-console-log-$TIMESTAMP.log"
-SYSTEM_LOG="$SCRIPT_DIR/ios-system-log-$TIMESTAMP.log"
+# Create log directory with PST timestamp
+LOG_BASE_DIR="$SCRIPT_DIR/Sample Run Logs"
+mkdir -p "$LOG_BASE_DIR"
 
-echo "📋 Logging to:"
-echo "   Console output: $CONSOLE_LOG" 
-echo "   System logs: $SYSTEM_LOG"
+# Get PST timestamp (TZ=America/Los_Angeles ensures PST/PDT)
+PST_TIMESTAMP=$(TZ=America/Los_Angeles date +"%Y-%m-%d_%H-%M-%S_PST")
+LOG_DIR="$LOG_BASE_DIR/$PST_TIMESTAMP"
+mkdir -p "$LOG_DIR"
+
+# Create log files
+CONSOLE_LOG="$LOG_DIR/console.log"
+SYSTEM_LOG="$LOG_DIR/system.log"
+
+echo "📋 Logging to directory: $LOG_DIR"
+echo "   Console output: console.log" 
+echo "   System logs: system.log"
 echo "📋 Press Ctrl+C to stop..."
 echo "========================================"
 echo ""

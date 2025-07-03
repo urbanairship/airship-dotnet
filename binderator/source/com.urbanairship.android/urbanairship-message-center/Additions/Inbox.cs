@@ -2,16 +2,16 @@
  Copyright Airship and Contributors
 */
 
-using System;
-using System.Collections.Generic;
-
 using Android.OS;
+using UrbanAirship;
+using IList = Java.Util.IList;
 
 namespace UrbanAirship.MessageCenter
 {
     public partial class Inbox
 	{
-		private Dictionary<Action, Listener> eventHandlers = new Dictionary<Action, Listener>();
+		private readonly Dictionary<Action, Listener> eventHandlers = new();
+		
 		public event Action OnInboxUpdated
 		{
 			add
@@ -31,75 +31,91 @@ namespace UrbanAirship.MessageCenter
 			}
 		}
 
-		public ICancelable FetchMessages(Action<bool> callback)
-		{
-			return FetchMessages(new FetchMessagesCallback (callback));
-		}
+		public ICancelable FetchMessages(Action<bool> callback) => FetchMessages(new FetchMessagesCallback(callback));
 
-		public ICancelable FetchMessages(Action<bool> callback, Looper looper)
+		public ICancelable FetchMessages(Looper looper, Action<bool> callback)
 		{
 			return FetchMessages(looper, new FetchMessagesCallback (callback));
 		}
 
-		public IList<Message> GetMessages(Func<Message, bool> predicate) {
-			return GetMessages (new Predicate (predicate));
-		}
-
-        internal class Listener : Java.Lang.Object, IInboxListener
+		public void GetMessages(Action<List<Message>> callback)
 		{
-			Action listener;
-
-			public Listener(Action listener)
-			{
-				this.listener = listener;
-			}
-
-			public void OnInboxUpdated()
-			{
-				if (listener != null)
-				{
-					listener.Invoke();
-				}
-			}
+			var pendingMessages = GetMessagesPendingResult(null);
+			pendingMessages.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke(CastToList(result)))
+			);
 		}
-
-		internal class FetchMessagesCallback : Java.Lang.Object, IFetchMessagesCallback
+		
+		public void GetMessages(Func<Message, bool> predicate, Action<List<Message>> callback)
 		{
-			Action<bool> callback;
-			public FetchMessagesCallback(Action<bool> callback)
-			{
-				this.callback = callback;
-			}
-
-			public void OnFinished (bool success) {
-				if (callback != null)
-				{
-					callback.Invoke (success);
-				}
-			}
+			var pendingMessages = GetMessagesPendingResult(new Predicate(predicate));
+			pendingMessages.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke(CastToList(result)))
+			);
 		}
-
-		public class Predicate : Java.Lang.Object, IPredicate
+		
+		public void GetMessage(string messageId, Action<Message?> callback)
 		{
-			Func<Message, bool> predicate;
+			var pendingMessage = GetMessagePendingResult(messageId);
+			pendingMessage.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke((Message?)result))
+			);
+		}
+		
+		public void GetUnreadCount(Action<int> callback) => UnreadCountPendingResult.AddResultCallback(
+			new ResultCallback((result) => callback.Invoke(((Java.Lang.Integer)result!).IntValue()))
+		);
 
-			public Predicate(Func<Message, bool> predicate)
-			{
-				this.predicate = predicate;
-			}
-
-			public bool Apply (Message message) {
-				if (predicate != null)
-				{
-					return predicate.Invoke (message);
-				}
-				return true;
-			}
-
-            public bool Apply(Java.Lang.Object p0)
-            {
-                throw new NotImplementedException();
-            }
+		public void GetCount(Action<int> callback) => CountPendingResult.AddResultCallback(
+			new ResultCallback((result) => callback.Invoke(((Java.Lang.Integer)result!).IntValue()))
+		);
+		
+		public void GetUnreadMessages(Action<List<Message>> callback)
+		{
+			var pendingMessages = GetUnreadMessagesPendingResult(null);
+			pendingMessages.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke(CastToList(result)))
+			);
+		}
+		
+		public void GetReadMessages(Action<List<Message>> callback)
+		{
+			var pendingMessages = GetReadMessagesPendingResult(null);
+			pendingMessages.AddResultCallback(
+				new ResultCallback((result) => callback.Invoke(CastToList(result)))
+			);
+		}
+		
+		public void GetReadCount(Action<int> callback) => ReadCountPendingResult.AddResultCallback(
+			new ResultCallback((result) => callback.Invoke(((Java.Lang.Integer)result!).IntValue()))
+		);
+		
+		internal class Listener(Action listener) : Java.Lang.Object, IInboxListener
+        {
+	        public void OnInboxUpdated() => listener.Invoke();
         }
+
+		internal class FetchMessagesCallback(Action<bool> callback) : Java.Lang.Object, IFetchMessagesCallback
+		{
+			public void OnFinished (bool success) => callback.Invoke (success);
+		}
+
+		public class Predicate(Func<Message, bool> predicate) : Java.Lang.Object, IPredicate
+		{
+			public bool Apply(Message message) => predicate.Invoke (message);
+
+			public bool Apply(Java.Lang.Object p0) => throw new NotImplementedException();
+		}
+		
+		private List<Message> CastToList(Java.Lang.Object? result)
+		{
+			var list = new List<Message>();
+
+			var enumerable = (result as IList)?.ToEnumerable();
+			if (enumerable == null) return list;
+
+			list.AddRange(enumerable.Cast<Message>());
+			return list;
+		}
 	}
 }

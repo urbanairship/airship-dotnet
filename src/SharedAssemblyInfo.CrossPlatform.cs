@@ -12,5 +12,5 @@ using System.Runtime.CompilerServices;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("19.5.0")]
+[assembly: AssemblyVersion ("20.0.0")]
 
