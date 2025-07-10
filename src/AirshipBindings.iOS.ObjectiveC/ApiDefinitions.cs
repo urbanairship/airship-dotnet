@@ -292,12 +292,6 @@ namespace Airship
 		// -(void)enableChannelCreation;
 		[Export ("enableChannelCreation")]
 		void EnableChannelCreation ();
-
-		// MARK: - Xamarin Compatibility Methods
-
-		// -(void)fetchSubscriptionListsSyncWithCompletion:(void (^ _Nonnull)(NSArray<NSString *> * _Nullable, NSError * _Nullable))completion;
-		[Export ("fetchSubscriptionListsSyncWithCompletion:")]
-		void FetchSubscriptionListsSync (Action<NSArray, NSError> completion);
 	}
 
 	// @interface UAConfig : NSObject
@@ -497,16 +491,6 @@ namespace Airship
 		// -(void)getNamedUserIDWithCompletionHandler:(void (^ _Nonnull)(NSString * _Nullable, NSError * _Nullable))completionHandler;
 		[Export ("getNamedUserIDWithCompletionHandler:")]
 		void GetNamedUserIDWithCompletionHandler (Action<NSString, NSError> completionHandler);
-
-		// MARK: - Xamarin Compatibility Methods
-
-		// -(void)fetchSubscriptionListsSyncWithCompletion:(void (^ _Nonnull)(NSDictionary<NSString *,NSArray<NSString *> *> * _Nullable, NSError * _Nullable))completion;
-		[Export ("fetchSubscriptionListsSyncWithCompletion:")]
-		void FetchSubscriptionListsSync (Action<NSDictionary, NSError> completion);
-
-		// -(void)getNamedUserIDSyncWithCompletion:(void (^ _Nonnull)(NSString * _Nullable, NSError * _Nullable))completion;
-		[Export ("getNamedUserIDSyncWithCompletion:")]
-		void GetNamedUserIDSync (Action<NSString, NSError> completion);
 	}
 
 	// @interface UACustomEvent : NSObject
@@ -1035,28 +1019,6 @@ namespace Airship
 		[Export ("deleteWithMessageIDs:completionHandler:")]
 		void DeleteWithMessageIDs (string[] messageIDs, Action completionHandler);
 
-		// MARK: - Xamarin Compatibility Methods
-
-		// -(void)getMessagesSyncWithCompletion:(void (^ _Nonnull)(NSArray<UAMessageCenterMessage *> * _Nonnull))completion;
-		[Export ("getMessagesSyncWithCompletion:")]
-		void GetMessagesSync (Action<UAMessageCenterMessage[]> completion);
-
-		// -(void)getUnreadCountSyncWithCompletion:(void (^ _Nonnull)(NSInteger))completion;
-		[Export ("getUnreadCountSyncWithCompletion:")]
-		void GetUnreadCountSync (Action<nint> completion);
-
-		// -(void)getUserSyncWithCompletion:(void (^ _Nonnull)(UAMessageCenterUser * _Nullable))completion;
-		[Export ("getUserSyncWithCompletion:")]
-		void GetUserSync (Action<UAMessageCenterUser> completion);
-
-		// -(void)messageForBodyURLSync:(NSUrl * _Nonnull)bodyURL completion:(void (^ _Nonnull)(UAMessageCenterMessage * _Nullable))completion;
-		[Export ("messageForBodyURLSync:completion:")]
-		void MessageForBodyURLSync (NSUrl bodyURL, Action<UAMessageCenterMessage> completion);
-
-		// -(void)messageForIDSync:(NSString * _Nonnull)messageID completion:(void (^ _Nonnull)(UAMessageCenterMessage * _Nullable))completion;
-		[Export ("messageForIDSync:completion:")]
-		void MessageForIDSync (string messageID, Action<UAMessageCenterMessage> completion);
-
 		// -(void)refreshMessagesSyncWithCompletion:(void (^ _Nonnull)(BOOL))completion;
 		[Export ("refreshMessagesSyncWithCompletion:")]
 		void RefreshMessagesSync (Action<bool> completion);
@@ -1518,8 +1480,6 @@ namespace Airship
 		// -(void)resetBadgeWithCompletionHandler:(void (^ _Nonnull)(NSError * _Nullable))completionHandler;
 		[Export ("resetBadgeWithCompletionHandler:")]
 		void ResetBadgeWithCompletionHandler (Action<NSError> completionHandler);
-
-		// MARK: - Xamarin Compatibility Methods
 
 		// -(void)enableUserPushNotificationsSyncWithCompletion:(void (^ _Nonnull)(BOOL))completion;
 		[Export ("enableUserPushNotificationsSyncWithCompletion:")]

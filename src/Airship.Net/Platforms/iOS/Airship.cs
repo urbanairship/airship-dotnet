@@ -334,7 +334,7 @@ namespace AirshipDotNet
 
         public void FetchChannelSubscriptionLists(Action<List<string>> subscriptions)
         {
-            UAirship.Channel.FetchSubscriptionListsSync((lists, error) =>
+            UAirship.Channel.FetchSubscriptionListsWithCompletionHandler((lists, error) =>
             {
                 var list = new List<string>();
                 if (lists != null)
@@ -351,7 +351,7 @@ namespace AirshipDotNet
 
         public void FetchContactSubscriptionLists(Action<Dictionary<string, List<String>>> subscriptions)
         {
-            UAirship.Contact.FetchSubscriptionListsSync((lists, error) =>
+            UAirship.Contact.FetchSubscriptionListsWithCompletionHandler((lists, error) =>
             {
                 var result = new Dictionary<string, List<string>>();
                 if (lists != null)
@@ -389,7 +389,7 @@ namespace AirshipDotNet
 
         public void GetNamedUser(Action<string> namedUser)
         {
-            UAirship.Contact.GetNamedUserIDSync((id, error) =>
+            UAirship.Contact.GetNamedUserIDWithCompletionHandler((id, error) =>
             {
                 namedUser(id ?? "");
             });
@@ -550,12 +550,12 @@ namespace AirshipDotNet
 
         public void MessageCenterUnreadCount(Action<int> messageCount)
         {
-            UAirship.MessageCenter.Inbox.GetUnreadCountSync(count => messageCount((int)count));
+            UAirship.MessageCenter.Inbox.GetUnreadCountWithCompletionHandler(count => messageCount((int)count));
         }
 
         public void MessageCenterCount(Action<int> messageCount)
         {
-            UAirship.MessageCenter.Inbox.GetMessagesSync(messages =>
+            UAirship.MessageCenter.Inbox.GetMessagesWithCompletionHandler(messages =>
             {
                 messageCount(messages?.Length ?? 0);
             });
@@ -564,7 +564,7 @@ namespace AirshipDotNet
         public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
             var messagesList = new List<MessageCenter.Message>();
-            UAirship.MessageCenter.Inbox.GetMessagesSync(messages =>
+            UAirship.MessageCenter.Inbox.GetMessagesWithCompletionHandler(messages =>
             {
                 if (messages != null)
                 {
