@@ -64,12 +64,13 @@ cd "$PROJECT_DIR"
 
 # Clean previous builds to ensure fresh build
 echo "🧹 Cleaning previous builds..."
-dotnet clean MauiSample.csproj -f net8.0-ios
+dotnet clean MauiSample.csproj -f net8.0-ios -v quiet
 
 # Build the app
 dotnet build MauiSample.csproj -f net8.0-ios \
     -p:RuntimeIdentifier=iossimulator-arm64 \
-    -p:CodesignProvision="dotnet-maui-sample-profile"
+    -p:CodesignProvision="dotnet-maui-sample-profile" \
+    -v minimal
 
 if [[ $? -ne 0 ]]; then
     echo "❌ Build failed. Make sure you have:"
@@ -108,10 +109,17 @@ echo "📋 Press Ctrl+C to stop..."
 echo "========================================"
 echo ""
 
-# Start system log capture in background (capture all logs)
+# Start system log capture in background (filtered for app-relevant logs)
 # Stream to both file and console
 xcrun simctl spawn "$DEVICE_ID" log stream \
-    --level debug 2>&1 | tee "$SYSTEM_LOG" &
+    --predicate 'processImagePath CONTAINS "MauiSample" OR 
+                 messageType == error OR 
+                 eventMessage CONTAINS "Airship" OR 
+                 eventMessage CONTAINS "xamarin" OR
+                 eventMessage CONTAINS "mono" OR
+                 eventMessage CONTAINS "SIGABRT" OR
+                 eventMessage CONTAINS "crash"' \
+    --level info 2>&1 | grep -v -E "SpringBoard|runningboardd|symptomsd|CommCenter|CloudKit|FrontBoard|UIKitCore|CoreFoundation" | tee "$SYSTEM_LOG" &
 LOG_PID=$!
 
 # Function to cleanup on exit

@@ -75,13 +75,21 @@ public partial class PushSettingsViewController : ContentPage
 
     void UpdateNamedUser()
     {
-        namedUserLabel.Text = "";
-        AirshipDotNet.Airship.Instance.GetNamedUser(namedUser =>
+        try
         {
-            MainThread.BeginInvokeOnMainThread(() =>
+            namedUserLabel.Text = "";
+            AirshipDotNet.Airship.Instance.GetNamedUser(namedUser =>
             {
-                namedUserLabel.Placeholder = namedUser != null ? namedUser : "named user";
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    namedUserLabel.Placeholder = namedUser != null ? namedUser : "named user";
+                });
             });
-        });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in UpdateNamedUser: {ex}");
+            namedUserLabel.Placeholder = "Error loading named user";
+        }
     }
 }
