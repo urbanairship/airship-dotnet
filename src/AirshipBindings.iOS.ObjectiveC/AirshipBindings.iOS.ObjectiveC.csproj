@@ -57,32 +57,32 @@
   </ItemGroup>
 
   <ItemGroup>
-    <NativeReference Include="..\..\frameworks\AirshipObjectiveC.xcframework">
+    <NativeReference Include="..\..\Carthage\Build\AirshipObjectiveC.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
     <!-- AirshipObjectiveC dependencies -->
-    <NativeReference Include="..\..\frameworks\AirshipCore.xcframework">
+    <NativeReference Include="..\..\Carthage\Build\AirshipCore.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
-    <NativeReference Include="..\..\frameworks\AirshipBasement.xcframework">
+    <NativeReference Include="..\..\Carthage\Build\AirshipBasement.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
-    <NativeReference Include="..\..\frameworks\AirshipAutomation.xcframework">
+    <NativeReference Include="..\..\Carthage\Build\AirshipAutomation.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
-    <NativeReference Include="..\..\frameworks\AirshipMessageCenter.xcframework">
+    <NativeReference Include="..\..\Carthage\Build\AirshipMessageCenter.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
-    <NativeReference Include="..\..\frameworks\AirshipPreferenceCenter.xcframework">
+    <NativeReference Include="..\..\Carthage\Build\AirshipPreferenceCenter.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
-    <NativeReference Include="..\..\frameworks\AirshipFeatureFlags.xcframework">
+    <NativeReference Include="..\..\Carthage\Build\AirshipFeatureFlags.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>
