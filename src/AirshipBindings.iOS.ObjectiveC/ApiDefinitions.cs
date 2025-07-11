@@ -7,6 +7,68 @@ using UserNotifications;
 
 namespace Airship
 {
+	// TODO: AWAirshipWrapper is temporarily commented out until the wrapper framework is functional
+	// Once the AirshipWrapper.xcframework is built and available, uncomment this binding
+	/*
+	// @interface AWAirshipWrapper : NSObject
+	[BaseType (typeof(NSObject))]
+	interface AWAirshipWrapper
+	{
+		// + (instancetype)shared;
+		[Static]
+		[Export ("shared")]
+		AWAirshipWrapper Shared { get; }
+
+		// @property (nonatomic, readonly) UAChannel *channel;
+		[Export ("channel")]
+		UAChannel Channel { get; }
+
+		// @property (nonatomic, readonly) UAContact *contact;
+		[Export ("contact")]
+		UAContact Contact { get; }
+
+		// @property (nonatomic, readonly) UAPush *push;
+		[Export ("push")]
+		UAPush Push { get; }
+
+		// @property (nonatomic, readonly) UAMessageCenter *messageCenter;
+		[Export ("messageCenter")]
+		UAMessageCenter MessageCenter { get; }
+
+		// @property (nonatomic, readonly) UAAnalytics *analytics;
+		[Export ("analytics")]
+		UAAnalytics Analytics { get; }
+
+		// @property (nonatomic, readonly) UAPrivacyManager *privacyManager;
+		[Export ("privacyManager")]
+		UAPrivacyManager PrivacyManager { get; }
+
+		// @property (nonatomic, weak) id<UADeepLinkDelegate> deepLinkDelegate;
+		[Export ("deepLinkDelegate", ArgumentSemantic.Weak)]
+		UADeepLinkDelegate DeepLinkDelegate { get; set; }
+
+		// + (void)getMessages:(void(^)(NSArray<UAMessageCenterMessage *> *))completion;
+		[Static]
+		[Export ("getMessages:")]
+		void GetMessages (Action<UAMessageCenterMessage[]> completion);
+
+		// + (void)getNamedUserID:(void(^)(NSString * _Nullable, NSError * _Nullable))completion;
+		[Static]
+		[Export ("getNamedUserID:")]
+		void GetNamedUserID (Action<string, NSError> completion);
+
+		// + (void)fetchChannelSubscriptionLists:(void(^)(NSArray<NSString *> * _Nullable, NSError * _Nullable))completion;
+		[Static]
+		[Export ("fetchChannelSubscriptionLists:")]
+		void FetchChannelSubscriptionLists (Action<NSArray, NSError> completion);
+
+		// + (void)fetchContactSubscriptionLists:(void(^)(NSDictionary<NSString *, NSArray<NSString *> *> * _Nullable, NSError * _Nullable))completion;
+		[Static]
+		[Export ("fetchContactSubscriptionLists:")]
+		void FetchContactSubscriptionLists (Action<NSDictionary<NSString, NSArray>, NSError> completion);
+	}
+	*/
+
 	// @interface UAAirshipNotifications : NSObject
 	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC22UAAirshipNotifications")]
 	interface UAAirshipNotifications
@@ -1019,9 +1081,6 @@ namespace Airship
 		[Export ("deleteWithMessageIDs:completionHandler:")]
 		void DeleteWithMessageIDs (string[] messageIDs, Action completionHandler);
 
-		// -(void)refreshMessagesSyncWithCompletion:(void (^ _Nonnull)(BOOL))completion;
-		[Export ("refreshMessagesSyncWithCompletion:")]
-		void RefreshMessagesSync (Action<bool> completion);
 	}
 
 	// @interface UAMessageCenterMessage : NSObject
@@ -1481,13 +1540,6 @@ namespace Airship
 		[Export ("resetBadgeWithCompletionHandler:")]
 		void ResetBadgeWithCompletionHandler (Action<NSError> completionHandler);
 
-		// -(void)enableUserPushNotificationsSyncWithCompletion:(void (^ _Nonnull)(BOOL))completion;
-		[Export ("enableUserPushNotificationsSyncWithCompletion:")]
-		void EnableUserPushNotificationsSync (Action<bool> completion);
-
-		// -(void)resetBadgeSyncWithCompletion:(void (^ _Nonnull)(void))completion;
-		[Export ("resetBadgeSyncWithCompletion:")]
-		void ResetBadgeSync (Action completion);
 
 		// @property (nonatomic, strong) NSTimeZone * _Nullable timeZone;
 		[NullAllowed, Export ("timeZone", ArgumentSemantic.Strong)]
