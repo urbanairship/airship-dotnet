@@ -246,3 +246,9 @@ binderator/output
 
 # VSCode folder
 .vscode
+
+# AirshipWrapper build artifacts
+AirshipWrapper/build/
+AirshipWrapper/lib/
+src/AirshipBindings.iOS.ObjectiveC/lib/
+src/AirshipBindings.iOS.ObjectiveC/AirshipWrapper.xcframework/

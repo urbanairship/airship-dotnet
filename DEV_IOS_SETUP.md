@@ -26,8 +26,14 @@ Create provisioning profile named: `dotnet-maui-sample-profile` for bundle ID: `
 ### 5. Build and Run
 ```bash
 cd MauiSample
-./run-ios.sh
+./run-ios.sh        # Normal build and run
+./run-ios.sh --clean # Clean Carthage and rebuild wrapper
 ```
+
+The script automatically:
+- Builds Carthage dependencies if missing
+- Builds AirshipWrapper.xcframework if missing  
+- Copies wrapper to binding project
 
 ## Configuration Files
 
@@ -46,6 +52,9 @@ The required config file should already exist:
 ```bash
 # Build and run
 ./run-ios.sh
+
+# Clean build (rebuilds Carthage + wrapper)
+./run-ios.sh --clean
 
 # List available simulators
 xcrun simctl list devices available

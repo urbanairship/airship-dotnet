@@ -1,0 +1,5 @@
+framework module AirshipWrapper {
+    umbrella header "AirshipWrapper.h"
+    export *
+    module * { export * }
+}

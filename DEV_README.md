@@ -36,6 +36,28 @@ Also, if you need to maintain multiple versions for native or other framework de
     * `MauiSample/Platforms/iOS/AirshipConfig.plist`
 1. Run `./gradlew build` to trigger generation of bindings and sync up versions set in the `airship.properties` file with the rest of the project.
 
+### Building iOS Dependencies
+
+The iOS bindings require building the Airship iOS SDK and the AirshipWrapper framework:
+
+1. **Build the Airship iOS SDK dependencies:**
+   ```bash
+   carthage update --use-xcframeworks --platform iOS
+   ```
+
+2. **Build the AirshipWrapper framework:**
+   ./build-wrapper.sh```bash
+   
+   ```
+
+The AirshipWrapper is a minimal Objective-C wrapper that handles 4 problematic Swift async methods that cause marshaling issues in Xamarin.iOS:
+- `getMessages`
+- `getNamedUserID`
+- `fetchChannelSubscriptionLists`
+- `fetchContactSubscriptionLists`
+
+All other SDK functionality is accessed directly through the native bindings.
+
 ### Airship Bindings and .NET SDK
 
 1. Open `Airship.Net.sln` in VS for Mac.

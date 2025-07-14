@@ -2,12 +2,29 @@
 
 # Build and run Airship .NET MAUI iOS sample app
 # Works for any user on macOS
+#
+# Usage:
+#   ./run-ios.sh        - Normal build and run
+#   ./run-ios.sh --clean - Clean Carthage and rebuild wrapper before running
+#   ./run-ios.sh --fast  - Skip Carthage rebuild, only rebuild wrapper if source changed
 
 set -e  # Exit on any error
+
+# Parse command line arguments
+CLEAN_BUILD=false
+FAST_BUILD=false
+if [[ "$1" == "--clean" ]]; then
+    CLEAN_BUILD=true
+    echo "🧹 Clean build requested - will rebuild Carthage and wrapper"
+elif [[ "$1" == "--fast" ]]; then
+    FAST_BUILD=true
+    echo "🚀 Fast build requested - will skip Carthage rebuild and only rebuild wrapper if needed"
+fi
 
 # Get the script directory to find the project
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Ensure .NET is in PATH
 export PATH="$HOME/.dotnet:$PATH"
@@ -35,6 +52,71 @@ if [[ "$USE_PROJECT_REFS" = "true" ]]; then
 else
     echo "⚠️  Using NuGet packages"
     echo "   To use project references for development, set UseProjectReferences=true in MauiSample.csproj"
+fi
+
+# Function to build Carthage dependencies
+build_carthage() {
+    echo "🏗️  Building Carthage dependencies..."
+    cd "$REPO_ROOT"
+    
+    if [[ "$CLEAN_BUILD" == "true" ]]; then
+        rm -rf Carthage/
+    fi
+    
+    if [[ "$FAST_BUILD" == "true" ]] && [[ -d "Carthage/Build" ]]; then
+        echo "🚀 Fast mode: Skipping Carthage rebuild (using existing build)"
+    elif [[ ! -d "Carthage/Build" ]]; then
+        echo "📦 Installing Carthage dependencies..."
+        # Try binaries first (faster), fall back to building from source if needed
+        carthage update --use-xcframeworks --platform iOS || \
+        carthage update --use-xcframeworks --no-use-binaries --platform iOS
+    else
+        echo "✅ Carthage dependencies already built"
+    fi
+}
+
+# Function to build AirshipWrapper
+build_wrapper() {
+    echo "🏗️  Building AirshipWrapper..."
+    cd "$REPO_ROOT/AirshipWrapper"
+    
+    WRAPPER_NEEDS_BUILD=false
+    
+    if [[ "$CLEAN_BUILD" == "true" ]] || [[ ! -f "lib/AirshipWrapper.xcframework/Info.plist" ]]; then
+        WRAPPER_NEEDS_BUILD=true
+    else
+        # Check if source files are newer than the built framework
+        if [[ "AirshipWrapper/AWAirshipWrapper.m" -nt "lib/AirshipWrapper.xcframework/Info.plist" ]] || \
+           [[ "AirshipWrapper/AWAirshipWrapper.h" -nt "lib/AirshipWrapper.xcframework/Info.plist" ]]; then
+            echo "📝 Source files changed, rebuilding wrapper..."
+            WRAPPER_NEEDS_BUILD=true
+        fi
+    fi
+    
+    if [[ "$WRAPPER_NEEDS_BUILD" == "true" ]]; then
+        echo "🔨 Building AirshipWrapper.xcframework..."
+        ./build-wrapper.sh
+        
+        # Copy to binding project
+        echo "📁 Copying wrapper to binding project..."
+        mkdir -p "$REPO_ROOT/src/AirshipBindings.iOS.ObjectiveC/lib"
+        cp -R lib/AirshipWrapper.xcframework "$REPO_ROOT/src/AirshipBindings.iOS.ObjectiveC/lib/"
+    else
+        echo "✅ AirshipWrapper already built and up to date"
+    fi
+}
+
+# Check and build dependencies if needed
+if [[ "$USE_PROJECT_REFS" = "true" ]]; then
+    # Check for carthage command
+    if ! command -v carthage &> /dev/null; then
+        echo "❌ Error: Carthage is not installed"
+        echo "Please install Carthage: brew install carthage"
+        exit 1
+    fi
+    
+    build_carthage
+    build_wrapper
 fi
 
 # Get booted iPhone/iPad simulators only (excluding Apple TV, Apple Watch, etc.)

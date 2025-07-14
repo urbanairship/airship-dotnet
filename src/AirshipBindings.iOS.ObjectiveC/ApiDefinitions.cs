@@ -7,9 +7,8 @@ using UserNotifications;
 
 namespace Airship
 {
-	// TODO: AWAirshipWrapper is temporarily commented out until the wrapper framework is functional
-	// Once the AirshipWrapper.xcframework is built and available, uncomment this binding
-	/*
+	// AWAirshipWrapper provides a workaround for Swift async marshaling issues
+	// by wrapping these 4 problematic methods in Objective-C completion handlers
 	// @interface AWAirshipWrapper : NSObject
 	[BaseType (typeof(NSObject))]
 	interface AWAirshipWrapper
@@ -35,6 +34,10 @@ namespace Airship
 		[Export ("messageCenter")]
 		UAMessageCenter MessageCenter { get; }
 
+		// @property (nonatomic, readonly) UAInAppAutomation *inAppAutomation;
+		[Export ("inAppAutomation")]
+		UAInAppAutomation InAppAutomation { get; }
+
 		// @property (nonatomic, readonly) UAAnalytics *analytics;
 		[Export ("analytics")]
 		UAAnalytics Analytics { get; }
@@ -43,9 +46,9 @@ namespace Airship
 		[Export ("privacyManager")]
 		UAPrivacyManager PrivacyManager { get; }
 
-		// @property (nonatomic, weak) id<UADeepLinkDelegate> deepLinkDelegate;
-		[Export ("deepLinkDelegate", ArgumentSemantic.Weak)]
-		UADeepLinkDelegate DeepLinkDelegate { get; set; }
+		// @property (nonatomic, readonly) UAPreferenceCenter *preferenceCenter;
+		[Export ("preferenceCenter")]
+		UAPreferenceCenter PreferenceCenter { get; }
 
 		// + (void)getMessages:(void(^)(NSArray<UAMessageCenterMessage *> *))completion;
 		[Static]
@@ -66,8 +69,22 @@ namespace Airship
 		[Static]
 		[Export ("fetchContactSubscriptionLists:")]
 		void FetchContactSubscriptionLists (Action<NSDictionary<NSString, NSArray>, NSError> completion);
+
+		// + (void)getMessageCenterUserAuth:(void(^)(NSString * _Nullable))completion;
+		[Static]
+		[Export ("getMessageCenterUserAuth:")]
+		void GetMessageCenterUserAuth (Action<NSString> completion);
+
+		// + (void)getMessageForID:(NSString *)messageID completion:(void(^)(UAMessageCenterMessage * _Nullable))completion;
+		[Static]
+		[Export ("getMessageForID:completion:")]
+		void GetMessageForID (string messageID, Action<UAMessageCenterMessage> completion);
+
+		// + (void)markReadWithMessageIDs:(NSArray<NSString *> *)messageIDs completion:(void(^)(void))completion;
+		[Static]
+		[Export ("markReadWithMessageIDs:completion:")]
+		void MarkReadWithMessageIDs (string[] messageIDs, Action completion);
 	}
-	*/
 
 	// @interface UAAirshipNotifications : NSObject
 	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC22UAAirshipNotifications")]

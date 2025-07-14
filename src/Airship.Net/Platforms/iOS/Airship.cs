@@ -334,51 +334,45 @@ namespace AirshipDotNet
 
         public void FetchChannelSubscriptionLists(Action<List<string>> subscriptions)
         {
-            /// TODO uncomment this when iOS binding issues with async methods are resolved
-            // AWAirshipWrapper.FetchChannelSubscriptionLists((lists, error) =>
-            // {
-            //     var list = new List<string>();
-            //     if (lists != null)
-            //     {
-            //         for (nuint i = 0; i < lists.Count; i++)
-            //         {
-            //             var item = lists.GetItem<NSString>(i);
-            //             list.Add(item.ToString());
-            //         }
-            //     }
-            //     subscriptions(list);
-            // });
-            subscriptions(new List<string>());
+            AWAirshipWrapper.FetchChannelSubscriptionLists((lists, error) =>
+            {
+                var list = new List<string>();
+                if (lists != null)
+                {
+                    for (nuint i = 0; i < lists.Count; i++)
+                    {
+                        var item = lists.GetItem<NSString>(i);
+                        list.Add(item.ToString());
+                    }
+                }
+                subscriptions(list);
+            });
         }
 
         public void FetchContactSubscriptionLists(Action<Dictionary<string, List<String>>> subscriptions)
         {
-            // TODO uncomment this when iOS binding issues with async methods are resolved
-            // AWAirshipWrapper.FetchContactSubscriptionLists((lists, error) =>
-            // {
-            //     var result = new Dictionary<string, List<string>>();
-            //     if (lists != null)
-            //     {
-            //         foreach (var kvp in lists)
-            //         {
-            //             var list = new List<string>();
-            //             var scopes = kvp.Value as NSArray;
-            //             if (scopes != null)
-            //             {
-            //                 for (nuint i = 0; i < scopes.Count; i++)
-            //                 {
-            //                     var scope = scopes.GetItem<NSString>(i);
-            //                     list.Add(scope.ToString());
-            //                 }
-            //             }
-            //             result.Add(kvp.Key.ToString(), list);
-            //         }
-            //     }
-            //     subscriptions(result);
-            // });
-
-            // Return empty dictionary for now
-            subscriptions(new Dictionary<string, List<string>>());
+            AWAirshipWrapper.FetchContactSubscriptionLists((lists, error) =>
+            {
+                var result = new Dictionary<string, List<string>>();
+                if (lists != null)
+                {
+                    foreach (var kvp in lists)
+                    {
+                        var list = new List<string>();
+                        var scopes = kvp.Value as NSArray;
+                        if (scopes != null)
+                        {
+                            for (nuint i = 0; i < scopes.Count; i++)
+                            {
+                                var scope = scopes.GetItem<NSString>(i);
+                                list.Add(scope.ToString());
+                            }
+                        }
+                        result.Add(kvp.Key.ToString(), list);
+                    }
+                }
+                subscriptions(result);
+            });
         }
 
         private string ScopeOrdinalToString(NSNumber ordinal)
@@ -395,13 +389,10 @@ namespace AirshipDotNet
 
         public void GetNamedUser(Action<string> namedUser)
         {
-            // TODO: Uncomment this when iOS binding issues with async methods are resolved
-            // AWAirshipWrapper.GetNamedUserID((id, error) =>
-            // {
-            //     namedUser(id ?? "");
-            // });
-            // Return empty string for now
-            namedUser("");
+            AWAirshipWrapper.GetNamedUserID((id, error) =>
+            {
+                namedUser(id ?? "");
+            });
         }
 
         public void ResetContact()
@@ -548,7 +539,7 @@ namespace AirshipDotNet
         public void MarkMessageRead(string messageId)
         {
             string[] toRead = { messageId };
-            UAirship.MessageCenter.Inbox.MarkReadWithMessageIDs(toRead, () => { });
+            AWAirshipWrapper.MarkReadWithMessageIDs(toRead, () => { });
         }
 
         public void DeleteMessage(string messageId)
@@ -559,64 +550,56 @@ namespace AirshipDotNet
 
         public void MessageCenterUnreadCount(Action<int> messageCount)
         {
-            // TODO: Uncomment this when iOS binding issues with async methods are resolved
-            // AWAirshipWrapper.Shared.MessageCenter.Inbox.GetUnreadCountWithCompletionHandler(count => messageCount((int)count));
-
-            // Return 0 for now
-            messageCount(0);
+            AWAirshipWrapper.GetMessages(messages =>
+            {
+                var unreadCount = messages?.Count(m => m.Unread) ?? 0;
+                messageCount(unreadCount);
+            });
         }
 
         public void MessageCenterCount(Action<int> messageCount)
         {
-            // TODO: Uncomment this when iOS binding issues with async methods are resolved
-            // AWAirshipWrapper.GetMessages(messages =>
-            // {
-            //     messageCount(messages?.Length ?? 0);
-            // });
-
-            // Return 0 for now
-            messageCount(0);
+            AWAirshipWrapper.GetMessages(messages =>
+            {
+                messageCount(messages?.Length ?? 0);
+            });
         }
 
         public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
-            // TODO: Uncomment this when iOS binding issues with async methods are resolved
-            // var messagesList = new List<MessageCenter.Message>();
-            // AWAirshipWrapper.GetMessages(messages =>
-            // {
-            //     if (messages != null)
-            //     {
-            //         foreach (var message in messages)
-            //         {
-            //             var extras = new Dictionary<string, string?>();
-            //             if (message.Extra != null)
-            //             {
-            //                 foreach (var key in message.Extra.Keys)
-            //                 {
-            //                     extras.Add(key.ToString(), message.Extra[key]?.ToString());
-            //                 }
-            //             }
-            //             DateTime? sentDate = FromNSDate(message.SentDate);
-            //             DateTime? expirationDate = FromNSDate(message.ExpirationDate);
+            var messagesList = new List<MessageCenter.Message>();
+            AWAirshipWrapper.GetMessages(messages =>
+            {
+                if (messages != null)
+                {
+                    foreach (var message in messages)
+                    {
+                        var extras = new Dictionary<string, string?>();
+                        if (message.Extra != null)
+                        {
+                            foreach (var key in message.Extra.Keys)
+                            {
+                                extras.Add(key.ToString(), message.Extra[key]?.ToString());
+                            }
+                        }
+                        DateTime? sentDate = FromNSDate(message.SentDate);
+                        DateTime? expirationDate = FromNSDate(message.ExpirationDate);
 
-            //             var inboxMessage = new MessageCenter.Message(
-            //                 message.Id,
-            //                 message.Title,
-            //                 sentDate,
-            //                 expirationDate,
-            //                 message.Unread,
-            //                 message.ListIcon,
-            //                 extras);
+                        var inboxMessage = new MessageCenter.Message(
+                            message.Id,
+                            message.Title,
+                            sentDate,
+                            expirationDate,
+                            message.Unread,
+                            message.ListIcon,
+                            extras);
 
-            //             messagesList.Add(inboxMessage);
-            //         }
-            //     }
+                        messagesList.Add(inboxMessage);
+                    }
+                }
 
-            //     listMessages(messagesList);
-            // });
-
-            // Return empty list for now
-            listMessages(new List<MessageCenter.Message>());
+                listMessages(messagesList);
+            });
         }
 
         private static NSDate? FromDateTime(DateTime? dateTime)
