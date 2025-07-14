@@ -46,15 +46,26 @@ The iOS bindings require building the Airship iOS SDK and the AirshipWrapper fra
    ```
 
 2. **Build the AirshipWrapper framework:**
-   ./build-wrapper.sh```bash
-   
+   ```bash
+   cd AirshipWrapper
+   ./build_ios.sh
    ```
 
-The AirshipWrapper is a minimal Objective-C wrapper that handles 4 problematic Swift async methods that cause marshaling issues in Xamarin.iOS:
-- `getMessages`
-- `getNamedUserID`
-- `fetchChannelSubscriptionLists`
-- `fetchContactSubscriptionLists`
+The AirshipWrapper is an Objective-C wrapper that handles problematic Swift async methods and Swift types that cause marshaling issues in Xamarin.iOS/.NET8. The wrapper implements:
+
+**Swift Async Method Wrappers:**
+- `getMessages` - Retrieves message center messages
+- `getNamedUserID` - Gets the named user ID
+- `fetchChannelSubscriptionLists` - Fetches channel subscription lists
+- `fetchContactSubscriptionLists` - Fetches contact subscription lists
+
+**Swift Type Marshaling Wrappers:**
+- `getMessageCenterUserAuth` - Extracts auth string from UAMessageCenterUser (avoiding Swift type marshaling)
+- `getMessageForID` - Retrieves a specific message by ID
+- `markReadWithMessageIDs` - Marks messages as read (avoiding NSArray marshaling issues)
+
+The wrapper also provides direct access to core Airship components through properties:
+- `channel`, `contact`, `push`, `messageCenter`, `inAppAutomation`, `analytics`, `privacyManager`, `preferenceCenter`
 
 All other SDK functionality is accessed directly through the native bindings.
 
