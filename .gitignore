@@ -209,7 +209,7 @@ Resource.designer.cs
 
 # Carthage
 Carthage/
-Cartfile.resolved
+# Track Cartfile.resolved to avoid dependency resolution API calls
 
 # Docs
 docs/doxygen.tag

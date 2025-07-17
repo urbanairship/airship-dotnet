@@ -11,7 +11,7 @@ env:
 
 jobs:
   ci:
-    runs-on: macOS-13
+    runs-on: macOS-14
     steps:
       - uses: actions/checkout@v4
 
@@ -24,7 +24,9 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: |
+            7.0.x
+            8.0.x
 
       - name: Install iOS cert and provisioning profile
         env:
@@ -70,9 +72,19 @@ jobs:
         run: |
           dotnet workload install android ios maui-android maui-ios maui-maccatalyst
 
+      - name: Bootstrap Carthage
+        run: carthage bootstrap --use-xcframeworks --platform iOS
       - name: Build
         run: ./gradlew build pack buildSample
 
+      - name: Build AirshipWrapper
+        run: |
+          cd AirshipWrapper
+          ./build-wrapper.sh
+          # Copy the built wrapper to the binding project
+          cd ..
+          mkdir -p src/AirshipBindings.iOS.ObjectiveC/lib
+          cp -R AirshipWrapper/lib/AirshipWrapper.xcframework src/AirshipBindings.iOS.ObjectiveC/lib/
       - name: Upload build dir artifact
         uses: actions/upload-artifact@v4
         with:
