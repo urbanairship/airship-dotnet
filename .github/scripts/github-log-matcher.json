@@ -1,0 +1,31 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "gradle-build",
+      "pattern": [
+        {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(error|warning)\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      ]
+    },
+    {
+      "owner": "msbuild",
+      "pattern": [
+        {
+          "regexp": "^\\s*(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning)\\s+([A-Z]+\\d+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        }
+      ]
+    }
+  ]
+}
