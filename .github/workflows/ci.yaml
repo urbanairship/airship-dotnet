@@ -90,14 +90,22 @@ jobs:
         run: |
           dotnet workload install android ios maui-android maui-ios maui-maccatalyst
 
+      - name: Install Carthage
+        run: |
+          brew install carthage
+
       - name: Bootstrap Carthage
         run: |
           echo "::group::Carthage Bootstrap"
-          # Use xcbeautify if available for prettier output
+          # Show Carthage version for debugging
+          carthage version || echo "Carthage not found"
+          # List files to ensure Cartfile exists
+          ls -la Cart*
+          # Run with verbose output and pipe to xcbeautify
           if command -v xcbeautify &> /dev/null; then
-            carthage bootstrap --use-xcframeworks --platform iOS 2>&1 | xcbeautify
+            carthage bootstrap --use-xcframeworks --platform iOS --verbose 2>&1 | xcbeautify
           else
-            carthage bootstrap --use-xcframeworks --platform iOS
+            carthage bootstrap --use-xcframeworks --platform iOS --verbose
           fi
           echo "::endgroup::"
       - name: Build
