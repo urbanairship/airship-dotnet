@@ -107,14 +107,30 @@ jobs:
           else
             carthage bootstrap --use-xcframeworks --platform iOS --verbose
           fi
+          
+          # Verify frameworks were downloaded
+          echo "Verifying Carthage frameworks..."
+          if [ -d "Carthage/Build" ]; then
+            echo "Contents of Carthage/Build:"
+            ls -la Carthage/Build/
+          else
+            echo "ERROR: Carthage/Build directory not found!"
+            exit 1
+          fi
           echo "::endgroup::"
 
       - name: Build AirshipWrapper
         run: |
-          cd AirshipWrapper
-          ./build-wrapper.sh
+          # Run build-wrapper.sh from root directory to maintain correct relative paths
+          cd AirshipWrapper && ./build-wrapper.sh && cd ..
+
+          # Verify the framework was built
+          if [ ! -d "AirshipWrapper/lib/AirshipWrapper.xcframework" ]; then
+            echo "ERROR: AirshipWrapper.xcframework not found after build!"
+            exit 1
+          fi
+
           # Copy the built wrapper to the binding project
-          cd ..
           mkdir -p src/AirshipBindings.iOS.ObjectiveC/lib
           cp -R AirshipWrapper/lib/AirshipWrapper.xcframework src/AirshipBindings.iOS.ObjectiveC/lib/
 

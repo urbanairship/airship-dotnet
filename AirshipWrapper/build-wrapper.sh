@@ -15,20 +15,38 @@ rm -rf lib/AirshipWrapper.xcframework
 mkdir -p lib
 
 echo "🏗️  Building AirshipWrapper for iOS device..."
-xcodebuild -project AirshipWrapper.xcodeproj \
-  -scheme AirshipWrapper \
-  -configuration Release \
-  -sdk iphoneos \
-  -derivedDataPath build/DerivedData \
-  BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+if command -v xcbeautify &> /dev/null; then
+  xcodebuild -project AirshipWrapper.xcodeproj \
+    -scheme AirshipWrapper \
+    -configuration Release \
+    -sdk iphoneos \
+    -derivedDataPath build/DerivedData \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES 2>&1 | xcbeautify
+else
+  xcodebuild -project AirshipWrapper.xcodeproj \
+    -scheme AirshipWrapper \
+    -configuration Release \
+    -sdk iphoneos \
+    -derivedDataPath build/DerivedData \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+fi
 
 echo "🏗️  Building AirshipWrapper for iOS simulator..."
-xcodebuild -project AirshipWrapper.xcodeproj \
-  -scheme AirshipWrapper \
-  -configuration Release \
-  -sdk iphonesimulator \
-  -derivedDataPath build/DerivedData \
-  BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+if command -v xcbeautify &> /dev/null; then
+  xcodebuild -project AirshipWrapper.xcodeproj \
+    -scheme AirshipWrapper \
+    -configuration Release \
+    -sdk iphonesimulator \
+    -derivedDataPath build/DerivedData \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES 2>&1 | xcbeautify
+else
+  xcodebuild -project AirshipWrapper.xcodeproj \
+    -scheme AirshipWrapper \
+    -configuration Release \
+    -sdk iphonesimulator \
+    -derivedDataPath build/DerivedData \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+fi
 
 echo "📦 Creating xcframework..."
 xcodebuild -create-xcframework \
