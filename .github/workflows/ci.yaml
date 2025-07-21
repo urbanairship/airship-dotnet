@@ -103,7 +103,8 @@ jobs:
       - name: Build
         run: |
           # Use pretty build wrapper for formatted output
-          ./.github/scripts/pretty-build.sh gradle build pack buildSample --warning-mode=summary
+          # Add --no-parallel to avoid CreateBindingResourcePackage thread-safety issues
+          ./.github/scripts/pretty-build.sh gradle build pack buildSample --warning-mode=summary --no-parallel
 
       - name: Build AirshipWrapper
         run: |
