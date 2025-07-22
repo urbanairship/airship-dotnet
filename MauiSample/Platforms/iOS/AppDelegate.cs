@@ -1,7 +1,7 @@
 ﻿using Foundation;
 using ObjCRuntime;
 using UIKit;
-using UrbanAirship;
+using Airship;
 using System.Diagnostics;
 
 namespace MauiSample;
@@ -9,16 +9,21 @@ namespace MauiSample;
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate
 {
-	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 
     public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
     {
-     
+
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        UAConfig config = UAConfig.DefaultConfig();
+        NSError configError;
+        UAConfig config = UAConfig.DefaultConfigWithError(out configError);
 
-        // Log config details using Console.WriteLine which works with --console flag
+        if (config == null || configError != null)
+        {
+            throw new InvalidOperationException($"Failed to load Airship configuration: {configError?.LocalizedDescription ?? "Unknown error"}");
+        }
+
         Console.WriteLine("🚀🚀🚀 AIRSHIP CONFIG LOADED 🚀🚀🚀");
         Console.WriteLine($"📱 App Key: {config.DefaultAppKey ?? "<null>"}");
         Console.WriteLine($"📱 App Secret: {config.DefaultAppSecret ?? "<null>"}");
@@ -28,30 +33,36 @@ public class AppDelegate : MauiUIApplicationDelegate
         Console.WriteLine($"📱 Site: {config.Site} (numeric: {(int)config.Site})");
         Console.WriteLine("🚀🚀🚀 END CONFIG 🚀🚀🚀");
 
-        // Set log level for debugging config loading (optional)
-        // It will be set to the value in the loaded config upon takeOff
-        UAirship.LogLevel = UALogLevel.Verbose;
-
-        if (!config.Validate())
-        {
-            throw new RuntimeException("The AirshipConfig.plist must be a part of the app bundle and " +
-                "include a valid appkey and secret for the selected production level.");
-        }
-
         WarnIfSimulator();
 
-        // Bootstrap the Airship SDK
-        UAirship.TakeOff(config, launchOptions);
+        NSError error;
+        bool success = UAirship.TakeOff(config, launchOptions as NSDictionary<NSString, NSObject>, out error);
+
+        if (!success || error != null)
+        {
+            throw new InvalidOperationException($"Failed to initialize Airship: {error?.LocalizedDescription ?? "Unknown error"}");
+        }
 
         // Log the actual runtime state after TakeOff
         Console.WriteLine("✅✅✅ AIRSHIP INITIALIZED ✅✅✅");
-        Console.WriteLine($"✈️ UAirship.LogLevel after TakeOff: {UAirship.LogLevel} (numeric: {(int)UAirship.LogLevel})");
-        Console.WriteLine($"✈️ Is Flying: {UAirship.IsFlying}");
+        Console.WriteLine($"✈️ Log Level: {config.DevelopmentLogLevel} (development), {config.ProductionLogLevel} (production)");
+        Console.WriteLine($"✈️ Is Flying: {success}");
         Console.WriteLine($"✈️ Channel ID: {UAirship.Channel?.Identifier ?? "<not yet created>"}");
-        Console.WriteLine($"✈️ Shared Instance: {(UAirship.Shared != null ? "EXISTS" : "NULL")}");
         Console.WriteLine("✅✅✅ END INITIALIZATION ✅✅✅");
 
-        UAirship.Push.ResetBadge();
+
+        // TODO: Commented out due to iOS binding issues with async methods
+        // UAirship.Push.ResetBadgeWithCompletionHandler((error) =>
+        // {
+        //     if (error != null)
+        //     {
+        //         Console.WriteLine($"Badge reset error: {error.LocalizedDescription}");
+        //     }
+        //     else
+        //     {
+        //         Console.WriteLine("Badge reset completed");
+        //     }
+        // });
 
         return base.FinishedLaunching(application, launchOptions);
     }

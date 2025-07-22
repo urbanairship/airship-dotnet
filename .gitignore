@@ -209,7 +209,7 @@ Resource.designer.cs
 
 # Carthage
 Carthage/
-Cartfile.resolved
+# Track Cartfile.resolved to avoid dependency resolution API calls
 
 # Docs
 docs/doxygen.tag
@@ -246,3 +246,9 @@ binderator/output
 
 # VSCode folder
 .vscode
+
+# AirshipWrapper build artifacts
+AirshipWrapper/build/
+AirshipWrapper/lib/
+src/AirshipBindings.iOS.ObjectiveC/lib/
+src/AirshipBindings.iOS.ObjectiveC/AirshipWrapper.xcframework/

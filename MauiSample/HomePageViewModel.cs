@@ -6,7 +6,7 @@ using System.Windows.Input;
 # if ANDROID
 using UrbanAirship.PreferenceCenter;
 #elif IOS
-using UrbanAirship;
+using Airship;
 #endif
 
 namespace MauiSample
@@ -61,16 +61,16 @@ namespace MauiSample
             OnMessageCenterButtonClicked = new Command(PerformOnMessageCenterButtonClicked);
             OnPrefCenterButtonClicked = new Command(PerformOnPrefCenterButtonClicked);
 
-            Airship.Instance.OnChannelCreation += OnChannelEvent;
-            Airship.Instance.OnPushNotificationStatusUpdate += OnPushNotificationStatusEvent;
+            AirshipDotNet.Airship.Instance.OnChannelCreation += OnChannelEvent;
+            AirshipDotNet.Airship.Instance.OnPushNotificationStatusUpdate += OnPushNotificationStatusEvent;
 
             Refresh();
         }
 
         ~HomePageViewModel()
         {
-            Airship.Instance.OnChannelCreation -= OnChannelEvent;
-            Airship.Instance.OnPushNotificationStatusUpdate -= OnPushNotificationStatusEvent;
+            AirshipDotNet.Airship.Instance.OnChannelCreation -= OnChannelEvent;
+            AirshipDotNet.Airship.Instance.OnPushNotificationStatusUpdate -= OnPushNotificationStatusEvent;
         }
 
         private void OnChannelEvent(object sender, EventArgs e) => Refresh();
@@ -79,25 +79,25 @@ namespace MauiSample
 
         public void Refresh()
         {
-            ChannelId = Airship.Instance.ChannelId;
-            ShowEnablePushButton = !Airship.Instance.UserNotificationsEnabled;
+            ChannelId = AirshipDotNet.Airship.Instance.ChannelId;
+            ShowEnablePushButton = !AirshipDotNet.Airship.Instance.UserNotificationsEnabled;
         }
 
         private static void PerformOnChannelIdClicked()
         {
-            var channel = Airship.Instance.ChannelId;
+            var channel = AirshipDotNet.Airship.Instance.ChannelId;
             Clipboard.Default.SetTextAsync(channel);
             Console.WriteLine("Channel ID '{0}' copied to clipboard!", channel);
         }
 
         private static void PerformOnEnablePushButtonClicked()
         {
-            Airship.Instance.UserNotificationsEnabled = true;
+            AirshipDotNet.Airship.Instance.UserNotificationsEnabled = true;
         }
 
         private static void PerformOnMessageCenterButtonClicked()
         {
-            Airship.Instance.DisplayMessageCenter();
+            AirshipDotNet.Airship.Instance.DisplayMessageCenter();
         }
 
         private static void PerformOnPrefCenterButtonClicked()
@@ -113,7 +113,8 @@ namespace MauiSample
 #if ANDROID
             PreferenceCenter.Shared().Open(prefCenterId);
 #elif IOS
-            UAPreferenceCenter.Shared.OpenPreferenceCenter(prefCenterId);
+            // SDK 19: Access PreferenceCenter through UAirship.PreferenceCenter
+            UAirship.PreferenceCenter.OpenPreferenceCenter(prefCenterId);
 #endif
         }
     }

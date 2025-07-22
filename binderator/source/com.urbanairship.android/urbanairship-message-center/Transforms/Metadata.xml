@@ -11,16 +11,26 @@
     <remove-node path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Inbox.SentAtRichPushMessageComparator']" /> 
 
     <!-- Add missing interface members"-->
-    <add-node path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message']">
-    <method name="compareTo" return="int" abstract="false" native="false" synchronized="false" static="false" final="false" deprecated="not deprecated" visibility="public">
-        <parameter name="p0" type="java.lang.Object" />
-    </method>
-    </add-node>
+<!--    <add-node path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message']">-->
+<!--    <method name="compareTo" return="int" abstract="false" native="false" synchronized="false" static="false" final="false" deprecated="not deprecated" visibility="public">-->
+<!--        <parameter name="p0" type="java.lang.Object" />-->
+<!--    </method>-->
+<!--    </add-node>-->
     <add-node path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Inbox.SentAtRichPushMessageComparator']">
     <method name="compare" return="int" abstract="false" native="false" synchronized="false" static="false" final="false" deprecated="not deprecated" visibility="public">
         <parameter name="p0" type="java.lang.Object" />
         <parameter name="p1" type="java.lang.Object" />
     </method>
     </add-node>
+    
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
+    <attr path="/api/package[@name='com.urbanairship.messagecenter.ui.view']/class[@name='MessageListState.Content.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.messagecenter.ui.view']/class[@name='MessageListState.Content.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
+    <attr path="/api/package[@name='com.urbanairship.messagecenter.ui.view']/class[@name='MessageViewState.Content.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.messagecenter.ui.view']/class[@name='MessageViewState.Content.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+    
 </metadata>
 

@@ -4,7 +4,7 @@ using CoreGraphics;
 using UIKit;
 
 using Foundation;
-using UrbanAirship;
+using Airship;
 using AirshipDotNet.MessageCenter.Controls;
 using Vision;
 
@@ -23,11 +23,12 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
 
     private NativeBridgeDelegate nativeBridgeDelegate;
     private NavigationDelegate navigationDelegate;
-    private UANativeBridge nativeBridge;
-    private UAMessageCenterNativeBridgeExtension nativeBridgeExtension;
+    // private UANativeBridge nativeBridge;
+    // TODO: UAMessageCenterNativeBridgeExtension not exposed in SDK 19 ObjectiveC bindings
+    // private UAMessageCenterNativeBridgeExtension nativeBridgeExtension;
     private string messageId;
     private UAMessageCenterMessage message;
-    private UAMessageCenterUser user;
+    private string userAuthString;
 
     public MessageViewHandler() : base(MessageViewMapper)
     {
@@ -53,24 +54,27 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
 
     public void LoadUser(string messageId, Action<bool> result)
     {
-        UAMessageCenter.Shared.Inbox.GetUser(currentUser =>
+        AWAirshipWrapper.GetMessageCenterUserAuth(authString =>
         {
-            UAMessageCenter.Shared.Inbox.MessageForID(messageId, currentMessage =>
+            AWAirshipWrapper.GetMessageForID(messageId, currentMessage =>
             {
-                user = currentUser;
+                // Store the auth string directly instead of the problematic UAMessageCenterUser
+                userAuthString = authString;
                 message = currentMessage;
 
                 nativeBridgeDelegate = new(this);
                 navigationDelegate = new(this);
 
-                nativeBridge = new()
+                /* nativeBridge = new()
                 {
                     ForwardNavigationDelegate = navigationDelegate,
                     NativeBridgeDelegate = nativeBridgeDelegate,
                     NativeBridgeExtensionDelegate = new UAMessageCenterNativeBridgeExtension(message, user)
                 };
+                */
 
-                PlatformView.NavigationDelegate = nativeBridge;
+                // PlatformView.NavigationDelegate = nativeBridge;
+                PlatformView.NavigationDelegate = navigationDelegate;
 
                 LoadMessage(messageId, result);
             });
@@ -85,11 +89,11 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
         }
         else
         {
-            UAMessageCenter.Shared.Inbox.RefreshMessages(refresh =>
+            UAirship.MessageCenter.Inbox.RefreshMessagesWithCompletionHandler(refresh =>
             {
                 if (refresh == true)
                 {
-                    UAMessageCenter.Shared.Inbox.MessageForID(messageId, newMessage =>
+                    AWAirshipWrapper.GetMessageForID(messageId, newMessage =>
                     {
                         message = newMessage;
                         if (message != null && !message.IsExpired)
@@ -114,18 +118,15 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
 
     protected void LoadMessageBody(UAMessageCenterMessage message, Action<bool> result)
     {
-        if (user == null)
-        {
-            result(false);
-        }
-
-        var auth = UAUtils.AuthHeaderString(user.Username, user.Password);
-
-        NSMutableDictionary dict = new NSMutableDictionary();
-        dict.Add(new NSString("Authorization"), new NSString(auth));
-
         var request = new NSMutableUrlRequest(message.BodyURL);
-        request.Headers = dict;
+        
+        // Only add auth header if we have auth string
+        if (!string.IsNullOrEmpty(userAuthString))
+        {
+            NSMutableDictionary dict = new NSMutableDictionary();
+            dict.Add(new NSString("Authorization"), new NSString(userAuthString));
+            request.Headers = dict;
+        }
 
         MainThread.BeginInvokeOnMainThread(() =>
             PlatformView.LoadRequest(request)
@@ -135,7 +136,7 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
         result(true);
     }
 
-    private class NavigationDelegate : NSObject, IUANavigationDelegate
+    private class NavigationDelegate : NSObject, IWKNavigationDelegate
     {
         private MessageViewHandler Handler { get; set; }
 
@@ -185,7 +186,9 @@ public partial class MessageViewHandler : ViewHandler<IMessageView, WKWebView>
         }
     }
 
-    private class NativeBridgeDelegate : NSObject, IUANativeBridgeDelegate
+    // TODO: UANativeBridgeDelegate not exposed in SDK 19 ObjectiveC bindings
+    // This needs to be reimplemented or the bindings need to be updated
+    private class NativeBridgeDelegate : NSObject // , IUANativeBridgeDelegate
     {
         private MessageViewHandler Handler { get; set; }
 

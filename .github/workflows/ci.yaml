@@ -3,17 +3,35 @@ name: CI
 on: [pull_request]
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_15.1.app
+  DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_NOLOGO: 1
   HOMEBREW_NO_INSTALL_CLEANUP: 1
+  # Reduce MSBuild verbosity (use 'normal' instead of default 'detailed')
+  MSBUILD_VERBOSITY: minimal
+  # Reduce dotnet CLI verbosity
+  DOTNET_CLI_VERBOSITY: minimal
 
 jobs:
   ci:
-    runs-on: macOS-13
+    runs-on: macOS-14
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install log formatting tools
+        run: |
+          # Install xcbeautify for better Xcode output formatting
+          brew install xcbeautify
+
+          # Install other useful tools
+          gem install xcpretty --no-document || true
+
+      - name: Setup problem matchers
+        run: |
+          # Register custom problem matchers for GitHub Actions
+          echo "::add-matcher::.github/scripts/github-log-matcher.json"
+
 
       - name: Set up JDK 11
         uses: actions/setup-java@v4
@@ -24,7 +42,9 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: |
+            7.0.x
+            8.0.x
 
       - name: Install iOS cert and provisioning profile
         env:
@@ -70,9 +90,55 @@ jobs:
         run: |
           dotnet workload install android ios maui-android maui-ios maui-maccatalyst
 
-      - name: Build
-        run: ./gradlew build pack buildSample
+      - name: Install Carthage
+        run: |
+          brew install carthage
 
+      - name: Bootstrap Carthage
+        run: |
+          echo "::group::Carthage Bootstrap"
+          # Show Carthage version for debugging
+          carthage version || echo "Carthage not found"
+          # List files to ensure Cartfile exists
+          ls -la Cart*
+          # Run with verbose output and pipe to xcbeautify
+          if command -v xcbeautify &> /dev/null; then
+            carthage bootstrap --use-xcframeworks --platform iOS --verbose 2>&1 | xcbeautify
+          else
+            carthage bootstrap --use-xcframeworks --platform iOS --verbose
+          fi
+          
+          # Verify frameworks were downloaded
+          echo "Verifying Carthage frameworks..."
+          if [ -d "Carthage/Build" ]; then
+            echo "Contents of Carthage/Build:"
+            ls -la Carthage/Build/
+          else
+            echo "ERROR: Carthage/Build directory not found!"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+      - name: Build AirshipWrapper
+        run: |
+          # Run build-wrapper.sh from root directory to maintain correct relative paths
+          cd AirshipWrapper && ./build-wrapper.sh && cd ..
+
+          # Verify the framework was built
+          if [ ! -d "AirshipWrapper/lib/AirshipWrapper.xcframework" ]; then
+            echo "ERROR: AirshipWrapper.xcframework not found after build!"
+            exit 1
+          fi
+
+          # Copy the built wrapper to the binding project
+          mkdir -p src/AirshipBindings.iOS.ObjectiveC/lib
+          cp -R AirshipWrapper/lib/AirshipWrapper.xcframework src/AirshipBindings.iOS.ObjectiveC/lib/
+
+      - name: Build
+        run: |
+          # Use pretty build wrapper for formatted output
+          # Add --no-parallel to avoid CreateBindingResourcePackage thread-safety issues
+          ./.github/scripts/pretty-build.sh gradle build pack buildSample --warning-mode=summary --no-parallel
       - name: Upload build dir artifact
         uses: actions/upload-artifact@v4
         with:

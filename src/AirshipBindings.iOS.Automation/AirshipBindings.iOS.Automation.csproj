@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <NativeReference Include="..\..\frameworks\AirshipAutomation.xcframework">
+    <NativeReference Include="..\..\Carthage\Build\AirshipAutomation.xcframework">
       <Kind>Framework</Kind>
       <SmartLink>False</SmartLink>
     </NativeReference>

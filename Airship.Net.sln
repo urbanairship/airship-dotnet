@@ -27,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.Message
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net", "src\Airship.Net\Airship.Net.csproj", "{C419463A-31A8-477B-A99E-1B0947AA416B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.NotificationContentExtension", "src\AirshipBindings.iOS.NotificationContentExtension\AirshipBindings.iOS.NotificationContentExtension.csproj", "{C9325C9E-B43A-4BE8-AD68-B7BF6942F9F8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.NotificationServiceExtension", "src\AirshipBindings.iOS.NotificationServiceExtension\AirshipBindings.iOS.NotificationServiceExtension.csproj", "{2C453988-C24E-431A-A17C-6989E93C795E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.PreferenceCenter", "src\AirshipBindings.iOS.PreferenceCenter\AirshipBindings.iOS.PreferenceCenter.csproj", "{13E9ACF2-4FE5-4FA6-96C4-BDFB6FF7C3A0}"
@@ -91,10 +89,6 @@ Global
 		{C419463A-31A8-477B-A99E-1B0947AA416B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C419463A-31A8-477B-A99E-1B0947AA416B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C419463A-31A8-477B-A99E-1B0947AA416B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9325C9E-B43A-4BE8-AD68-B7BF6942F9F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9325C9E-B43A-4BE8-AD68-B7BF6942F9F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9325C9E-B43A-4BE8-AD68-B7BF6942F9F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9325C9E-B43A-4BE8-AD68-B7BF6942F9F8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C453988-C24E-431A-A17C-6989E93C795E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C453988-C24E-431A-A17C-6989E93C795E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C453988-C24E-431A-A17C-6989E93C795E}.Release|Any CPU.ActiveCfg = Release|Any CPU

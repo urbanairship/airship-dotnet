@@ -123,7 +123,8 @@ namespace AirshipDotNet
         TagsAndAttributes = 1 << 5,
         Contacts = 1 << 6,
         // RETIRED: Location = 1 << 7,
-        All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts
+        FeatureFlags = 1 << 8,
+        All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts | FeatureFlags
     }
 
     /// <summary>

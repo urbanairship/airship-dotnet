@@ -1,5 +1,9 @@
 ext {
     pod = 'UrbanAirship-iOS-SDK'
+    // Ensure airshipProperties is available in this subproject
+    if (!project.hasProperty('airshipProperties')) {
+        airshipProperties = rootProject.ext.airshipProperties
+    }
 }
 
 task clean(type: Delete) {
@@ -60,7 +64,8 @@ task carthageCheckout {
 }
 
 task build {
-  dependsOn 'downloadFrameworks'
+  // Disabled downloadFrameworks since we're using Carthage to manage iOS dependencies
+  // dependsOn 'downloadFrameworks'
 
   def BuildConfiguration=project.properties['build_configuration'] ?: "Release"
   doLast() {

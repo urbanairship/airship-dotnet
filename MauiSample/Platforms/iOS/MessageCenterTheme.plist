@@ -77,6 +77,6 @@
 	<key>backButtonColorDark</key>
 	<string>#DDDDDD</string>
 	<key>navigationBarTitle</key>
-	<string>Nav Bar Title</string>
+	<string>My Message Center</string>
 </dict>
 </plist>

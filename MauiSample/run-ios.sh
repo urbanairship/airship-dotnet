@@ -2,12 +2,29 @@
 
 # Build and run Airship .NET MAUI iOS sample app
 # Works for any user on macOS
+#
+# Usage:
+#   ./run-ios.sh        - Normal build and run
+#   ./run-ios.sh --clean - Clean Carthage and rebuild wrapper before running
+#   ./run-ios.sh --fast  - Skip Carthage rebuild, only rebuild wrapper if source changed
 
 set -e  # Exit on any error
+
+# Parse command line arguments
+CLEAN_BUILD=false
+FAST_BUILD=false
+if [[ "$1" == "--clean" ]]; then
+    CLEAN_BUILD=true
+    echo "🧹 Clean build requested - will rebuild Carthage and wrapper"
+elif [[ "$1" == "--fast" ]]; then
+    FAST_BUILD=true
+    echo "🚀 Fast build requested - will skip Carthage rebuild and only rebuild wrapper if needed"
+fi
 
 # Get the script directory to find the project
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Ensure .NET is in PATH
 export PATH="$HOME/.dotnet:$PATH"
@@ -24,6 +41,82 @@ if [[ ! -f "$PROJECT_DIR/MauiSample.csproj" ]]; then
     echo "❌ Error: MauiSample.csproj not found in $PROJECT_DIR"
     echo "Please run this script from the MauiSample directory"
     exit 1
+fi
+
+# Check UseProjectReferences setting
+USE_PROJECT_REFS=$(grep -o '<UseProjectReferences>.*</UseProjectReferences>' MauiSample.csproj | sed 's/<[^>]*>//g')
+
+if [[ "$USE_PROJECT_REFS" = "true" ]]; then
+    echo "✅ Using project references (development mode)"
+    echo "   SDK changes will be built automatically with the sample app"
+else
+    echo "⚠️  Using NuGet packages"
+    echo "   To use project references for development, set UseProjectReferences=true in MauiSample.csproj"
+fi
+
+# Function to build Carthage dependencies
+build_carthage() {
+    echo "🏗️  Building Carthage dependencies..."
+    cd "$REPO_ROOT"
+    
+    if [[ "$CLEAN_BUILD" == "true" ]]; then
+        rm -rf Carthage/
+    fi
+    
+    if [[ "$FAST_BUILD" == "true" ]] && [[ -d "Carthage/Build" ]]; then
+        echo "🚀 Fast mode: Skipping Carthage rebuild (using existing build)"
+    elif [[ ! -d "Carthage/Build" ]]; then
+        echo "📦 Installing Carthage dependencies..."
+        # Try binaries first (faster), fall back to building from source if needed
+        carthage update --use-xcframeworks --platform iOS || \
+        carthage update --use-xcframeworks --no-use-binaries --platform iOS
+    else
+        echo "✅ Carthage dependencies already built"
+    fi
+}
+
+# Function to build AirshipWrapper
+build_wrapper() {
+    echo "🏗️  Building AirshipWrapper..."
+    cd "$REPO_ROOT/AirshipWrapper"
+    
+    WRAPPER_NEEDS_BUILD=false
+    
+    if [[ "$CLEAN_BUILD" == "true" ]] || [[ ! -f "lib/AirshipWrapper.xcframework/Info.plist" ]]; then
+        WRAPPER_NEEDS_BUILD=true
+    else
+        # Check if source files are newer than the built framework
+        if [[ "AirshipWrapper/AWAirshipWrapper.m" -nt "lib/AirshipWrapper.xcframework/Info.plist" ]] || \
+           [[ "AirshipWrapper/AWAirshipWrapper.h" -nt "lib/AirshipWrapper.xcframework/Info.plist" ]]; then
+            echo "📝 Source files changed, rebuilding wrapper..."
+            WRAPPER_NEEDS_BUILD=true
+        fi
+    fi
+    
+    if [[ "$WRAPPER_NEEDS_BUILD" == "true" ]]; then
+        echo "🔨 Building AirshipWrapper.xcframework..."
+        ./build-wrapper.sh
+        
+        # Copy to binding project
+        echo "📁 Copying wrapper to binding project..."
+        mkdir -p "$REPO_ROOT/src/AirshipBindings.iOS.ObjectiveC/lib"
+        cp -R lib/AirshipWrapper.xcframework "$REPO_ROOT/src/AirshipBindings.iOS.ObjectiveC/lib/"
+    else
+        echo "✅ AirshipWrapper already built and up to date"
+    fi
+}
+
+# Check and build dependencies if needed
+if [[ "$USE_PROJECT_REFS" = "true" ]]; then
+    # Check for carthage command
+    if ! command -v carthage &> /dev/null; then
+        echo "❌ Error: Carthage is not installed"
+        echo "Please install Carthage: brew install carthage"
+        exit 1
+    fi
+    
+    build_carthage
+    build_wrapper
 fi
 
 # Get booted iPhone/iPad simulators only (excluding Apple TV, Apple Watch, etc.)
@@ -51,10 +144,15 @@ fi
 echo "🏗️  Building iOS app..."
 cd "$PROJECT_DIR"
 
+# Clean previous builds to ensure fresh build
+echo "🧹 Cleaning previous builds..."
+dotnet clean MauiSample.csproj -f net8.0-ios -v quiet
+
 # Build the app
-dotnet build -f net8.0-ios \
+dotnet build MauiSample.csproj -f net8.0-ios \
     -p:RuntimeIdentifier=iossimulator-arm64 \
-    -p:CodesignProvision="dotnet-maui-sample-profile"
+    -p:CodesignProvision="dotnet-maui-sample-profile" \
+    -v minimal
 
 if [[ $? -ne 0 ]]; then
     echo "❌ Build failed. Make sure you have:"
@@ -64,27 +162,46 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
+# Uninstall existing app to ensure clean state
+echo "🗑️  Uninstalling existing app..."
+xcrun simctl uninstall "$DEVICE_ID" com.urbanairship.richpush 2>/dev/null || true
+
 echo "📱 Installing app to simulator (Device: $DEVICE_ID)..."
 xcrun simctl install "$DEVICE_ID" "$PROJECT_DIR/bin/Debug/net8.0-ios/iossimulator-arm64/MauiSample.app"
 
 echo "🚀 Launching app..."
 
-# Create log files with timestamp
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-CONSOLE_LOG="$SCRIPT_DIR/ios-console-log-$TIMESTAMP.log"
-SYSTEM_LOG="$SCRIPT_DIR/ios-system-log-$TIMESTAMP.log"
+# Create log directory with PST timestamp
+LOG_BASE_DIR="$SCRIPT_DIR/Sample Run Logs"
+mkdir -p "$LOG_BASE_DIR"
 
-echo "📋 Logging to:"
-echo "   Console output: $CONSOLE_LOG" 
-echo "   System logs: $SYSTEM_LOG"
+# Get PST timestamp (TZ=America/Los_Angeles ensures PST/PDT)
+PST_TIMESTAMP=$(TZ=America/Los_Angeles date +"%Y-%m-%d_%H-%M-%S_PST")
+LOG_DIR="$LOG_BASE_DIR/$PST_TIMESTAMP"
+mkdir -p "$LOG_DIR"
+
+# Create log files
+CONSOLE_LOG="$LOG_DIR/console.log"
+SYSTEM_LOG="$LOG_DIR/system.log"
+
+echo "📋 Logging to directory: $LOG_DIR"
+echo "   Console output: console.log" 
+echo "   System logs: system.log"
 echo "📋 Press Ctrl+C to stop..."
 echo "========================================"
 echo ""
 
-# Start system log capture in background (capture all logs)
+# Start system log capture in background (filtered for app-relevant logs)
 # Stream to both file and console
 xcrun simctl spawn "$DEVICE_ID" log stream \
-    --level debug 2>&1 | tee "$SYSTEM_LOG" &
+    --predicate 'processImagePath CONTAINS "MauiSample" OR 
+                 messageType == error OR 
+                 eventMessage CONTAINS "Airship" OR 
+                 eventMessage CONTAINS "xamarin" OR
+                 eventMessage CONTAINS "mono" OR
+                 eventMessage CONTAINS "SIGABRT" OR
+                 eventMessage CONTAINS "crash"' \
+    --level info 2>&1 | grep -v -E "SpringBoard|runningboardd|symptomsd|CommCenter|CloudKit|FrontBoard|UIKitCore|CoreFoundation" | tee "$SYSTEM_LOG" &
 LOG_PID=$!
 
 # Function to cleanup on exit

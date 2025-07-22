@@ -87,7 +87,8 @@ namespace AirshipDotNet
             add
             {
                 onMessageCenterDisplay += value;
-                MessageCenterClass.Shared().SetOnShowMessageCenterListener(this);
+                // TODO(SDK19): why is this not accessible?
+                //MessageCenterClass.Shared().SetOnShowMessageCenterListener(this);
             }
 
             remove
@@ -96,7 +97,8 @@ namespace AirshipDotNet
 
                 if (onMessageCenterDisplay == null)
                 {
-                    MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
+                    // TODO(SDK19): why is this not accessible?
+                    // MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
                 }
             }
         }
@@ -151,6 +153,10 @@ namespace AirshipDotNet
             {
                 uAFeatures.Add(PrivacyManager.Feature.Contacts);
             }
+            if (features.HasFlag(Features.FeatureFlags))
+            {
+                uAFeatures.Add(PrivacyManager.Feature.FeatureFlags);
+            }
 
             return uAFeatures.ToArray();
         }
@@ -189,25 +195,15 @@ namespace AirshipDotNet
                 features |= Features.Contacts;
             }
 
+            if (uAFeatures.Contains(PrivacyManager.Feature.FeatureFlags))
+            {
+                features |= Features.FeatureFlags;
+            }
+
             return features;
         }
 
         public IEnumerable<string> Tags => UAirship.Shared().Channel.Tags;
-
-        private class ResultCallback : Java.Lang.Object, IResultCallback
-        {
-            Action<Java.Lang.Object?> action;
-
-            internal ResultCallback(Action<Java.Lang.Object?> action)
-            {
-                this.action = action;
-            }
-
-            public void OnResult(Java.Lang.Object? result)
-            {
-                action.Invoke(result);
-            }
-        }
 
         private List<string> CastHashSetToList(HashSet set)
         {
@@ -366,38 +362,41 @@ namespace AirshipDotNet
 
         public void DeleteMessage(string messageId) => MessageCenterClass.Shared().Inbox.DeleteMessages(new List<String> { messageId });
 
-        public void MessageCenterUnreadCount(Action<int> messageCount) => messageCount(MessageCenterClass.Shared().Inbox.UnreadCount);
+        public void MessageCenterUnreadCount(Action<int> messageCount) => MessageCenterClass.Shared().Inbox.GetUnreadCount(messageCount);
 
-        public void MessageCenterCount(Action<int> messageCount) => messageCount(MessageCenterClass.Shared().Inbox.Count);
+        public void MessageCenterCount(Action<int> messageCount) => MessageCenterClass.Shared().Inbox.GetCount(messageCount);
 
         public void InboxMessages(Action<List<MessageCenter.Message>> listMessages)
         {
-            var messagesList = new List<MessageCenter.Message>();
-            var messages = MessageCenterClass.Shared().Inbox.Messages;
-            foreach (var message in messages)
+            MessageCenterClass.Shared().Inbox.GetMessages(messages =>
             {
-                var extras = new Dictionary<string, string>();
-                foreach (var key in message.Extras.KeySet())
+                var messagesList = new List<MessageCenter.Message>();
+
+                foreach (var message in messages)
                 {
-                    extras.Add(key, message.Extras.Get(key).ToString());
+                    var extras = new Dictionary<string, string?>();
+                    foreach (var key in message.Extras.Keys)
+                    {
+                        extras.Add(key, message.Extras[key]);
+                    }
+
+                    DateTime? sentDate = FromDate(message.SentDate);
+                    DateTime? expirationDate = FromDate(message.ExpirationDate);
+
+                    var inboxMessage = new MessageCenter.Message(
+                        message.Id,
+                        message.Title,
+                        sentDate,
+                        expirationDate,
+                        message.IsRead,
+                        message.ListIconUrl,
+                        extras);
+
+                    messagesList.Add(inboxMessage);
                 }
-
-                DateTime? sentDate = FromDate(message.SentDate);
-                DateTime? expirationDate = FromDate(message.ExpirationDate);
-
-                var inboxMessage = new MessageCenter.Message(
-                    message.MessageId,
-                    message.Title,
-                    sentDate,
-                    expirationDate,
-                    message.IsRead,
-                    message.ListIconUrl,
-                    extras);
-
-                messagesList.Add(inboxMessage);
-            }
-
-            listMessages(messagesList);
+                
+                listMessages(messagesList);
+            });
         }
 
         private Date FromDateTime(DateTime? dateTime)
