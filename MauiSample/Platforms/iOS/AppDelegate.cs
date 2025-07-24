@@ -9,6 +9,8 @@ namespace MauiSample;
 [Register("AppDelegate")]
 public class AppDelegate : MauiUIApplicationDelegate
 {
+    private LocationPermissionDelegate locationDelegate; // Keep reference to prevent GC
+    
     protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 
     public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
@@ -63,6 +65,11 @@ public class AppDelegate : MauiUIApplicationDelegate
         //         Console.WriteLine("Badge reset completed");
         //     }
         // });
+
+        // Set up location permission delegate
+        locationDelegate = new LocationPermissionDelegate();
+        UAirship.Shared.PermissionsManager.SetDelegate(locationDelegate, UAPermission.Location);
+        Console.WriteLine("✅ Location permission delegate configured");
 
         return base.FinishedLaunching(application, launchOptions);
     }

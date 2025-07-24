@@ -48,6 +48,12 @@
                 HorizontalOptions="Center"
                 Command="{Binding OnPrefCenterButtonClicked}" />
 
+            <Button
+                x:Name="LocationPermissionButton"
+                Text="Request Location Permission"
+                HorizontalOptions="Center"
+                Clicked="OnRequestLocationPermission" />
+
         </VerticalStackLayout>
     </ScrollView>
 

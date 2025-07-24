@@ -36,5 +36,9 @@
 	<string>Assets.xcassets/appicon.appiconset</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.urbanairship.richpush</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs location access to provide location-based notifications and relevant content</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs location access to provide relevant content based on your location</string>
 </dict>
 </plist>
