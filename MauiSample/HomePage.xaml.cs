@@ -1,4 +1,7 @@
 ﻿using AirshipDotNet;
+#if IOS
+using Airship;
+#endif
 
 namespace MauiSample;
 
@@ -22,9 +25,21 @@ public partial class HomePage : ContentPage
         try
         {
 #if IOS
-            // On iOS, the permission request is handled by the delegate we registered
-            // This will trigger the system permission dialog
-            await DisplayAlert("Location Permission", "The location permission request has been initiated. Please check the system dialog.", "OK");
+            // Request location permission using Airship's permission manager
+            UAPermissionsManager.RequestPermission(UAPermission.Location, (status) =>
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    string message = status switch
+                    {
+                        UAPermissionStatus.Granted => "Location permission granted!",
+                        UAPermissionStatus.Denied => "Location permission denied.",
+                        UAPermissionStatus.NotDetermined => "Location permission not determined.",
+                        _ => "Unknown permission status."
+                    };
+                    await DisplayAlert("Location Permission", message, "OK");
+                });
+            });
 #elif ANDROID
             // Android implementation would go here
             await DisplayAlert("Location Permission", "Android location permission handling not yet implemented.", "OK");

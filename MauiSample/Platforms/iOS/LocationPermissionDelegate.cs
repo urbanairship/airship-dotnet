@@ -6,7 +6,7 @@ using Airship;
 
 namespace MauiSample.Platforms.iOS
 {
-    public class LocationPermissionDelegate : UAAirshipPermissionDelegate
+    public class LocationPermissionDelegate : UAPermissionDelegate
     {
         private readonly CLLocationManager locationManager = new CLLocationManager();
 
@@ -28,7 +28,7 @@ namespace MauiSample.Platforms.iOS
                 var currentStatus = GetCurrentPermissionStatus();
                 
                 // If already determined, return current status
-                if (currentStatus != UAPermissionStatus.notDetermined)
+                if (currentStatus != UAPermissionStatus.NotDetermined)
                 {
                     completionHandler?.Invoke(currentStatus);
                     return;
@@ -37,7 +37,7 @@ namespace MauiSample.Platforms.iOS
                 // Only request when app is active
                 if (UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active)
                 {
-                    completionHandler?.Invoke(UAPermissionStatus.notDetermined);
+                    completionHandler?.Invoke(UAPermissionStatus.NotDetermined);
                     return;
                 }
                 
@@ -58,12 +58,12 @@ namespace MauiSample.Platforms.iOS
             
             return status switch
             {
-                CLAuthorizationStatus.NotDetermined => UAPermissionStatus.notDetermined,
-                CLAuthorizationStatus.Restricted => UAPermissionStatus.denied,
-                CLAuthorizationStatus.Denied => UAPermissionStatus.denied,
-                CLAuthorizationStatus.AuthorizedAlways => UAPermissionStatus.granted,
-                CLAuthorizationStatus.AuthorizedWhenInUse => UAPermissionStatus.granted,
-                _ => UAPermissionStatus.notDetermined
+                CLAuthorizationStatus.NotDetermined => UAPermissionStatus.NotDetermined,
+                CLAuthorizationStatus.Restricted => UAPermissionStatus.Denied,
+                CLAuthorizationStatus.Denied => UAPermissionStatus.Denied,
+                CLAuthorizationStatus.AuthorizedAlways => UAPermissionStatus.Granted,
+                CLAuthorizationStatus.AuthorizedWhenInUse => UAPermissionStatus.Granted,
+                _ => UAPermissionStatus.NotDetermined
             };
         }
 

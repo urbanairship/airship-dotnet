@@ -3,6 +3,7 @@ using ObjCRuntime;
 using UIKit;
 using Airship;
 using System.Diagnostics;
+using MauiSample.Platforms.iOS;
 
 namespace MauiSample;
 
@@ -68,7 +69,7 @@ public class AppDelegate : MauiUIApplicationDelegate
 
         // Set up location permission delegate
         locationDelegate = new LocationPermissionDelegate();
-        UAirship.Shared.PermissionsManager.SetDelegate(locationDelegate, UAPermission.Location);
+        UAPermissionsManager.SetDelegate(locationDelegate, UAPermission.Location);
         Console.WriteLine("✅ Location permission delegate configured");
 
         return base.FinishedLaunching(application, launchOptions);

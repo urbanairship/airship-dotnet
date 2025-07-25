@@ -1778,5 +1778,46 @@ namespace Airship
 		[Static]
 		[Export ("takeOff:launchOptions:error:")]
 		bool TakeOff ([NullAllowed] UAConfig config, [NullAllowed] NSDictionary<NSString, NSObject> launchOptions, [NullAllowed] out NSError error);
+
+		// @property (readonly, nonatomic, strong, class) UAPermissionsManager * _Nonnull permissionsManager;
+		[Static]
+		[Export ("permissionsManager", ArgumentSemantic.Strong)]
+		UAPermissionsManager PermissionsManager { get; }
+	}
+
+	// @protocol UAPermissionDelegate
+	[Protocol, Model]
+	[BaseType (typeof(NSObject))]
+	interface UAPermissionDelegate
+	{
+		// @required -(void)checkPermissionStatusWithCompletionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Abstract]
+		[Export ("checkPermissionStatusWithCompletionHandler:")]
+		void CheckPermissionStatus (Action<UAPermissionStatus> completionHandler);
+
+		// @required -(void)requestPermissionWithCompletionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Abstract]
+		[Export ("requestPermissionWithCompletionHandler:")]
+		void RequestPermission (Action<UAPermissionStatus> completionHandler);
+	}
+
+	// @interface UAPermissionsManager : NSObject
+	[BaseType (typeof(NSObject))]
+	interface UAPermissionsManager
+	{
+		// +(void)setDelegate:(id<UAPermissionDelegate> _Nullable)delegate permission:(enum UAPermission)permission;
+		[Static]
+		[Export ("setDelegate:permission:")]
+		void SetDelegate ([NullAllowed] UAPermissionDelegate @delegate, UAPermission permission);
+
+		// +(void)checkPermissionStatus:(enum UAPermission)permission completionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Static]
+		[Export ("checkPermissionStatus:completionHandler:")]
+		void CheckPermissionStatus (UAPermission permission, Action<UAPermissionStatus> completionHandler);
+
+		// +(void)requestPermission:(enum UAPermission)permission completionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Static]
+		[Export ("requestPermission:completionHandler:")]
+		void RequestPermission (UAPermission permission, Action<UAPermissionStatus> completionHandler);
 	}
 }
