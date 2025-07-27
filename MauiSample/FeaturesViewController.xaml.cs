@@ -12,83 +12,126 @@ public partial class FeaturesViewController : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        enabledPushFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.Push);
-        enableMessageCenterFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.MessageCenter);
-        enableInAppAutomationFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.InAppAutomation);
-        EnableAnalyticsFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.Analytics);
-        enableTagsAndAttributesFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.TagsAndAttributes);
-        enableContactsFeatureSwitch.On = AirshipDotNet.Airship.Instance.IsFeatureEnabled(Features.Contacts);
+        var enabledFeatures = AirshipDotNet.Airship.PrivacyManager.EnabledFeatures;
+        enabledPushFeatureSwitch.On = enabledFeatures.HasFlag(Features.Push);
+        enableMessageCenterFeatureSwitch.On = enabledFeatures.HasFlag(Features.MessageCenter);
+        enableInAppAutomationFeatureSwitch.On = enabledFeatures.HasFlag(Features.InAppAutomation);
+        EnableAnalyticsFeatureSwitch.On = enabledFeatures.HasFlag(Features.Analytics);
+        enableTagsAndAttributesFeatureSwitch.On = enabledFeatures.HasFlag(Features.TagsAndAttributes);
+        enableContactsFeatureSwitch.On = enabledFeatures.HasFlag(Features.Contacts);
     }
 
-    void enablePushFeature_OnChanged(object sender, EventArgs e)
+    async void enablePushFeature_OnChanged(object sender, EventArgs e)
     {
-        if (enabledPushFeatureSwitch.On)
+        try
         {
-            AirshipDotNet.Airship.Instance.EnableFeatures(Features.Push);
+            if (enabledPushFeatureSwitch.On)
+            {
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.Push);
+            }
+            else
+            {
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.Push);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            AirshipDotNet.Airship.Instance.DisableFeatures(Features.Push);
-        }
-    }
-
-    void enableMessageCenterFeature_OnChanged(object sender, EventArgs e)
-    {
-        if (enableMessageCenterFeatureSwitch.On)
-        {
-            AirshipDotNet.Airship.Instance.EnableFeatures(Features.MessageCenter);
-        }
-        else
-        {
-            AirshipDotNet.Airship.Instance.DisableFeatures(Features.MessageCenter);
+            Console.WriteLine($"Error toggling push feature: {ex.Message}");
         }
     }
 
-    void enableInAppAutomationFeature_OnChanged(object sender, EventArgs e)
+    async void enableMessageCenterFeature_OnChanged(object sender, EventArgs e)
     {
-        if (enableInAppAutomationFeatureSwitch.On)
+        try
         {
-            AirshipDotNet.Airship.Instance.EnableFeatures(Features.InAppAutomation);
+            if (enableMessageCenterFeatureSwitch.On)
+            {
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.MessageCenter);
+            }
+            else
+            {
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.MessageCenter);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            AirshipDotNet.Airship.Instance.DisableFeatures(Features.InAppAutomation);
+            Console.WriteLine($"Error toggling message center feature: {ex.Message}");
         }
     }
 
-    void enableAnalyticsFeature_OnChanged(object sender, EventArgs e)
+    async void enableInAppAutomationFeature_OnChanged(object sender, EventArgs e)
     {
-        if (EnableAnalyticsFeatureSwitch.On)
+        try
         {
-            AirshipDotNet.Airship.Instance.EnableFeatures(Features.Analytics);
+            if (enableInAppAutomationFeatureSwitch.On)
+            {
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.InAppAutomation);
+            }
+            else
+            {
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.InAppAutomation);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            AirshipDotNet.Airship.Instance.DisableFeatures(Features.Analytics);
+            Console.WriteLine($"Error toggling in-app automation feature: {ex.Message}");
         }
     }
 
-    void enableTagsAndAttributesFeature_OnChanged(object sender, EventArgs e)
+    async void enableAnalyticsFeature_OnChanged(object sender, EventArgs e)
     {
-        if (enableTagsAndAttributesFeatureSwitch.On)
+        try
         {
-            AirshipDotNet.Airship.Instance.EnableFeatures(Features.TagsAndAttributes);
+            if (EnableAnalyticsFeatureSwitch.On)
+            {
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.Analytics);
+            }
+            else
+            {
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.Analytics);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            AirshipDotNet.Airship.Instance.DisableFeatures(Features.TagsAndAttributes);
+            Console.WriteLine($"Error toggling analytics feature: {ex.Message}");
         }
     }
 
-    void enableContactsFeature_OnChanged(object sender, EventArgs e)
+    async void enableTagsAndAttributesFeature_OnChanged(object sender, EventArgs e)
     {
-        if (enableContactsFeatureSwitch.On)
+        try
         {
-            AirshipDotNet.Airship.Instance.EnableFeatures(Features.Contacts);
+            if (enableTagsAndAttributesFeatureSwitch.On)
+            {
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.TagsAndAttributes);
+            }
+            else
+            {
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.TagsAndAttributes);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            AirshipDotNet.Airship.Instance.DisableFeatures(Features.Contacts);
+            Console.WriteLine($"Error toggling tags and attributes feature: {ex.Message}");
+        }
+    }
+
+    async void enableContactsFeature_OnChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            if (enableContactsFeatureSwitch.On)
+            {
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.Contacts);
+            }
+            else
+            {
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.Contacts);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error toggling contacts feature: {ex.Message}");
         }
     }
 

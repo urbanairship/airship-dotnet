@@ -96,28 +96,16 @@ jobs:
 
       - name: Bootstrap Carthage
         run: |
-          echo "::group::Carthage Bootstrap"
-          # Show Carthage version for debugging
-          carthage version || echo "Carthage not found"
-          # List files to ensure Cartfile exists
-          ls -la Cart*
-          # Run with verbose output and pipe to xcbeautify
-          if command -v xcbeautify &> /dev/null; then
-            carthage bootstrap --use-xcframeworks --platform iOS --verbose 2>&1 | xcbeautify
-          else
-            carthage bootstrap --use-xcframeworks --platform iOS --verbose
-          fi
+          carthage version
           
-          # Verify frameworks were downloaded
-          echo "Verifying Carthage frameworks..."
-          if [ -d "Carthage/Build" ]; then
-            echo "Contents of Carthage/Build:"
-            ls -la Carthage/Build/
-          else
-            echo "ERROR: Carthage/Build directory not found!"
+          # Bootstrap with xcframeworks, using binary downloads when available
+          carthage bootstrap --use-xcframeworks --platform iOS --cache-builds
+
+          # Verify the build directory was created
+          if [ ! -d "Carthage/Build" ]; then
+            echo "ERROR: Carthage/Build directory not found. This likely failed due to GitHub API rate limits or network issues."
             exit 1
           fi
-          echo "::endgroup::"
 
       - name: Build AirshipWrapper
         run: |

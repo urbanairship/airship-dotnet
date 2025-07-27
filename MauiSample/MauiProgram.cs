@@ -1,5 +1,4 @@
-﻿
-using AirshipDotNet.MessageCenter;
+﻿using AirshipDotNet;
 
 namespace MauiSample;
 
@@ -10,7 +9,6 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
-			// Configures Maui handlers for Airship Message Center
 			.UseAirshipMessageCenter()
             .ConfigureFonts(fonts =>
 			{

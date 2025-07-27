@@ -1,5 +1,5 @@
 ﻿using AirshipDotNet;
-using AirshipDotNet.MessageCenter.Controls;
+using AirshipDotNet.Controls;
 
 namespace MauiSample;
 
@@ -10,6 +10,8 @@ public partial class MessagePage : ContentPage
     public event EventHandler<MessageLoadFailedEventArgs> LoadFailed;
     public event EventHandler<MessageClosedEventArgs> Closed;
 
+    private string _messageId = "";
+
     public MessagePage()
     {
         InitializeComponent();
@@ -17,12 +19,13 @@ public partial class MessagePage : ContentPage
 
     public string MessageId
     {
-        get => messageView.MessageId;
+        get => _messageId;
         set
         {
-            if (value != messageView.MessageId)
+            if (value != _messageId)
             {
-                messageView.MessageId = value;
+                _messageId = value;
+                messageView.MessageId = _messageId;
             }
         }
     }
@@ -33,11 +36,18 @@ public partial class MessagePage : ContentPage
     void MessageView_LoadFailed(object sender, MessageLoadFailedEventArgs args) =>
         LoadFailed?.Invoke(this, args);
 
-    void MessageView_LoadFinished(object sender, MessageLoadFinishedEventArgs args)
+    async void MessageView_LoadFinished(object sender, MessageLoadFinishedEventArgs args)
     {
         LoadFinished?.Invoke(this, args);
 
-        AirshipDotNet.Airship.Instance.MarkMessageRead(MessageId);
+        try
+        {
+            await AirshipDotNet.Airship.MessageCenter.MarkReadAsync(MessageId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error marking message as read: {ex.Message}");
+        }
     }
 
     void MessageView_Closed(object sender, MessageClosedEventArgs args) =>

@@ -95,7 +95,6 @@
 
   <ItemGroup Label="Common Project Dependencies" Condition="$(UseProjectReferences)">
     <ProjectReference Condition="$(UseProjectReferences)" Include="..\src\Airship.Net\Airship.Net.csproj" />
-    <ProjectReference Condition="$(UseProjectReferences)" Include="..\src\Airship.Net.MessageCenter\Airship.Net.MessageCenter.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="iOS Project Dependencies" Condition="'$(TargetFramework)' == 'net8.0-ios' And '$(UseProjectReferences)'">

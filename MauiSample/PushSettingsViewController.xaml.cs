@@ -9,11 +9,23 @@ public partial class PushSettingsViewController : ContentPage
         InitializeComponent();
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-        enabledPushSwitch.On = AirshipDotNet.Airship.Instance.UserNotificationsEnabled;
-        channelId.Detail = AirshipDotNet.Airship.Instance.ChannelId != null ? AirshipDotNet.Airship.Instance.ChannelId : "";
+        enabledPushSwitch.On = AirshipDotNet.Airship.Push.UserNotificationsEnabled;
+
+        try
+        {
+            // Get channel ID asynchronously
+            var id = await AirshipDotNet.Airship.Channel.GetChannelIdAsync();
+            channelId.Detail = id ?? "";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting channel ID: {ex.Message}");
+            channelId.Detail = "";
+        }
+
         UpdateNamedUser();
         UpdateTagsCell();
     }
@@ -25,70 +37,92 @@ public partial class PushSettingsViewController : ContentPage
 
     void enablePush_OnChanged(object sender, EventArgs e)
     {
-        AirshipDotNet.Airship.Instance.UserNotificationsEnabled = enabledPushSwitch.On;
+        AirshipDotNet.Airship.Push.UserNotificationsEnabled = enabledPushSwitch.On;
     }
 
-    void CopyChannelID(object sender, EventArgs e)
+    async void CopyChannelID(object sender, EventArgs e)
     {
-        if (AirshipDotNet.Airship.Instance.ChannelId != null)
+        try
         {
-            Clipboard.Default.SetTextAsync(AirshipDotNet.Airship.Instance.ChannelId);
-            DisplayAlert("Alert", "Channel ID copied to clipboard!", "OK");
+            var id = await AirshipDotNet.Airship.Channel.GetChannelIdAsync();
+            if (!string.IsNullOrEmpty(id))
+            {
+                await Clipboard.Default.SetTextAsync(id);
+                await DisplayAlert("Alert", "Channel ID copied to clipboard!", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error copying channel ID: {ex.Message}");
+            await DisplayAlert("Error", "Failed to copy channel ID", "OK");
         }
     }
 
-    void AddNamedUser(object sender, EventArgs e)
+    async void AddNamedUser(object sender, EventArgs e)
     {
-        if (namedUserLabel.Text == null)
+        try
         {
-            AirshipDotNet.Airship.Instance.ResetContact();
+            if (string.IsNullOrEmpty(namedUserLabel.Text))
+            {
+                await AirshipDotNet.Airship.Contact.ResetAsync();
+            }
+            else
+            {
+                await AirshipDotNet.Airship.Contact.IdentifyAsync(namedUserLabel.Text);
+            }
+
+            UpdateNamedUser();
+            await DisplayAlert("Alert", "Named user added successfully", "OK");
         }
-        else
+        catch (Exception ex)
         {
-            AirshipDotNet.Airship.Instance.IdentifyContact(namedUserLabel.Text);
+            Console.WriteLine($"Error adding named user: {ex.Message}");
+            await DisplayAlert("Error", "Failed to add named user", "OK");
         }
-        UpdateNamedUser();
-        DisplayAlert("Alert", "Named user added successufully", "OK");
     }
 
     void AddTag(object sender, EventArgs e)
     {
         string tagToAdd = tagLabel.Text;
-        AirshipDotNet.Airship.Instance.EditDeviceTags()
+        AirshipDotNet.Airship.Channel.EditTags()
                 .AddTags(new string[] { tagToAdd })
                 .Apply();
         UpdateTagsCell();
     }
 
-    void UpdateTagsCell()
+    async void UpdateTagsCell()
     {
         tagLabel.Text = "";
-        IEnumerable<string> tags = AirshipDotNet.Airship.Instance.Tags;
-
-        string str = "";
-        foreach (string tag in tags)
-        {
-            str = str + tag + "\n";
-        }
-        tagsList.Text = str;
-    }
-
-    void UpdateNamedUser()
-    {
         try
         {
-            namedUserLabel.Text = "";
-            AirshipDotNet.Airship.Instance.GetNamedUser(namedUser =>
+            var tags = await AirshipDotNet.Airship.Channel.GetTagsAsync();
+
+            string str = "";
+            foreach (string tag in tags)
             {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    namedUserLabel.Placeholder = namedUser != null ? namedUser : "named user";
-                });
-            });
+                str = str + tag + "\n";
+            }
+
+            tagsList.Text = str;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in UpdateNamedUser: {ex}");
+            Console.WriteLine($"Error updating tags: {ex.Message}");
+            tagsList.Text = "Error loading tags";
+        }
+    }
+
+    async void UpdateNamedUser()
+    {
+        namedUserLabel.Text = "";
+        try
+        {
+            var namedUser = await AirshipDotNet.Airship.Contact.GetNamedUserAsync();
+            namedUserLabel.Placeholder = namedUser ?? "named user";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in UpdateNamedUser: {ex.Message}");
             namedUserLabel.Placeholder = "Error loading named user";
         }
     }
