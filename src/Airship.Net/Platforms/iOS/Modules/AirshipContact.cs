@@ -27,7 +27,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Gets the named user ID.
         /// </summary>
         /// <returns>The named user ID or null if not set.</returns>
-        public Task<string?> GetNamedUserAsync()
+        public Task<string?> GetNamedUser()
         {
             var tcs = new TaskCompletionSource<string?>();
 
@@ -52,7 +52,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Identifies the contact with a named user ID.
         /// </summary>
         /// <param name="namedUserId">The named user ID.</param>
-        public Task IdentifyAsync(string namedUserId)
+        public Task Identify(string namedUserId)
         {
             return Task.Run(() => UAirship.Contact.Identify(namedUserId));
         }
@@ -60,7 +60,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <summary>
         /// Resets the contact.
         /// </summary>
-        public Task ResetAsync()
+        public Task Reset()
         {
             return Task.Run(() => UAirship.Contact.Reset());
         }
@@ -69,7 +69,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Fetches the contact subscription lists.
         /// </summary>
         /// <returns>Dictionary of subscription lists by type.</returns>
-        public Task<Dictionary<string, List<string>>> FetchSubscriptionListsAsync()
+        public Task<Dictionary<string, List<string>>> FetchSubscriptionLists()
         {
             var tcs = new TaskCompletionSource<Dictionary<string, List<string>>>();
 

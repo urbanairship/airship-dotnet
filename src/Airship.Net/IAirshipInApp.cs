@@ -14,24 +14,24 @@ namespace AirshipDotNet
         /// Gets whether in-app automation is paused.
         /// </summary>
         /// <returns>True if paused, false otherwise.</returns>
-        Task<bool> IsPausedAsync();
+        Task<bool> IsPaused();
         
         /// <summary>
         /// Sets whether in-app automation is paused.
         /// </summary>
         /// <param name="paused">True to pause, false to resume.</param>
-        Task SetPausedAsync(bool paused);
+        Task SetPaused(bool paused);
         
         /// <summary>
         /// Gets the display interval for in-app messages.
         /// </summary>
         /// <returns>The display interval.</returns>
-        Task<TimeSpan> GetDisplayIntervalAsync();
+        Task<TimeSpan> GetDisplayInterval();
         
         /// <summary>
         /// Sets the display interval for in-app messages.
         /// </summary>
         /// <param name="interval">The display interval.</param>
-        Task SetDisplayIntervalAsync(TimeSpan interval);
+        Task SetDisplayInterval(TimeSpan interval);
     }
 }

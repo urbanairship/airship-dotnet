@@ -27,7 +27,7 @@ namespace AirshipDotNet
         /// Gets the channel identifier.
         /// </summary>
         /// <returns>The channel ID or null if not created yet.</returns>
-        public Task<string?> GetChannelIdAsync()
+        public Task<string?> GetChannelId()
         {
             return Task.FromResult(_module.UAirship.Channel.Id);
         }
@@ -36,7 +36,7 @@ namespace AirshipDotNet
         /// Gets the channel tags.
         /// </summary>
         /// <returns>The current tags.</returns>
-        public Task<List<string>> GetTagsAsync()
+        public Task<List<string>> GetTags()
         {
             var tags = _module.UAirship.Channel.Tags;
             var result = tags?.ToList() ?? new List<string>();
@@ -47,7 +47,7 @@ namespace AirshipDotNet
         /// Fetches the channel subscription lists.
         /// </summary>
         /// <returns>List of subscription list IDs.</returns>
-        public async Task<List<string>> FetchSubscriptionListsAsync()
+        public async Task<List<string>> FetchSubscriptionLists()
         {
             var pendingResult = _module.UAirship.Channel.FetchSubscriptionListsPendingResult();
             var result = await _module.WrapPendingResult<HashSet>(pendingResult);

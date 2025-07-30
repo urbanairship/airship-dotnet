@@ -14,19 +14,19 @@ namespace AirshipDotNet
         /// Tracks a custom event.
         /// </summary>
         /// <param name="customEvent">The custom event to track.</param>
-        Task TrackEventAsync(CustomEvent customEvent);
+        Task TrackEvent(CustomEvent customEvent);
 
         /// <summary>
         /// Tracks a screen view.
         /// </summary>
         /// <param name="screen">The screen name.</param>
-        Task TrackScreenAsync(string screen);
+        Task TrackScreen(string screen);
 
         /// <summary>
         /// Associates an identifier.
         /// </summary>
         /// <param name="key">The identifier key.</param>
         /// <param name="identifier">The identifier value.</param>
-        Task AssociateIdentifierAsync(string key, string identifier);
+        Task AssociateIdentifier(string key, string identifier);
     }
 }

@@ -52,7 +52,7 @@ public class AppDelegate : MauiUIApplicationDelegate
 
 
         // Reset the badge count using the wrapper method
-        _ = AirshipDotNet.Airship.Push.ResetBadgeAsync().ContinueWith(t =>
+        _ = AirshipDotNet.Airship.Push.ResetBadge().ContinueWith(t =>
         {
             if (t.IsFaulted)
             {

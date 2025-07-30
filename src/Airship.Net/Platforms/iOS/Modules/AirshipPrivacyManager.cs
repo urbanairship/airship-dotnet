@@ -33,7 +33,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Gets the currently enabled features.
         /// </summary>
         /// <returns>The enabled features.</returns>
-        public Task<Features> GetEnabledFeaturesAsync()
+        public Task<Features> GetEnabledFeatures()
         {
             return Task.Run(() =>
             {
@@ -46,7 +46,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Sets the enabled features.
         /// </summary>
         /// <param name="features">The features to enable.</param>
-        public Task SetEnabledFeaturesAsync(Features features)
+        public Task SetEnabledFeatures(Features features)
         {
             return Task.Run(() =>
             {
@@ -58,7 +58,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Enables specific features.
         /// </summary>
         /// <param name="features">The features to enable.</param>
-        public Task EnableFeaturesAsync(Features features)
+        public Task EnableFeatures(Features features)
         {
             return Task.Run(() =>
             {
@@ -70,7 +70,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Disables specific features.
         /// </summary>
         /// <param name="features">The features to disable.</param>
-        public Task DisableFeaturesAsync(Features features)
+        public Task DisableFeatures(Features features)
         {
             return Task.Run(() =>
             {
@@ -83,9 +83,9 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// </summary>
         /// <param name="feature">The feature to check.</param>
         /// <returns>True if the feature is enabled, false otherwise.</returns>
-        public async Task<bool> IsFeatureEnabledAsync(Features feature)
+        public async Task<bool> IsFeatureEnabled(Features feature)
         {
-            var enabledFeatures = await GetEnabledFeaturesAsync();
+            var enabledFeatures = await GetEnabledFeatures();
             return enabledFeatures.HasFlag(feature);
         }
 
@@ -93,9 +93,9 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Checks if any feature is enabled.
         /// </summary>
         /// <returns>True if any feature is enabled, false otherwise.</returns>
-        public async Task<bool> IsAnyFeatureEnabledAsync()
+        public async Task<bool> IsAnyFeatureEnabled()
         {
-            var enabledFeatures = await GetEnabledFeaturesAsync();
+            var enabledFeatures = await GetEnabledFeatures();
             return enabledFeatures != Features.None;
         }
 

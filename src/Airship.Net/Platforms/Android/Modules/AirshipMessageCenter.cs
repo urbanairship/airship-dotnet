@@ -25,7 +25,7 @@ namespace AirshipDotNet
         /// <summary>
         /// Displays the message center.
         /// </summary>
-        public Task DisplayAsync()
+        public Task Display()
         {
             MessageCenterClass.Shared().ShowMessageCenter();
             return Task.CompletedTask;
@@ -35,31 +35,9 @@ namespace AirshipDotNet
         /// Displays a specific message.
         /// </summary>
         /// <param name="messageId">The message ID to display.</param>
-        public Task DisplayMessageAsync(string messageId)
+        public Task DisplayMessage(string messageId)
         {
             MessageCenterClass.Shared().ShowMessageCenter(messageId);
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Marks a message as read.
-        /// </summary>
-        /// <param name="messageId">The message ID to mark as read.</param>
-        public Task MarkMessageReadAsync(string messageId)
-        {
-            var messages = new List<string> { messageId };
-            MessageCenterClass.Shared().Inbox.MarkMessagesRead(messages);
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Deletes a message.
-        /// </summary>
-        /// <param name="messageId">The message ID to delete.</param>
-        public Task DeleteMessageAsync(string messageId)
-        {
-            var messages = new List<string> { messageId };
-            MessageCenterClass.Shared().Inbox.DeleteMessages(messages);
             return Task.CompletedTask;
         }
 
@@ -67,7 +45,7 @@ namespace AirshipDotNet
         /// Gets the unread message count.
         /// </summary>
         /// <returns>The number of unread messages.</returns>
-        public Task<int> GetUnreadCountAsync()
+        public Task<int> GetUnreadCount()
         {
             var tcs = new TaskCompletionSource<int>();
             MessageCenterClass.Shared().Inbox.GetUnreadCount(count => tcs.SetResult(count));
@@ -78,7 +56,7 @@ namespace AirshipDotNet
         /// Gets the total message count.
         /// </summary>
         /// <returns>The total number of messages.</returns>
-        public Task<int> GetCountAsync()
+        public Task<int> GetCount()
         {
             var tcs = new TaskCompletionSource<int>();
             MessageCenterClass.Shared().Inbox.GetCount(count => tcs.SetResult(count));
@@ -89,7 +67,7 @@ namespace AirshipDotNet
         /// Gets all inbox messages.
         /// </summary>
         /// <returns>List of inbox messages.</returns>
-        public Task<List<AirshipDotNet.MessageCenter.Message>> GetMessagesAsync()
+        public Task<List<AirshipDotNet.MessageCenter.Message>> GetMessages()
         {
             var tcs = new TaskCompletionSource<List<AirshipDotNet.MessageCenter.Message>>();
 
@@ -131,7 +109,7 @@ namespace AirshipDotNet
         /// </summary>
         /// <param name="messageId">The message ID.</param>
         /// <returns>The message or null if not found.</returns>
-        public Task<AirshipDotNet.MessageCenter.Message?> GetMessageAsync(string messageId)
+        public Task<AirshipDotNet.MessageCenter.Message?> GetMessage(string messageId)
         {
             var tcs = new TaskCompletionSource<AirshipDotNet.MessageCenter.Message?>();
 
@@ -171,7 +149,7 @@ namespace AirshipDotNet
         /// Marks messages as read.
         /// </summary>
         /// <param name="messageIds">The message IDs to mark as read.</param>
-        public Task MarkReadAsync(params string[] messageIds)
+        public Task MarkRead(params string[] messageIds)
         {
             MessageCenterClass.Shared().Inbox.MarkMessagesRead(messageIds);
             return Task.CompletedTask;
@@ -181,7 +159,7 @@ namespace AirshipDotNet
         /// Deletes messages.
         /// </summary>
         /// <param name="messageIds">The message IDs to delete.</param>
-        public Task DeleteAsync(params string[] messageIds)
+        public Task Delete(params string[] messageIds)
         {
             MessageCenterClass.Shared().Inbox.DeleteMessages(messageIds);
             return Task.CompletedTask;

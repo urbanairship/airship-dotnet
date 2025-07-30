@@ -23,7 +23,7 @@ namespace AirshipDotNet
         /// Tracks a screen view.
         /// </summary>
         /// <param name="screen">The screen name.</param>
-        public Task TrackScreenAsync(string screen)
+        public Task TrackScreen(string screen)
         {
             _module.UAirship.Analytics.TrackScreen(screen);
             return Task.CompletedTask;
@@ -33,7 +33,7 @@ namespace AirshipDotNet
         /// Tracks a custom event.
         /// </summary>
         /// <param name="customEvent">The custom event to track.</param>
-        public Task TrackEventAsync(CustomEvent customEvent)
+        public Task TrackEvent(CustomEvent customEvent)
         {
             if (customEvent == null || string.IsNullOrEmpty(customEvent.EventName))
             {
@@ -79,7 +79,7 @@ namespace AirshipDotNet
         /// </summary>
         /// <param name="key">The identifier key.</param>
         /// <param name="identifier">The identifier value.</param>
-        public Task AssociateIdentifierAsync(string key, string? identifier)
+        public Task AssociateIdentifier(string key, string identifier)
         {
             if (identifier == null)
             {

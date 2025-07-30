@@ -29,7 +29,7 @@ namespace AirshipDotNet
         /// Gets the named user ID.
         /// </summary>
         /// <returns>The named user ID or null if not set.</returns>
-        public Task<string?> GetNamedUserAsync()
+        public Task<string?> GetNamedUser()
         {
             return Task.FromResult(_module.UAirship.Contact.NamedUserId);
         }
@@ -37,7 +37,7 @@ namespace AirshipDotNet
         /// <summary>
         /// Resets the contact.
         /// </summary>
-        public Task ResetAsync()
+        public Task Reset()
         {
             _module.UAirship.Contact.Reset();
             return Task.CompletedTask;
@@ -47,7 +47,7 @@ namespace AirshipDotNet
         /// Identifies the contact with a named user ID.
         /// </summary>
         /// <param name="namedUserId">The named user ID.</param>
-        public Task IdentifyAsync(string namedUserId)
+        public Task Identify(string namedUserId)
         {
             _module.UAirship.Contact.Identify(namedUserId);
             return Task.CompletedTask;
@@ -57,7 +57,7 @@ namespace AirshipDotNet
         /// Fetches the contact subscription lists.
         /// </summary>
         /// <returns>Dictionary of subscription lists by scope.</returns>
-        public async Task<Dictionary<string, List<string>>> FetchSubscriptionListsAsync()
+        public async Task<Dictionary<string, List<string>>> FetchSubscriptionLists()
         {
             var pendingResult = _module.UAirship.Contact.FetchSubscriptionListsPendingResult();
             var result = await _module.WrapPendingResult<HashMap>(pendingResult);

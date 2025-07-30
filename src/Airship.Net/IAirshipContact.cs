@@ -17,24 +17,24 @@ namespace AirshipDotNet
         /// Gets the named user ID.
         /// </summary>
         /// <returns>The named user ID or null if not set.</returns>
-        Task<string?> GetNamedUserAsync();
+        Task<string?> GetNamedUser();
 
         /// <summary>
         /// Identifies the contact with a named user ID.
         /// </summary>
         /// <param name="namedUserId">The named user ID.</param>
-        Task IdentifyAsync(string namedUserId);
+        Task Identify(string namedUserId);
 
         /// <summary>
         /// Resets the contact.
         /// </summary>
-        Task ResetAsync();
+        Task Reset();
 
         /// <summary>
         /// Fetches the contact subscription lists.
         /// </summary>
         /// <returns>Dictionary of subscription lists by type.</returns>
-        Task<Dictionary<string, List<string>>> FetchSubscriptionListsAsync();
+        Task<Dictionary<string, List<string>>> FetchSubscriptionLists();
 
         /// <summary>
         /// Edit contact tag groups.

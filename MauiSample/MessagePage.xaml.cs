@@ -42,7 +42,7 @@ public partial class MessagePage : ContentPage
 
         try
         {
-            await AirshipDotNet.Airship.MessageCenter.MarkReadAsync(MessageId);
+            await AirshipDotNet.Airship.MessageCenter.MarkRead(MessageId);
         }
         catch (Exception ex)
         {

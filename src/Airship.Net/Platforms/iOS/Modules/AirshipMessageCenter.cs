@@ -26,7 +26,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Gets all messages from the message center.
         /// </summary>
         /// <returns>List of messages.</returns>
-        public Task<List<Message>> GetMessagesAsync()
+        public Task<List<Message>> GetMessages()
         {
             var tcs = new TaskCompletionSource<List<Message>>();
 
@@ -75,9 +75,9 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// </summary>
         /// <param name="messageId">The message ID.</param>
         /// <returns>The message or null if not found.</returns>
-        public async Task<Message?> GetMessageAsync(string messageId)
+        public async Task<Message?> GetMessage(string messageId)
         {
-            var messages = await GetMessagesAsync();
+            var messages = await GetMessages();
             return messages.FirstOrDefault(m => m.MessageId == messageId);
         }
 
@@ -85,9 +85,9 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Gets the unread message count.
         /// </summary>
         /// <returns>The number of unread messages.</returns>
-        public async Task<int> GetUnreadCountAsync()
+        public async Task<int> GetUnreadCount()
         {
-            var messages = await GetMessagesAsync();
+            var messages = await GetMessages();
             return messages.Count(m => m.Unread);
         }
 
@@ -95,9 +95,9 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Gets the total message count.
         /// </summary>
         /// <returns>The total number of messages.</returns>
-        public async Task<int> GetCountAsync()
+        public async Task<int> GetCount()
         {
-            var messages = await GetMessagesAsync();
+            var messages = await GetMessages();
             return messages.Count;
         }
 
@@ -105,7 +105,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Marks messages as read.
         /// </summary>
         /// <param name="messageIds">The message IDs to mark as read.</param>
-        public Task MarkReadAsync(params string[] messageIds)
+        public Task MarkRead(params string[] messageIds)
         {
             var tcs = new TaskCompletionSource<bool>();
 
@@ -122,7 +122,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Deletes messages.
         /// </summary>
         /// <param name="messageIds">The message IDs to delete.</param>
-        public Task DeleteAsync(params string[] messageIds)
+        public Task Delete(params string[] messageIds)
         {
             return Task.Run(() =>
             {
@@ -133,7 +133,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <summary>
         /// Displays the message center.
         /// </summary>
-        public Task DisplayAsync()
+        public Task Display()
         {
             var tcs = new TaskCompletionSource<bool>();
 
@@ -150,7 +150,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Displays a specific message.
         /// </summary>
         /// <param name="messageId">The message ID to display.</param>
-        public Task DisplayMessageAsync(string messageId)
+        public Task DisplayMessage(string messageId)
         {
             var tcs = new TaskCompletionSource<bool>();
 

@@ -81,8 +81,8 @@ namespace MauiSample
         {
             try
             {
-                // Using new modular API - Channel.GetChannelIdAsync()
-                var channelId = await AirshipDotNet.Airship.Channel.GetChannelIdAsync();
+                // Using new modular API - Channel.GetChannelId()
+                var channelId = await AirshipDotNet.Airship.Channel.GetChannelId();
                 ChannelId = channelId;
                 ShowEnablePushButton = !AirshipDotNet.Airship.Push.UserNotificationsEnabled;
             }
@@ -96,7 +96,7 @@ namespace MauiSample
         {
             try
             {
-                var channel = await AirshipDotNet.Airship.Channel.GetChannelIdAsync();
+                var channel = await AirshipDotNet.Airship.Channel.GetChannelId();
                 if (!string.IsNullOrEmpty(channel))
                 {
                     await Clipboard.Default.SetTextAsync(channel);
@@ -118,7 +118,7 @@ namespace MauiSample
         {
             try
             {
-                await AirshipDotNet.Airship.MessageCenter.DisplayAsync();
+                await AirshipDotNet.Airship.MessageCenter.Display();
             }
             catch (Exception ex)
             {

@@ -56,7 +56,7 @@ namespace AirshipDotNet
         /// Gets the currently enabled features.
         /// </summary>
         /// <returns>The enabled features.</returns>
-        public Task<Features> GetEnabledFeaturesAsync()
+        public Task<Features> GetEnabledFeatures()
         {
             return Task.FromResult(EnabledFeatures);
         }
@@ -65,7 +65,7 @@ namespace AirshipDotNet
         /// Sets the enabled features.
         /// </summary>
         /// <param name="features">The features to enable.</param>
-        public Task SetEnabledFeaturesAsync(Features features)
+        public Task SetEnabledFeatures(Features features)
         {
             EnabledFeatures = features;
             return Task.CompletedTask;
@@ -75,7 +75,7 @@ namespace AirshipDotNet
         /// Enables specific features.
         /// </summary>
         /// <param name="features">The features to enable.</param>
-        public Task EnableFeaturesAsync(Features features)
+        public Task EnableFeatures(Features features)
         {
             _module.UAirship.PrivacyManager.Enable(UAFeaturesFromFeatures(features));
             return Task.CompletedTask;
@@ -85,7 +85,7 @@ namespace AirshipDotNet
         /// Disables specific features.
         /// </summary>
         /// <param name="features">The features to disable.</param>
-        public Task DisableFeaturesAsync(Features features)
+        public Task DisableFeatures(Features features)
         {
             _module.UAirship.PrivacyManager.Disable(UAFeaturesFromFeatures(features));
             return Task.CompletedTask;
@@ -96,7 +96,7 @@ namespace AirshipDotNet
         /// </summary>
         /// <param name="feature">The feature to check.</param>
         /// <returns>True if the feature is enabled, false otherwise.</returns>
-        public Task<bool> IsFeatureEnabledAsync(Features feature)
+        public Task<bool> IsFeatureEnabled(Features feature)
         {
             return Task.FromResult(EnabledFeatures.HasFlag(feature));
         }
@@ -105,7 +105,7 @@ namespace AirshipDotNet
         /// Checks if any feature is enabled.
         /// </summary>
         /// <returns>True if any feature is enabled, false otherwise.</returns>
-        public Task<bool> IsAnyFeatureEnabledAsync()
+        public Task<bool> IsAnyFeatureEnabled()
         {
             return Task.FromResult(EnabledFeatures != Features.None);
         }

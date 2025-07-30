@@ -18,30 +18,30 @@ namespace AirshipDotNet
         /// Checks if user notifications are enabled.
         /// </summary>
         /// <returns>True if user notifications are enabled, false otherwise.</returns>
-        Task<bool> IsUserNotificationsEnabledAsync();
+        Task<bool> IsUserNotificationsEnabled();
 
         /// <summary>
         /// Enables or disables user notifications.
         /// </summary>
         /// <param name="enabled">True to enable, false to disable.</param>
-        Task SetUserNotificationsEnabledAsync(bool enabled);
+        Task SetUserNotificationsEnabled(bool enabled);
 
         /// <summary>
         /// Checks if notifications are opted in.
         /// </summary>
         /// <returns>True if opted in, false otherwise.</returns>
-        Task<bool> IsOptedInAsync();
+        Task<bool> IsOptedIn();
 
         /// <summary>
         /// Gets the push notification status.
         /// </summary>
         /// <returns>The current push notification status.</returns>
-        Task<PushNotificationStatus> GetPushNotificationStatusAsync();
+        Task<PushNotificationStatus> GetPushNotificationStatus();
 
         /// <summary>
         /// Resets the badge count.
         /// </summary>
         /// <returns>A task that completes when the badge is reset.</returns>
-        Task ResetBadgeAsync();
+        Task ResetBadge();
     }
 }

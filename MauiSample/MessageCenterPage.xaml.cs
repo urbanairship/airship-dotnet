@@ -36,7 +36,7 @@ public partial class MessageCenterPage : ContentPage
     {
         try
         {
-            var messages = await AirshipDotNet.Airship.MessageCenter.GetMessagesAsync();
+            var messages = await AirshipDotNet.Airship.MessageCenter.GetMessages();
             listView.ItemsSource = messages;
             refreshView.IsRefreshing = false;
         }

@@ -27,11 +27,11 @@ public partial class FeaturesViewController : ContentPage
         {
             if (enabledPushFeatureSwitch.On)
             {
-                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.Push);
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeatures(Features.Push);
             }
             else
             {
-                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.Push);
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeatures(Features.Push);
             }
         }
         catch (Exception ex)
@@ -46,11 +46,11 @@ public partial class FeaturesViewController : ContentPage
         {
             if (enableMessageCenterFeatureSwitch.On)
             {
-                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.MessageCenter);
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeatures(Features.MessageCenter);
             }
             else
             {
-                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.MessageCenter);
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeatures(Features.MessageCenter);
             }
         }
         catch (Exception ex)
@@ -65,11 +65,11 @@ public partial class FeaturesViewController : ContentPage
         {
             if (enableInAppAutomationFeatureSwitch.On)
             {
-                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.InAppAutomation);
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeatures(Features.InAppAutomation);
             }
             else
             {
-                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.InAppAutomation);
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeatures(Features.InAppAutomation);
             }
         }
         catch (Exception ex)
@@ -84,11 +84,11 @@ public partial class FeaturesViewController : ContentPage
         {
             if (EnableAnalyticsFeatureSwitch.On)
             {
-                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.Analytics);
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeatures(Features.Analytics);
             }
             else
             {
-                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.Analytics);
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeatures(Features.Analytics);
             }
         }
         catch (Exception ex)
@@ -103,11 +103,11 @@ public partial class FeaturesViewController : ContentPage
         {
             if (enableTagsAndAttributesFeatureSwitch.On)
             {
-                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.TagsAndAttributes);
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeatures(Features.TagsAndAttributes);
             }
             else
             {
-                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.TagsAndAttributes);
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeatures(Features.TagsAndAttributes);
             }
         }
         catch (Exception ex)
@@ -122,11 +122,11 @@ public partial class FeaturesViewController : ContentPage
         {
             if (enableContactsFeatureSwitch.On)
             {
-                await AirshipDotNet.Airship.PrivacyManager.EnableFeaturesAsync(Features.Contacts);
+                await AirshipDotNet.Airship.PrivacyManager.EnableFeatures(Features.Contacts);
             }
             else
             {
-                await AirshipDotNet.Airship.PrivacyManager.DisableFeaturesAsync(Features.Contacts);
+                await AirshipDotNet.Airship.PrivacyManager.DisableFeatures(Features.Contacts);
             }
         }
         catch (Exception ex)

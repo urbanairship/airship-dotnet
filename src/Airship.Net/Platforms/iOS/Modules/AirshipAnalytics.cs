@@ -25,7 +25,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Tracks a custom event.
         /// </summary>
         /// <param name="customEvent">The custom event to track.</param>
-        public Task TrackEventAsync(CustomEvent customEvent)
+        public Task TrackEvent(CustomEvent customEvent)
         {
             return Task.Run(() =>
             {
@@ -120,7 +120,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Tracks a screen view.
         /// </summary>
         /// <param name="screen">The screen name.</param>
-        public Task TrackScreenAsync(string screen)
+        public Task TrackScreen(string screen)
         {
             return Task.Run(() => UAirship.Analytics.TrackScreen(screen));
         }
@@ -130,7 +130,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// </summary>
         /// <param name="key">The identifier key.</param>
         /// <param name="identifier">The identifier value.</param>
-        public Task AssociateIdentifierAsync(string key, string identifier)
+        public Task AssociateIdentifier(string key, string identifier)
         {
             return Task.Run(() =>
             {

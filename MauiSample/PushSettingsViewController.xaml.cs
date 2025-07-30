@@ -17,7 +17,7 @@ public partial class PushSettingsViewController : ContentPage
         try
         {
             // Get channel ID asynchronously
-            var id = await AirshipDotNet.Airship.Channel.GetChannelIdAsync();
+            var id = await AirshipDotNet.Airship.Channel.GetChannelId();
             channelId.Detail = id ?? "";
         }
         catch (Exception ex)
@@ -44,7 +44,7 @@ public partial class PushSettingsViewController : ContentPage
     {
         try
         {
-            var id = await AirshipDotNet.Airship.Channel.GetChannelIdAsync();
+            var id = await AirshipDotNet.Airship.Channel.GetChannelId();
             if (!string.IsNullOrEmpty(id))
             {
                 await Clipboard.Default.SetTextAsync(id);
@@ -64,11 +64,11 @@ public partial class PushSettingsViewController : ContentPage
         {
             if (string.IsNullOrEmpty(namedUserLabel.Text))
             {
-                await AirshipDotNet.Airship.Contact.ResetAsync();
+                await AirshipDotNet.Airship.Contact.Reset();
             }
             else
             {
-                await AirshipDotNet.Airship.Contact.IdentifyAsync(namedUserLabel.Text);
+                await AirshipDotNet.Airship.Contact.Identify(namedUserLabel.Text);
             }
 
             UpdateNamedUser();
@@ -95,7 +95,7 @@ public partial class PushSettingsViewController : ContentPage
         tagLabel.Text = "";
         try
         {
-            var tags = await AirshipDotNet.Airship.Channel.GetTagsAsync();
+            var tags = await AirshipDotNet.Airship.Channel.GetTags();
 
             string str = "";
             foreach (string tag in tags)
@@ -117,7 +117,7 @@ public partial class PushSettingsViewController : ContentPage
         namedUserLabel.Text = "";
         try
         {
-            var namedUser = await AirshipDotNet.Airship.Contact.GetNamedUserAsync();
+            var namedUser = await AirshipDotNet.Airship.Contact.GetNamedUser();
             namedUserLabel.Placeholder = namedUser ?? "named user";
         }
         catch (Exception ex)

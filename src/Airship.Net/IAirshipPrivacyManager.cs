@@ -18,37 +18,37 @@ namespace AirshipDotNet
         /// Gets the currently enabled features.
         /// </summary>
         /// <returns>The enabled features.</returns>
-        Task<Features> GetEnabledFeaturesAsync();
+        Task<Features> GetEnabledFeatures();
 
         /// <summary>
         /// Sets the enabled features.
         /// </summary>
         /// <param name="features">The features to enable.</param>
-        Task SetEnabledFeaturesAsync(Features features);
+        Task SetEnabledFeatures(Features features);
 
         /// <summary>
         /// Enables specific features.
         /// </summary>
         /// <param name="features">The features to enable.</param>
-        Task EnableFeaturesAsync(Features features);
+        Task EnableFeatures(Features features);
 
         /// <summary>
         /// Disables specific features.
         /// </summary>
         /// <param name="features">The features to disable.</param>
-        Task DisableFeaturesAsync(Features features);
+        Task DisableFeatures(Features features);
 
         /// <summary>
         /// Checks if a specific feature is enabled.
         /// </summary>
         /// <param name="feature">The feature to check.</param>
         /// <returns>True if the feature is enabled, false otherwise.</returns>
-        Task<bool> IsFeatureEnabledAsync(Features feature);
+        Task<bool> IsFeatureEnabled(Features feature);
 
         /// <summary>
         /// Checks if any feature is enabled.
         /// </summary>
         /// <returns>True if any feature is enabled, false otherwise.</returns>
-        Task<bool> IsAnyFeatureEnabledAsync();
+        Task<bool> IsAnyFeatureEnabled();
     }
 }

@@ -22,7 +22,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <summary>
         /// Gets whether in-app automation is paused.
         /// </summary>
-        public Task<bool> IsPausedAsync()
+        public Task<bool> IsPaused()
         {
             return Task.FromResult(UAirship.InAppAutomation.IsPaused);
         }
@@ -31,7 +31,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Sets whether in-app automation is paused.
         /// </summary>
         /// <param name="paused">True to pause, false to resume.</param>
-        public Task SetPausedAsync(bool paused)
+        public Task SetPaused(bool paused)
         {
             return Task.Run(() =>
             {
@@ -43,7 +43,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Gets the display interval for in-app messages.
         /// </summary>
         /// <returns>The display interval.</returns>
-        public Task<TimeSpan> GetDisplayIntervalAsync()
+        public Task<TimeSpan> GetDisplayInterval()
         {
             return Task.FromResult(TimeSpan.FromSeconds(UAirship.InAppAutomation.DisplayInterval));
         }
@@ -52,7 +52,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// Sets the display interval for in-app messages.
         /// </summary>
         /// <param name="interval">The display interval.</param>
-        public Task SetDisplayIntervalAsync(TimeSpan interval)
+        public Task SetDisplayInterval(TimeSpan interval)
         {
             return Task.Run(() =>
             {

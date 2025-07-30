@@ -33,7 +33,7 @@ namespace AirshipDotNet
         /// Checks if user notifications are enabled.
         /// </summary>
         /// <returns>True if user notifications are enabled, false otherwise.</returns>
-        public Task<bool> IsUserNotificationsEnabledAsync()
+        public Task<bool> IsUserNotificationsEnabled()
         {
             return Task.FromResult(UAirship.Push.UserPushNotificationsEnabled);
         }
@@ -42,7 +42,7 @@ namespace AirshipDotNet
         /// Enables or disables user notifications.
         /// </summary>
         /// <param name="enabled">True to enable, false to disable.</param>
-        public Task SetUserNotificationsEnabledAsync(bool enabled)
+        public Task SetUserNotificationsEnabled(bool enabled)
         {
             return Task.Run(() =>
             {
@@ -54,7 +54,7 @@ namespace AirshipDotNet
         /// Checks if notifications are opted in.
         /// </summary>
         /// <returns>True if opted in, false otherwise.</returns>
-        public Task<bool> IsOptedInAsync()
+        public Task<bool> IsOptedIn()
         {
             // TODO: The AirshipObjectiveC xcframework doesn't expose IsOptedIn property directly.
             // This would require checking both UserPushNotificationsEnabled AND system authorization status.
@@ -67,7 +67,7 @@ namespace AirshipDotNet
         /// Gets the push notification status.
         /// </summary>
         /// <returns>The current push notification status.</returns>
-        public Task<PushNotificationStatus> GetPushNotificationStatusAsync()
+        public Task<PushNotificationStatus> GetPushNotificationStatus()
         {
             // TODO: The AirshipObjectiveC xcframework doesn't expose all properties needed for full status.
             // Missing: IsPushPrivacyFeatureEnabled, IsPushTokenRegistered, IsUserOptedIn
@@ -91,7 +91,7 @@ namespace AirshipDotNet
         /// Resets the badge count.
         /// </summary>
         /// <returns>A task that completes when the badge is reset.</returns>
-        public Task ResetBadgeAsync()
+        public Task ResetBadge()
         {
             var tcs = new TaskCompletionSource<bool>();
 
