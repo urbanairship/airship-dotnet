@@ -93,8 +93,27 @@ namespace AirshipDotNet.Controls
                             var bodyUrl = message.BodyURL;
                             if (bodyUrl != null)
                             {
-                                var request = new NSUrlRequest(bodyUrl);
-                                _webView.LoadRequest(request);
+                                // Get authentication credentials
+                                AWAirshipWrapper.GetMessageCenterUserAuth((authString) =>
+                                {
+                                    NSRunLoop.Main.InvokeOnMainThread(() =>
+                                    {
+                                        if (authString != null)
+                                        {
+                                            // Create request with authentication header
+                                            var mutableRequest = new NSMutableUrlRequest(bodyUrl);
+                                            // The authString from basicAuthString already includes "Basic " prefix
+                                            mutableRequest["Authorization"] = authString;
+                                            _webView.LoadRequest(mutableRequest);
+                                        }
+                                        else
+                                        {
+                                            // Fallback to loading without auth if auth retrieval fails
+                                            var request = new NSUrlRequest(bodyUrl);
+                                            _webView.LoadRequest(request);
+                                        }
+                                    });
+                                });
                             }
                             else
                             {
