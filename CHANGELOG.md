@@ -1,5 +1,18 @@
 # Airship DotNet Changelog
 
+## Version 20.0.0 - August 1, 2025
+Major release with complete interface modernization and architectural improvements.
+
+### Changes
+- Updated iOS SDK to 19.6.1
+- Updated Android SDK to 19.8.0
+- Complete interface modernization - split monolithic IAirship into module-specific interfaces
+- Changed access pattern from instance-based to static module properties
+- All async operations now return Tasks
+- Merged Message Center functionality into main Airship.Net package
+- Added iOS AirshipWrapper to handle Swift async method compatibility
+- Improved type safety and separation of concerns across modules
+
 ## Version 19.5.0 - Feb 7, 2025
 Minor release that updates the Android SDK to 18.7.0, including AndroidX library updates.
 

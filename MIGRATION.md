@@ -1,5 +1,53 @@
 # Migration Guide
 
+## 19.x to 20.x
+
+### Architecture Changes
+
+The monolithic `IAirship` interface has been split into focused, module-specific interfaces:
+
+| Module | Interface | Access Via |
+|--------|-----------|------------|
+| Push | `IAirshipPush` | `Airship.Push` |
+| Channel | `IAirshipChannel` | `Airship.Channel` |
+| Contact | `IAirshipContact` | `Airship.Contact` |
+| Message Center | `IAirshipMessageCenter` | `Airship.MessageCenter` |
+| Analytics | `IAirshipAnalytics` | `Airship.Analytics` |
+| In-App | `IAirshipInApp` | `Airship.InApp` |
+| Privacy | `IAirshipPrivacyManager` | `Airship.PrivacyManager` |
+| Feature Flags | `IAirshipFeatureFlagManager` | `Airship.FeatureFlagManager` |
+| Preference Center | `IAirshipPreferenceCenter` | `Airship.PreferenceCenter` |
+
+### API Changes
+
+#### Access Pattern
+
+| 19.x | 20.x |
+|------|------|
+| `Airship.Instance.UserNotificationsEnabled = true;` | `Airship.Push.UserNotificationsEnabled = true;` |
+| `Airship.Instance.ChannelId` | `Airship.Channel.ChannelId` |
+| `Airship.Instance.Tags` | `Airship.Channel.Tags` |
+| `Airship.Instance.EnabledFeatures` | `Airship.PrivacyManager.EnabledFeatures` |
+
+#### Async Methods
+
+All methods that perform I/O operations now return Tasks:
+
+| 19.x | 20.x |
+|------|------|
+| `Airship.Instance.GetNamedUser(namedUser => { ... });` | `var namedUser = await Airship.Contact.GetNamedUserID();` |
+| `Airship.Instance.InboxMessages(messages => { ... });` | `var messages = await Airship.MessageCenter.GetMessages();` |
+| `Airship.Instance.MessageCenterUnreadCount(count => { ... });` | `var count = await Airship.MessageCenter.GetUnreadCount();` |
+| `Airship.Instance.FetchChannelSubscriptionLists(lists => { ... });` | `var lists = await Airship.Channel.FetchSubscriptionLists();` |
+
+#### Message Center Package
+
+The separate `Airship.Net.MessageCenter` package has been merged into `Airship.Net`. Update your package references and using statements accordingly.
+
+#### iOS Specific
+
+iOS builds now require the AirshipWrapper framework to handle Swift async method compatibility issues. This is included automatically when building the iOS bindings.
+
 ## 18.x to 19.x
 
 ### .NET Version
