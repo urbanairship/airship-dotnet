@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)getMessageCenterUserAuth:(void(^)(NSString * _Nullable))completion;
 + (void)getMessageForID:(NSString *)messageID completion:(void(^)(UAMessageCenterMessage * _Nullable))completion;
 + (void)markReadWithMessageIDs:(NSArray<NSString *> *)messageIDs completion:(void(^)(void))completion;
++ (void)resetBadgeWithCompletion:(void(^)(NSError * _Nullable))completion;
 
 @end
 

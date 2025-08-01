@@ -111,4 +111,8 @@ static AWAirshipWrapper *_shared = nil;
     [[UAirship messageCenter].inbox markReadWithMessageIDs:messageIDs completionHandler:completion];
 }
 
++ (void)resetBadgeWithCompletion:(void(^)(NSError * _Nullable))completion {
+    [[UAirship push] resetBadgeWithCompletionHandler:completion];
+}
+
 @end

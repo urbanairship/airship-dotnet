@@ -3,11 +3,6 @@ using System.Runtime.CompilerServices;
 using AirshipDotNet;
 using System.Windows.Input;
 
-# if ANDROID
-using UrbanAirship.PreferenceCenter;
-#elif IOS
-using Airship;
-#endif
 
 namespace MauiSample
 {
@@ -77,27 +72,53 @@ namespace MauiSample
 
         private void OnPushNotificationStatusEvent(object sender, EventArgs e) => Refresh();
 
-        public void Refresh()
+        public async void Refresh()
         {
-            ChannelId = AirshipDotNet.Airship.Instance.ChannelId;
-            ShowEnablePushButton = !AirshipDotNet.Airship.Instance.UserNotificationsEnabled;
+            try
+            {
+                // Using new modular API - Channel.GetChannelId()
+                var channelId = await AirshipDotNet.Airship.Channel.GetChannelId();
+                ChannelId = channelId;
+                ShowEnablePushButton = !AirshipDotNet.Airship.Push.UserNotificationsEnabled;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error refreshing channel: {ex.Message}");
+            }
         }
 
-        private static void PerformOnChannelIdClicked()
+        private static async void PerformOnChannelIdClicked()
         {
-            var channel = AirshipDotNet.Airship.Instance.ChannelId;
-            Clipboard.Default.SetTextAsync(channel);
-            Console.WriteLine("Channel ID '{0}' copied to clipboard!", channel);
+            try
+            {
+                var channel = await AirshipDotNet.Airship.Channel.GetChannelId();
+                if (!string.IsNullOrEmpty(channel))
+                {
+                    await Clipboard.Default.SetTextAsync(channel);
+                    Console.WriteLine("Channel ID '{0}' copied to clipboard!", channel);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error copying channel ID: {ex.Message}");
+            }
         }
 
         private static void PerformOnEnablePushButtonClicked()
         {
-            AirshipDotNet.Airship.Instance.UserNotificationsEnabled = true;
+            AirshipDotNet.Airship.Push.UserNotificationsEnabled = true;
         }
 
-        private static void PerformOnMessageCenterButtonClicked()
+        private static async void PerformOnMessageCenterButtonClicked()
         {
-            AirshipDotNet.Airship.Instance.DisplayMessageCenter();
+            try
+            {
+                await AirshipDotNet.Airship.MessageCenter.Display();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error displaying message center: {ex.Message}");
+            }
         }
 
         private static void PerformOnPrefCenterButtonClicked()
@@ -108,14 +129,9 @@ namespace MauiSample
         private void OnPropertyChanged([CallerMemberName] string name = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        private static void OpenPreferenceCenter(string prefCenterId)
+        private static async void OpenPreferenceCenter(string prefCenterId)
         {
-#if ANDROID
-            PreferenceCenter.Shared().Open(prefCenterId);
-#elif IOS
-            // SDK 19: Access PreferenceCenter through UAirship.PreferenceCenter
-            UAirship.PreferenceCenter.OpenPreferenceCenter(prefCenterId);
-#endif
+            await AirshipDotNet.Airship.PreferenceCenter.Open(prefCenterId);
         }
     }
 }

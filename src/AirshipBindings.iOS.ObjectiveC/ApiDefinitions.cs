@@ -84,6 +84,11 @@ namespace Airship
 		[Static]
 		[Export ("markReadWithMessageIDs:completion:")]
 		void MarkReadWithMessageIDs (string[] messageIDs, Action completion);
+
+		// + (void)resetBadgeWithCompletion:(void(^)(NSError * _Nullable))completion;
+		[Static]
+		[Export ("resetBadgeWithCompletion:")]
+		void ResetBadgeWithCompletion (Action<NSError> completion);
 	}
 
 	// @interface UAAirshipNotifications : NSObject

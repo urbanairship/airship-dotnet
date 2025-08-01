@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using AirshipDotNet;
 using AirshipDotNet.MessageCenter;
-using AirshipDotNet.MessageCenter.Controls;
+using AirshipDotNet.Controls;
 using Microsoft.Maui.Controls;
 
 namespace MauiSample;
@@ -20,22 +20,31 @@ public partial class MessageCenterPage : ContentPage
         );
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         refreshView.BindingContext = this;
-        Refresh();
+        await RefreshAsync();
     }
 
     public void Refresh()
     {
-        AirshipDotNet.Airship.Instance.InboxMessages(messages =>
+        // Fire and forget the async refresh
+        _ = RefreshAsync();
+    }
+
+    private async Task RefreshAsync()
+    {
+        try
         {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                listView.ItemsSource = messages;
-                refreshView.IsRefreshing = false;
-            });
-        });
+            var messages = await AirshipDotNet.Airship.MessageCenter.GetMessages();
+            listView.ItemsSource = messages;
+            refreshView.IsRefreshing = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error refreshing messages: {ex.Message}");
+            refreshView.IsRefreshing = false;
+        }
     }
 
     void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
@@ -46,6 +55,7 @@ public partial class MessageCenterPage : ContentPage
         {
             MessageId = message.MessageId
         };
+
         messagePage.LoadStarted += onLoadStarted;
         messagePage.LoadFinished += onLoadFinished;
         messagePage.Closed += onClosed;
@@ -72,6 +82,6 @@ public partial class MessageCenterPage : ContentPage
 
     private void onLoadFailed(object sender, MessageLoadFailedEventArgs e)
     {
-        Console.WriteLine("MessageCenterPage onLoadFailed was reached.");
+        Console.WriteLine($"MessageCenterPage onLoadFailed was reached: {e.Error}");
     }
 }

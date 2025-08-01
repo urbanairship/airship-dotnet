@@ -51,18 +51,18 @@ public class AppDelegate : MauiUIApplicationDelegate
         Console.WriteLine("✅✅✅ END INITIALIZATION ✅✅✅");
 
 
-        // TODO: Commented out due to iOS binding issues with async methods
-        // UAirship.Push.ResetBadgeWithCompletionHandler((error) =>
-        // {
-        //     if (error != null)
-        //     {
-        //         Console.WriteLine($"Badge reset error: {error.LocalizedDescription}");
-        //     }
-        //     else
-        //     {
-        //         Console.WriteLine("Badge reset completed");
-        //     }
-        // });
+        // Reset the badge count using the wrapper method
+        _ = AirshipDotNet.Airship.Push.ResetBadge().ContinueWith(t =>
+        {
+            if (t.IsFaulted)
+            {
+                Console.WriteLine($"Badge reset error: {t.Exception?.GetBaseException()?.Message}");
+            }
+            else
+            {
+                Console.WriteLine("Badge reset completed");
+            }
+        });
 
         return base.FinishedLaunching(application, launchOptions);
     }
