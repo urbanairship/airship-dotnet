@@ -5,6 +5,7 @@ using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using UrbanAirship.MessageCenter;
 using Android.Webkit;
+using Com.Urbanairship.Messagecenter.UI.Widget;
 using AView = Android.Views.View;
 using AContext = Android.Content.Context;
 using JavaObject = Java.Lang.Object;
@@ -14,21 +15,21 @@ namespace AirshipDotNet.Controls
     public partial class MessageViewHandler : ViewHandler<MessageView, FrameLayout>
     {
         private FrameLayout _container;
-        private Android.Webkit.WebView _webView;
+        private MessageWebView _webView;
 
         protected override FrameLayout CreatePlatformView()
         {
             _container = new FrameLayout(Context);
             
-            // Create WebView
-            _webView = new Android.Webkit.WebView(Context);
+            // Create specialized MessageWebView
+            _webView = new MessageWebView(Context);
             _webView.Settings.JavaScriptEnabled = true;
             _webView.Settings.DomStorageEnabled = true;
             _webView.Settings.LoadWithOverviewMode = true;
             _webView.Settings.UseWideViewPort = true;
             
-            // Set WebViewClient to monitor loading
-            _webView.SetWebViewClient(new MessageWebViewClient(this));
+            // Set custom WebViewClient that extends MessageWebViewClient to monitor loading
+            _webView.SetWebViewClient(new CustomMessageWebViewClient(this));
             
             // Add WebView to container
             _container.AddView(_webView, new FrameLayout.LayoutParams(
@@ -81,15 +82,8 @@ namespace AirshipDotNet.Controls
                     // Mark as read
                     MessageCenterClass.Shared().Inbox.MarkMessagesRead(new[] { messageId });
 
-                    // Load message URL
-                    if (!string.IsNullOrEmpty(message.BodyUrl))
-                    {
-                        _webView.LoadUrl(message.BodyUrl);
-                    }
-                    else
-                    {
-                        VirtualView?.SendLoadFailed("No message URL available");
-                    }
+                    // Use the specialized LoadMessage method which handles authentication
+                    _webView.LoadMessage(message);
                 });
             }
             catch (Exception ex)
@@ -98,11 +92,11 @@ namespace AirshipDotNet.Controls
             }
         }
 
-        private class MessageWebViewClient : WebViewClient
+        private class CustomMessageWebViewClient : Com.Urbanairship.Messagecenter.UI.Widget.MessageWebViewClient
         {
             private readonly MessageViewHandler _handler;
 
-            public MessageWebViewClient(MessageViewHandler handler)
+            public CustomMessageWebViewClient(MessageViewHandler handler)
             {
                 _handler = handler;
             }
