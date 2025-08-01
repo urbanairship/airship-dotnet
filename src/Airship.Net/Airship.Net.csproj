@@ -52,6 +52,8 @@
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj" />
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Layout\Airship.Net.Android.Layout.csproj" />
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.FeatureFlag\Airship.Net.Android.FeatureFlag.csproj" />
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.PreferenceCenter\Airship.Net.Android.PreferenceCenter.csproj" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-ios'">
 		<ProjectReference Include="..\AirshipBindings.iOS.ObjectiveC\AirshipBindings.iOS.ObjectiveC.csproj" />

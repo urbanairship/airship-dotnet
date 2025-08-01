@@ -24,6 +24,16 @@ namespace AirshipDotNet
         }
 
         /// <summary>
+        /// Gets the channel ID.
+        /// </summary>
+        public string? ChannelId => UAirship.Channel.Identifier;
+
+        /// <summary>
+        /// Gets the channel tags.
+        /// </summary>
+        public IEnumerable<string> Tags => UAirship.Channel.Tags ?? new string[0];
+
+        /// <summary>
         /// Gets the channel identifier.
         /// </summary>
         /// <returns>The channel ID or null if not created yet.</returns>

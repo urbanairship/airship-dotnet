@@ -15,6 +15,15 @@ namespace AirshipDotNet
         /// <summary>
         /// Gets the channel ID.
         /// </summary>
+        string? ChannelId { get; }
+
+        /// <summary>
+        /// Gets the channel tags.
+        /// </summary>
+        IEnumerable<string> Tags { get; }
+        /// <summary>
+        /// Gets the channel ID.
+        /// </summary>
         /// <returns>The channel ID or null if not created yet.</returns>
         Task<string?> GetChannelId();
 

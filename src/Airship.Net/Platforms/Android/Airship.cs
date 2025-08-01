@@ -33,6 +33,8 @@ namespace AirshipDotNet
         private readonly IAirshipAnalytics _analytics;
         private readonly IAirshipInApp _inApp;
         private readonly IAirshipPrivacyManager _privacyManager;
+        private readonly IAirshipFeatureFlagManager _featureFlagManager;
+        private readonly IAirshipPreferenceCenter _preferenceCenter;
 
         public Airship()
         {
@@ -44,6 +46,8 @@ namespace AirshipDotNet
             _analytics = new AirshipAnalytics(_module);
             _inApp = new AirshipInApp(_module);
             _privacyManager = new AirshipPrivacyManager(_module);
+            _featureFlagManager = new AirshipFeatureFlagManager(_module);
+            _preferenceCenter = new AirshipPreferenceCenter(_module);
         }
 
         private void Init()
@@ -135,6 +139,8 @@ namespace AirshipDotNet
         public static IAirshipAnalytics Analytics => Instance._analytics;
         public static IAirshipInApp InApp => Instance._inApp;
         public static IAirshipPrivacyManager PrivacyManager => Instance._privacyManager;
+        public static IAirshipFeatureFlagManager FeatureFlagManager => Instance._featureFlagManager;
+        public static IAirshipPreferenceCenter PreferenceCenter => Instance._preferenceCenter;
 
         // Interface implementations
         public bool OnDeepLink(string deepLink)

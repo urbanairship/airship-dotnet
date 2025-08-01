@@ -3,11 +3,6 @@ using System.Runtime.CompilerServices;
 using AirshipDotNet;
 using System.Windows.Input;
 
-# if ANDROID
-using UrbanAirship.PreferenceCenter;
-#elif IOS
-using Airship;
-#endif
 
 namespace MauiSample
 {
@@ -134,14 +129,9 @@ namespace MauiSample
         private void OnPropertyChanged([CallerMemberName] string name = "") =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        private static void OpenPreferenceCenter(string prefCenterId)
+        private static async void OpenPreferenceCenter(string prefCenterId)
         {
-#if ANDROID
-            PreferenceCenter.Shared().Open(prefCenterId);
-#elif IOS
-            // SDK 19: Access PreferenceCenter through UAirship.PreferenceCenter
-            UAirship.PreferenceCenter.OpenPreferenceCenter(prefCenterId);
-#endif
+            await AirshipDotNet.Airship.PreferenceCenter.Open(prefCenterId);
         }
     }
 }
