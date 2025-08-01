@@ -8,6 +8,8 @@
              Title="Message">
 
     <airship:MessageView x:Name="messageView"
+                         VerticalOptions="FillAndExpand"
+                         HorizontalOptions="FillAndExpand"
                          LoadStarted="MessageView_LoadStarted"
                          LoadFailed="MessageView_LoadFailed"
                          LoadFinished="MessageView_LoadFinished"

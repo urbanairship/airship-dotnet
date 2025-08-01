@@ -1,47 +1,37 @@
 using System;
-using Android.Views;
-using Android.Widget;
 using Microsoft.Maui.Handlers;
-using Microsoft.Maui.Platform;
+using Com.Urbanairship.Messagecenter.UI.Widget;
 using UrbanAirship.MessageCenter;
 using Android.Webkit;
-using Com.Urbanairship.Messagecenter.UI.Widget;
-using AView = Android.Views.View;
-using AContext = Android.Content.Context;
-using JavaObject = Java.Lang.Object;
 
 namespace AirshipDotNet.Controls
 {
-    public partial class MessageViewHandler : ViewHandler<MessageView, FrameLayout>
+    public partial class MessageViewHandler : ViewHandler<MessageView, MessageWebView>
     {
-        private FrameLayout _container;
         private MessageWebView _webView;
 
-        protected override FrameLayout CreatePlatformView()
+        protected override MessageWebView CreatePlatformView()
         {
-            _container = new FrameLayout(Context);
-            
-            // Create specialized MessageWebView
             _webView = new MessageWebView(Context);
-            _webView.Settings.JavaScriptEnabled = true;
-            _webView.Settings.DomStorageEnabled = true;
-            _webView.Settings.LoadWithOverviewMode = true;
-            _webView.Settings.UseWideViewPort = true;
             
-            // Set custom WebViewClient that extends MessageWebViewClient to monitor loading
+            // Configure WebView settings
+            var settings = _webView.Settings;
+            settings.JavaScriptEnabled = true;
+            settings.DomStorageEnabled = true;
+            
             _webView.SetWebViewClient(new CustomMessageWebViewClient(this));
             
-            // Add WebView to container
-            _container.AddView(_webView, new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MatchParent,
-                ViewGroup.LayoutParams.MatchParent));
-            
-            return _container;
+            return _webView;
         }
 
-        protected override void ConnectHandler(FrameLayout platformView)
+        protected override void ConnectHandler(MessageWebView platformView)
         {
             base.ConnectHandler(platformView);
+
+            // Ensure WebView has proper layout parameters
+            platformView.LayoutParameters = new Android.Widget.FrameLayout.LayoutParams(
+                Android.Widget.FrameLayout.LayoutParams.MatchParent,
+                Android.Widget.FrameLayout.LayoutParams.MatchParent);
 
             if (VirtualView != null && !string.IsNullOrEmpty(VirtualView.MessageId))
             {
@@ -49,7 +39,7 @@ namespace AirshipDotNet.Controls
             }
         }
 
-        protected override void DisconnectHandler(FrameLayout platformView)
+        protected override void DisconnectHandler(MessageWebView platformView)
         {
             _webView?.Destroy();
             _webView = null;
@@ -75,15 +65,21 @@ namespace AirshipDotNet.Controls
                 {
                     if (message == null)
                     {
-                        VirtualView?.SendLoadFailed("Message not found");
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            VirtualView?.SendLoadFailed("Message not found");
+                        });
                         return;
                     }
 
-                    // Mark as read
-                    MessageCenterClass.Shared().Inbox.MarkMessagesRead(new[] { messageId });
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        // Mark as read
+                        MessageCenterClass.Shared().Inbox.MarkMessagesRead(new[] { messageId });
 
-                    // Use the specialized LoadMessage method which handles authentication
-                    _webView.LoadMessage(message);
+                        // Use the specialized LoadMessage method which handles authentication
+                        _webView.LoadMessage(message);
+                    });
                 });
             }
             catch (Exception ex)
@@ -92,7 +88,7 @@ namespace AirshipDotNet.Controls
             }
         }
 
-        private class CustomMessageWebViewClient : Com.Urbanairship.Messagecenter.UI.Widget.MessageWebViewClient
+        private class CustomMessageWebViewClient : MessageWebViewClient
         {
             private readonly MessageViewHandler _handler;
 
