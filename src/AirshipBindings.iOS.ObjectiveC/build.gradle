@@ -7,4 +7,4 @@ ext {
     project = findProject(":src:AirshipBindings.iOS.ObjectiveC")
 }
 
-apply from: rootProject.file("../AirshipBindings.iOS.common/build.gradle")
+apply from: rootProject.file("AirshipBindings.iOS.common/build.gradle")
