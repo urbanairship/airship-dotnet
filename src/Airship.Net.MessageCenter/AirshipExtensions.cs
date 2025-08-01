@@ -9,6 +9,7 @@ namespace AirshipDotNet
     /// </summary>
     public static class AirshipExtensions
     {
+#if IOS || ANDROID
         private static IAirshipMessageCenter? _messageCenter;
 
         /// <summary>
@@ -24,11 +25,10 @@ namespace AirshipDotNet
                 _messageCenter = new MessageCenter.Platforms.iOS.Modules.AirshipMessageCenter(new AirshipDotNet.Platforms.iOS.AirshipModule());
 #elif ANDROID
                 _messageCenter = new MessageCenter.Platforms.Android.Modules.AirshipMessageCenter(new AirshipDotNet.Platforms.Android.AirshipModule());
-#else
-                throw new NotSupportedException("MessageCenter is not supported on this platform");
 #endif
             }
             return _messageCenter;
         }
+#endif
     }
 }

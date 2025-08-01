@@ -16,6 +16,8 @@ tasks.register('pack') {
 }
 
 tasks.register('build') {
+    dependsOn(':src:Airship.Net:build', ':src:AirshipBindings.iOS.ObjectiveC:build')
+
     doLast() {
         exec {
             workingDir projectDir
