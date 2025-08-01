@@ -3,7 +3,7 @@
 using System.Threading.Tasks;
 using UrbanAirship.PreferenceCenter;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship PreferenceCenter module.

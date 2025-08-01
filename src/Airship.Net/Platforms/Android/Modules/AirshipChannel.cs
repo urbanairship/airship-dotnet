@@ -9,7 +9,7 @@ using AirshipDotNet.Attributes;
 using UrbanAirship;
 using Java.Util;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship Channel module.

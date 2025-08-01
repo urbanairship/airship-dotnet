@@ -5,19 +5,20 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using AirshipDotNet.MessageCenter;
+using AirshipDotNet.Platforms.iOS;
 using Foundation;
 using Airship;
 
-namespace AirshipDotNet.Platforms.iOS.Modules
+namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
 {
     /// <summary>
     /// iOS implementation of Airship Message Center module.
     /// </summary>
-    internal class AirshipMessageCenter : IAirshipMessageCenter
+    public class AirshipMessageCenter : IAirshipMessageCenter
     {
         private readonly AirshipModule _module;
 
-        internal AirshipMessageCenter(AirshipModule module)
+        public AirshipMessageCenter(AirshipModule module)
         {
             _module = module;
         }

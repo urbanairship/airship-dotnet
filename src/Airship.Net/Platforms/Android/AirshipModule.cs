@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using UrbanAirship;
 using Java.Util.Concurrent;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.Android
 {
     /// <summary>
     /// Android-specific module for handling platform implementations.
     /// </summary>
-    internal class AirshipModule
+    public class AirshipModule
     {
-        internal AirshipModule()
+        public AirshipModule()
         {
         }
 

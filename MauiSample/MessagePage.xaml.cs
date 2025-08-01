@@ -1,5 +1,6 @@
 ﻿using AirshipDotNet;
-using AirshipDotNet.Controls;
+using AirshipDotNet.MessageCenter;
+using AirshipDotNet.MessageCenter.Controls;
 
 namespace MauiSample;
 
@@ -42,7 +43,7 @@ public partial class MessagePage : ContentPage
 
         try
         {
-            await AirshipDotNet.Airship.MessageCenter.MarkRead(MessageId);
+            await AirshipDotNet.Airship.Instance.MessageCenter().MarkRead(MessageId);
         }
         catch (Exception ex)
         {

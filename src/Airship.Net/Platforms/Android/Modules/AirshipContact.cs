@@ -11,7 +11,7 @@ using UrbanAirship;
 using Com.Urbanairship.Contacts;
 using Java.Util;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship Contact module.

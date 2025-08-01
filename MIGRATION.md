@@ -40,10 +40,6 @@ All methods that perform I/O operations now return Tasks:
 | `Airship.Instance.MessageCenterUnreadCount(count => { ... });` | `var count = await Airship.MessageCenter.GetUnreadCount();` |
 | `Airship.Instance.FetchChannelSubscriptionLists(lists => { ... });` | `var lists = await Airship.Channel.FetchSubscriptionLists();` |
 
-#### Message Center Package
-
-The separate `Airship.Net.MessageCenter` package has been merged into `Airship.Net`. Update your package references and using statements accordingly.
-
 #### iOS Specific
 
 iOS builds now require the AirshipWrapper framework to handle Swift async method compatibility issues. This is included automatically when building the iOS bindings.

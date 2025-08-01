@@ -1,9 +1,9 @@
 using Microsoft.Maui.Controls.Hosting;
 #if ANDROID || IOS
-using AirshipDotNet.Controls;
+using AirshipDotNet.MessageCenter.Controls;
 #endif
 
-namespace AirshipDotNet
+namespace AirshipDotNet.MessageCenter
 {
     /// <summary>
     /// Extension methods for configuring Airship in MAUI applications.

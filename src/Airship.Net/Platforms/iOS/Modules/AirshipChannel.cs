@@ -9,7 +9,7 @@ using AirshipDotNet.Attributes;
 using Foundation;
 using Airship;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.iOS.Modules
 {
     /// <summary>
     /// iOS implementation of Airship Channel module.

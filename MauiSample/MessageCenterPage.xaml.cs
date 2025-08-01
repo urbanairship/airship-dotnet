@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using AirshipDotNet;
 using AirshipDotNet.MessageCenter;
-using AirshipDotNet.Controls;
+using AirshipDotNet.MessageCenter.Controls;
 using Microsoft.Maui.Controls;
 
 namespace MauiSample;
@@ -36,7 +36,7 @@ public partial class MessageCenterPage : ContentPage
     {
         try
         {
-            var messages = await AirshipDotNet.Airship.MessageCenter.GetMessages();
+            var messages = await AirshipDotNet.Airship.Instance.MessageCenter().GetMessages();
             listView.ItemsSource = messages;
             refreshView.IsRefreshing = false;
         }
