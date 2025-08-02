@@ -1,5 +1,3 @@
-import com.airship.PublishExtension
-
 ext {
     artifactId = "Airship.Net.iOS.ObjectiveC"
     projectName = "Airship iOS SDK - ObjectiveC"
