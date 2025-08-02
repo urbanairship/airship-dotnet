@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using Foundation;
 using Airship;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.iOS
 {
     /// <summary>
     /// iOS-specific module for handling platform implementations.
     /// </summary>
-    internal class AirshipModule
+    public class AirshipModule
     {
-        internal AirshipModule()
+        public AirshipModule()
         {
         }
 

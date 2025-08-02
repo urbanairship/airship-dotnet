@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AirshipDotNet.Analytics;
 using UrbanAirship;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship Analytics module.

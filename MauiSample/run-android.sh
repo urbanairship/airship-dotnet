@@ -71,10 +71,25 @@ adb logcat -c
 
 echo -e "${YELLOW}🚀 Launching app...${NC}"
 
-# Launch the app
-if ! adb shell monkey -p com.urbanairship.sample -c android.intent.category.LAUNCHER 1 > /dev/null 2>&1; then
-    echo -e "${RED}❌ Error: Failed to launch app${NC}"
-    exit 1
+# Launch the app - Try multiple methods
+echo "Attempting to launch app..."
+
+# Method 1: Try with monkey (most common)
+if adb shell monkey -p com.urbanairship.sample -c android.intent.category.LAUNCHER 1 > /dev/null 2>&1; then
+    echo -e "${GREEN}✅ App launched successfully with monkey${NC}"
+else
+    # Method 2: Try with am start using common MAUI activity name
+    if adb shell am start -n com.urbanairship.sample/crc64ffe6b59f69e5ae4a.MainActivity > /dev/null 2>&1; then
+        echo -e "${GREEN}✅ App launched successfully with am start${NC}"
+    else
+        # Method 3: Try launching by package name only
+        if adb shell am start --user 0 $(adb shell cmd package resolve-activity --brief com.urbanairship.sample | tail -n 1) > /dev/null 2>&1; then
+            echo -e "${GREEN}✅ App launched successfully${NC}"
+        else
+            echo -e "${YELLOW}⚠️  Could not auto-launch app. Please launch it manually from the device.${NC}"
+            echo -e "${GREEN}App is installed and ready to use.${NC}"
+        fi
+    fi
 fi
 
 echo -e "${GREEN}🎉 App deployed and running successfully!${NC}"

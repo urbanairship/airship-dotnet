@@ -41,7 +41,7 @@ tasks.register('pack') {
     // Pack all Android bindings generated via Binderator
     dependsOn(':binderator:pack')
     // Pack all iOS bindings
-    dependsOn(':src:AirshipBindings.iOS.common:pack')
+    dependsOn(':src:AirshipBindings.iOS.ObjectiveC:pack')
     // Pack .net common libraries
     dependsOn(':src:Airship.Net:pack')
     dependsOn(':src:Airship.Net.MessageCenter:pack')
@@ -114,8 +114,7 @@ tasks.register('syncRootVersion') {
 tasks.register('syncVersion') {
     mustRunAfter('clean')
     dependsOn('syncRootVersion',
-            ':binderator:syncVersion',
-            ':src:AirshipBindings.iOS.common:syncVersion'
+            ':binderator:syncVersion'
     )
 }
 
@@ -202,7 +201,7 @@ tasks.register('build') {
 
     dependsOn('syncVersion',
             ':binderator:build',
-            ':src:AirshipBindings.iOS.common:build',
+            ':src:AirshipBindings.iOS.ObjectiveC:build',
             ':src:Airship.Net:build',
             ':src:Airship.Net.MessageCenter:build')
 

@@ -7,15 +7,16 @@ using UrbanAirship;
 using UrbanAirship.Automation;
 using UrbanAirship.Actions;
 using UrbanAirship.Channel;
-using UrbanAirship.MessageCenter;
 using UrbanAirship.Push;
+using AirshipDotNet.Platforms.Android;
+using AirshipDotNet.Platforms.Android.Modules;
 
 namespace AirshipDotNet
 {
     /// <summary>
     /// Provides cross-platform access to a common subset of functionality between the iOS and Android SDKs
     /// </summary>
-    public class Airship : Java.Lang.Object, IDeepLinkListener, IInboxListener, MessageCenterClass.IOnShowMessageCenterListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener
+    public class Airship : Java.Lang.Object, IDeepLinkListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener
     {
         private static readonly Lazy<Airship> sharedAirship = new(() =>
         {
@@ -29,7 +30,6 @@ namespace AirshipDotNet
         private readonly IAirshipPush _push;
         private readonly IAirshipChannel _channel;
         private readonly IAirshipContact _contact;
-        private readonly IAirshipMessageCenter _messageCenter;
         private readonly IAirshipAnalytics _analytics;
         private readonly IAirshipInApp _inApp;
         private readonly IAirshipPrivacyManager _privacyManager;
@@ -40,9 +40,8 @@ namespace AirshipDotNet
         {
             _module = new AirshipModule();
             _push = new AirshipPush(_module);
-            _channel = new AirshipChannel(_module);
+            _channel = new AirshipDotNet.Platforms.Android.Modules.AirshipChannel(_module);
             _contact = new AirshipContact(_module);
-            _messageCenter = new AirshipMessageCenter(_module);
             _analytics = new AirshipAnalytics(_module);
             _inApp = new AirshipInApp(_module);
             _privacyManager = new AirshipPrivacyManager(_module);
@@ -57,8 +56,6 @@ namespace AirshipDotNet
             //Adding Push notification status listener
             UAirship.Shared().PushManager.AddNotificationStatusListener(this);
 
-            //Adding Inbox updated listener
-            MessageCenterClass.Shared().Inbox.AddListener(this);
         }
 
         /// <summary>
@@ -95,39 +92,6 @@ namespace AirshipDotNet
             }
         }
 
-        /// <summary>
-        /// Add/remove the Message Center updated listener.
-        /// </summary>
-        public event EventHandler? OnMessageCenterUpdated;
-
-        private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
-
-        /// <summary>
-        /// Add/remove the Message Center display listener.
-        /// </summary>
-        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
-        {
-            add
-            {
-                onMessageCenterDisplay += value;
-                // TODO: SetOnShowMessageCenterListener is not exposed in the Android bindings.
-                // The method is marked as kotlin-internal in the native SDK and needs metadata
-                // transformation to expose it. See binderator/.../Metadata.xml for fix.
-                //MessageCenterClass.Shared().SetOnShowMessageCenterListener(this);
-            }
-
-            remove
-            {
-                onMessageCenterDisplay -= value;
-
-                if (onMessageCenterDisplay == null)
-                {
-                    // TODO: SetOnShowMessageCenterListener is not exposed in the Android bindings.
-                    // See comment above for details.
-                    // MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
-                }
-            }
-        }
 
         public static Airship Instance => sharedAirship.Value;
 
@@ -135,7 +99,6 @@ namespace AirshipDotNet
         public static IAirshipPush Push => Instance._push;
         public static IAirshipChannel Channel => Instance._channel;
         public static IAirshipContact Contact => Instance._contact;
-        public static IAirshipMessageCenter MessageCenter => Instance._messageCenter;
         public static IAirshipAnalytics Analytics => Instance._analytics;
         public static IAirshipInApp InApp => Instance._inApp;
         public static IAirshipPrivacyManager PrivacyManager => Instance._privacyManager;
@@ -154,18 +117,6 @@ namespace AirshipDotNet
             return false;
         }
 
-        public bool OnShowMessageCenter(string? messageId)
-        {
-            if (onMessageCenterDisplay != null)
-            {
-                onMessageCenterDisplay(this, new MessageCenterEventArgs(messageId));
-                return true;
-            }
-
-            return false;
-        }
-
-        public void OnInboxUpdated() => OnMessageCenterUpdated?.Invoke(this, EventArgs.Empty);
 
         public void OnChannelCreated(string channelId) => OnChannelCreation?.Invoke(this, new ChannelEventArgs(channelId));
 

@@ -3,7 +3,7 @@
 using System.Threading.Tasks;
 using Airship;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.iOS.Modules
 {
     /// <summary>
     /// iOS implementation of Airship PreferenceCenter module.

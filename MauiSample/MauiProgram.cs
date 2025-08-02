@@ -1,4 +1,5 @@
 ﻿using AirshipDotNet;
+using AirshipDotNet.MessageCenter;
 
 namespace MauiSample;
 

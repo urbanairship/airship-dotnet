@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UrbanAirship;
 using UrbanAirship.Push;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship PrivacyManager module.

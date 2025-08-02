@@ -1,7 +1,7 @@
 using Microsoft.Maui.Controls;
 using System;
 
-namespace AirshipDotNet.Controls
+namespace AirshipDotNet.MessageCenter.Controls
 {
     /// <summary>
     /// A view for displaying Airship message center messages.

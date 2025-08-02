@@ -4,11 +4,19 @@ using Com.Urbanairship.Messagecenter.UI.Widget;
 using UrbanAirship.MessageCenter;
 using Android.Webkit;
 
-namespace AirshipDotNet.Controls
+namespace AirshipDotNet.MessageCenter.Controls
 {
     public partial class MessageViewHandler : ViewHandler<MessageView, MessageWebView>
     {
         private MessageWebView _webView;
+
+        public MessageViewHandler() : base(PropertyMapper, CommandMapper)
+        {
+        }
+
+        public MessageViewHandler(IPropertyMapper? mapper, CommandMapper? commandMapper = null) : base(mapper ?? PropertyMapper, commandMapper ?? CommandMapper)
+        {
+        }
 
         protected override MessageWebView CreatePlatformView()
         {
@@ -46,11 +54,11 @@ namespace AirshipDotNet.Controls
             base.DisconnectHandler(platformView);
         }
 
-        static partial void MapMessageId(MessageViewHandler handler, MessageView view)
+        static partial void MapMessageId(IViewHandler handler, MessageView view)
         {
-            if (!string.IsNullOrEmpty(view.MessageId))
+            if (!string.IsNullOrEmpty(view.MessageId) && handler is MessageViewHandler messageViewHandler)
             {
-                handler.LoadMessage(view.MessageId);
+                messageViewHandler.LoadMessage(view.MessageId);
             }
         }
 

@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using AirshipDotNet.FeatureFlags;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.iOS.Modules
 {
     /// <summary>
     /// iOS implementation of Airship FeatureFlagManager module.

@@ -6,7 +6,7 @@ task clean(type: Delete) {
 }
 
 task build {
-    dependsOn(':binderator:build', ':src:AirshipBindings.iOS.common:build')
+    dependsOn(':binderator:build', ':src:AirshipBindings.iOS.ObjectiveC:build')
   
     def BuildConfiguration=project.properties['build_configuration'] ?: "Release"
     doLast() {

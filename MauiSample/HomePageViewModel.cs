@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using AirshipDotNet;
+using AirshipDotNet.MessageCenter;
 using System.Windows.Input;
 
 
@@ -113,7 +114,7 @@ namespace MauiSample
         {
             try
             {
-                await AirshipDotNet.Airship.MessageCenter.Display();
+                await AirshipDotNet.Airship.Instance.MessageCenter().Display();
             }
             catch (Exception ex)
             {

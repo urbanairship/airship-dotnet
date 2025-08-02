@@ -8,6 +8,7 @@ using Android.App;
 using Android.OS;
 using System.Reflection;
 using UrbanAirship.Analytics;
+using UrbanAirship.Actions;
 using UrbanAirship.Attributes;
 
 [assembly: Permission(Name = "@PACKAGE_NAME@.permission.UA_DATA", ProtectionLevel=Android.Content.PM.Protection.Signature)]
