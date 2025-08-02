@@ -55,4 +55,9 @@
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
 	</ItemGroup>
 
+	<!-- iOS-specific dependencies -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-ios'">
+		<ProjectReference Include="..\AirshipBindings.iOS.ObjectiveC\AirshipBindings.iOS.ObjectiveC.csproj" />
+	</ItemGroup>
+
 </Project>
