@@ -52,7 +52,7 @@ This version of the plugin now requires .NET 8.0 (`net8.0-android` and `net8.0-i
 
 ### Minimum iOS Version
 
-This version of the plugin requires iOS 14+ as the min deployment target and Xcode 15+.
+This version of the plugin requires iOS 14+ as the min deployment target and Xcode 16+.
 
 ### iOS Log Levels
 

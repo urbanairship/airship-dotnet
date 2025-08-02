@@ -63,7 +63,7 @@ Minor release that updates the Airship SDK to iOS 17.7.3 and Android 17.7.2, fix
 - Deprecated iOS `Trace` log level and add the replacement `Verbose` log level.
 
 ## Version 19.0.0 - Nov 21, 2023
-Major release that updates the Airship bindings and cross-platform libraries to target .NET 8.0. The Airship .NET SDK now requires .NET 8.0 (`net8.0-android` and `net8.0-ios`) as the minimum target framework, and iOS 14+ as the minimum deployment version with Xcode 15+.
+Major release that updates the Airship bindings and cross-platform libraries to target .NET 8.0. The Airship .NET SDK now requires .NET 8.0 (`net8.0-android` and `net8.0-ios`) as the minimum target framework, and iOS 14+ as the minimum deployment version with Xcode 16+.
 
 ### Changes
 - Updated iOS SDK to 17.6.1
