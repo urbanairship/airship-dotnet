@@ -44,6 +44,7 @@
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj" />
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj" />
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Layout\Airship.Net.Android.Layout.csproj" />
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.FeatureFlag\Airship.Net.Android.FeatureFlag.csproj" />
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.PreferenceCenter\Airship.Net.Android.PreferenceCenter.csproj" />
 	</ItemGroup>

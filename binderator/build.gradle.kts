@@ -12,6 +12,7 @@ plugins {
 
 configure<DotnetExtension> {
   solution = file("generated/airship-android.sln")
+  configuration = "Release"
 }
 
 val binderatorConfigFile = file("config.json")
@@ -52,8 +53,15 @@ tasks {
     configFile.set(binderatorConfigFile)
   }
 
-  val build = register<DotnetBuild>("build") {
+  val generateBindings = register<DotnetBuild>("generateBindings") {
     dependsOn(binderate, ensureSources)
+    
+    // Build without Additions to generate all C# types first
+    additionalArgs.set(listOf("-p:IncludeAndroidAdditions=false"))
+  }
+
+  val build = register<DotnetBuild>("build") {
+    dependsOn(generateBindings)
   }
 
   register<DotnetPack>("pack") {
@@ -61,6 +69,8 @@ tasks {
 
     inputs.dir(binderatorGeneratedDir)
     outputDir.set(rootProject.buildDir)
+    // Don't rebuild during pack, use existing build output
+    additionalArgs.set(listOf("--no-build"))
   }
 
   register<DotnetScript>("checkMavenVersions") {

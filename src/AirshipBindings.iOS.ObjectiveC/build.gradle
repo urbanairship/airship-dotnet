@@ -15,6 +15,11 @@ task clean(type: Delete) {
 task build {
     def BuildConfiguration=project.properties['build_configuration'] ?: "Release"
     doLast() {
+        // Ensure wrapper framework exists
+        if (!file("lib/AirshipWrapper.xcframework").exists()) {
+            throw new GradleException("AirshipWrapper.xcframework not found. Please run the root build task to build iOS dependencies.")
+        }
+        
         exec {
             commandLine "dotnet", "build", "--configuration=${BuildConfiguration}", "AirshipBindings.iOS.ObjectiveC.csproj"
         }

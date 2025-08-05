@@ -1,5 +1,6 @@
 package com.airship.gradle.dotnet.tasks
 
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -12,10 +13,21 @@ abstract class DotnetBuild : BaseDotnetBuildTask("build") {
   @get:Optional
   abstract val outputDir: Property<File>
 
+  @get:Input
+  @get:Optional
+  abstract val additionalArgs: ListProperty<String>
+
+  init {
+    additionalArgs.convention(emptyList())
+  }
+
   override val arguments: List<String>
     get() = super.arguments.toMutableList().apply {
       if (outputDir.isPresent) {
         addAll(listOf("--output", outputDir.get().absolutePath))
+      }
+      if (additionalArgs.isPresent) {
+        addAll(additionalArgs.get())
       }
     }
 }
@@ -24,14 +36,22 @@ abstract class DotnetPack : BaseDotnetBuildTask("pack") {
   @get:OutputDirectory
   abstract val outputDir: Property<File>
 
+  @get:Input
+  @get:Optional
+  abstract val additionalArgs: ListProperty<String>
+
   init {
     outputDir.convention(project.buildDir)
+    additionalArgs.convention(emptyList())
   }
 
   override val arguments: List<String>
     get() = super.arguments.toMutableList().apply {
       if (outputDir.isPresent) {
         addAll(listOf("--output", outputDir.get().absolutePath))
+      }
+      if (additionalArgs.isPresent) {
+        addAll(additionalArgs.get())
       }
     }
 }

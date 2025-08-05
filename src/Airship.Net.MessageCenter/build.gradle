@@ -1,6 +1,6 @@
 // Pack Nuget file
 tasks.register('pack') {
-    dependsOn(':syncRootVersion')
+    dependsOn(':syncRootVersion', ':src:Airship.Net.MessageCenter:build')
 
     doLast() {
         exec {
@@ -10,7 +10,8 @@ tasks.register('pack') {
             commandLine 'dotnet', 'pack', 
                 'Airship.Net.MessageCenter.csproj',
                 '--configuration', 'Release',
-                '--output', "$buildDir"
+                '--output', "$rootProject.buildDir",
+                '--no-build'
         }
     }
 }
@@ -25,7 +26,8 @@ tasks.register('build') {
             environment 'AirshipCrossPlatformNugetVersion', "$crossPlatformNugetVersion"
             commandLine 'dotnet', 'build', 
                 'Airship.Net.MessageCenter.csproj',
-                '--configuration', 'Release'
+                '--configuration', 'Release',
+                '--no-dependencies'
         }
     }
 }

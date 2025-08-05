@@ -38,7 +38,7 @@ ext {
 tasks.register('pack') {
     dependsOn('build')
 
-    // Pack all Android bindings generated via Binderator
+    // Pack all Android bindings
     dependsOn(':binderator:pack')
     // Pack all iOS bindings
     dependsOn(':src:AirshipBindings.iOS.ObjectiveC:pack')
@@ -85,6 +85,50 @@ tasks.register('createLocalFeed') {
 }
 
 // Sync the nuspec and shared assembly versions with the version declared in the airship.properties file.
+// iOS dependency tasks
+tasks.register('carthageUpdate') {
+    doLast() {
+        // Update Cartfile with correct iOS version
+        ant.replaceregexp(
+            file: "$projectDir/Cartfile",
+            match: "\"urbanairship/ios-library\" == .*",
+            replace: "\"urbanairship/ios-library\" == $iosVersion"
+        )
+        
+        // Run carthage update
+        exec {
+            workingDir "$projectDir"
+            commandLine "carthage", "update", "--use-xcframeworks", "--platform", "iOS"
+        }
+    }
+}
+
+tasks.register('buildWrapper') {
+    mustRunAfter('carthageUpdate')
+    
+    doLast() {
+        exec {
+            workingDir "$projectDir/AirshipWrapper"
+            commandLine "./build-wrapper.sh"
+        }
+    }
+}
+
+tasks.register('copyWrapper') {
+    mustRunAfter('buildWrapper')
+    
+    doLast() {
+        // Ensure target directory exists
+        mkdir "$projectDir/src/AirshipBindings.iOS.ObjectiveC/lib"
+        
+        // Copy wrapper framework
+        copy {
+            from "$projectDir/AirshipWrapper/lib/AirshipWrapper.xcframework"
+            into "$projectDir/src/AirshipBindings.iOS.ObjectiveC/lib/"
+        }
+    }
+}
+
 tasks.register('syncRootVersion') {
     dependsOn('syncDirectoryBuildProps')
 
@@ -200,6 +244,9 @@ tasks.register('build') {
     mustRunAfter('clean')
 
     dependsOn('syncVersion',
+            'carthageUpdate',
+            'buildWrapper',
+            'copyWrapper',
             ':binderator:build',
             ':src:AirshipBindings.iOS.ObjectiveC:build',
             ':src:Airship.Net:build',

@@ -6,12 +6,17 @@ task clean(type: Delete) {
 }
 
 task build {
-    dependsOn(':binderator:build', ':src:AirshipBindings.iOS.ObjectiveC:build')
+    // Ensure Android bindings are fully built before building Airship.Net
+    dependsOn(':binderator:build')
+    // Also build iOS bindings
+    dependsOn(':src:AirshipBindings.iOS.ObjectiveC:build')
+    // This task must run after binderator:build completes
+    mustRunAfter(':binderator:build')
   
     def BuildConfiguration=project.properties['build_configuration'] ?: "Release"
     doLast() {
       exec {
-        commandLine "dotnet", "build", "--configuration=${BuildConfiguration}", "Airship.Net.csproj"
+        commandLine "dotnet", "build", "--configuration=${BuildConfiguration}", "--no-dependencies", "Airship.Net.csproj"
       }
     }
 }
@@ -22,7 +27,10 @@ task pack {
     // Pack Airship.Net library
     doLast() {
       exec {
-        commandLine "dotnet", "pack", "Airship.Net.csproj", "-o=${rootProject.buildDir}"
+        commandLine "dotnet", "pack", "Airship.Net.csproj", 
+            "-o=${rootProject.buildDir}", 
+            "-c", "Release",
+            "--no-build"
       }
     }
 }

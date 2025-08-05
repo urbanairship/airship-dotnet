@@ -112,9 +112,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\..\src\SharedAssemblyInfo.Common.cs" />
+    <Compile Include="..\..\..\src\SharedAssemblyInfo.Common.cs" Condition="'$(IncludeAndroidAdditions)' != 'false'" />
 
-    <Compile Include="..\..\source\@(Model.MavenGroupId)\@(Model.Name)\Additions\*.cs">
+    <Compile Include="..\..\source\@(Model.MavenGroupId)\@(Model.Name)\Additions\*.cs" Condition="'$(IncludeAndroidAdditions)' != 'false'">
       <Link>Additions/%(RecursiveDir)/%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
