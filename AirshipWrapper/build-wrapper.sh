@@ -4,6 +4,7 @@
 # Creates a universal xcframework for iOS device and simulator
 
 set -e  # Exit on any error
+set -o pipefail  # Exit on pipe failures
 
 echo "🧹 Cleaning previous builds..."
 

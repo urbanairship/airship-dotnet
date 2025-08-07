@@ -7,13 +7,21 @@ using Airship;
 using CoreGraphics;
 using WebKit;
 
-namespace AirshipDotNet.Controls
+namespace AirshipDotNet.MessageCenter.Controls
 {
     public partial class MessageViewHandler : ViewHandler<MessageView, UIView>
     {
         private UIView _containerView = null!;
         private WKWebView _webView = null!;
         private NSObject? _webViewObserver;
+
+        public MessageViewHandler() : base(PropertyMapper, CommandMapper)
+        {
+        }
+
+        public MessageViewHandler(IPropertyMapper? mapper, CommandMapper? commandMapper = null) : base(mapper ?? PropertyMapper, commandMapper ?? CommandMapper)
+        {
+        }
 
         protected override UIView CreatePlatformView()
         {
@@ -59,11 +67,11 @@ namespace AirshipDotNet.Controls
             base.DisconnectHandler(platformView);
         }
 
-        static partial void MapMessageId(MessageViewHandler handler, MessageView view)
+        static partial void MapMessageId(IViewHandler handler, MessageView view)
         {
-            if (!string.IsNullOrEmpty(view.MessageId))
+            if (!string.IsNullOrEmpty(view.MessageId) && handler is MessageViewHandler messageViewHandler)
             {
-                handler.LoadMessage(view.MessageId);
+                messageViewHandler.LoadMessage(view.MessageId);
             }
         }
 

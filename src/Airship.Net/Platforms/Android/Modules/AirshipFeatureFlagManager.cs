@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AirshipDotNet.FeatureFlags;
 using Com.Urbanairship.Featureflag;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship FeatureFlagManager module.

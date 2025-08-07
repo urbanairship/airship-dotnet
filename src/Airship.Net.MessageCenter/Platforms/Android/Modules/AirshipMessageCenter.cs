@@ -5,19 +5,20 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using AirshipDotNet.MessageCenter;
+using AirshipDotNet.Platforms.Android;
 using UrbanAirship.MessageCenter;
 using Java.Util;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.MessageCenter.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship MessageCenter module.
     /// </summary>
-    internal class AirshipMessageCenter : IAirshipMessageCenter
+    public class AirshipMessageCenter : IAirshipMessageCenter
     {
         private readonly AirshipModule _module;
 
-        internal AirshipMessageCenter(AirshipModule module)
+        public AirshipMessageCenter(AirshipModule module)
         {
             _module = module;
         }

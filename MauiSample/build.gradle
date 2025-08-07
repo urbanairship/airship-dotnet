@@ -12,7 +12,5 @@ tasks.register("restore", Exec) {
 tasks.register("buildSample", Exec) {
     dependsOn restore
 
-    mustRunAfter ':src:Airship.Net:build', ':src:Airship.Net.MessageCenter:build'
-
-    commandLine "dotnet", "build", "-c", "Debug", "../MauiSample.sln"
+    commandLine "dotnet", "build", "-c", "Release", "--no-dependencies", "-f", "net8.0-android", "MauiSample.csproj"
 }

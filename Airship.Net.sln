@@ -17,19 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.Message
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net.Android.PreferenceCenter", "binderator\generated\Airship.Net.Android.PreferenceCenter\Airship.Net.Android.PreferenceCenter.csproj", "{E99F9D88-6E68-46D8-9A8A-651C8490E59C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.Basement", "src\AirshipBindings.iOS.Basement\AirshipBindings.iOS.Basement.csproj", "{5E85A7FD-8C42-4DE6-B002-E3CC2DA529C7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.Core", "src\AirshipBindings.iOS.Core\AirshipBindings.iOS.Core.csproj", "{7F49C0FA-F958-44CF-9246-8B8577748E6F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.Automation", "src\AirshipBindings.iOS.Automation\AirshipBindings.iOS.Automation.csproj", "{70434FB5-A468-4777-9478-DD2AB80BE0E2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.MessageCenter", "src\AirshipBindings.iOS.MessageCenter\AirshipBindings.iOS.MessageCenter.csproj", "{AC22EEC5-DCA6-49D3-8B37-533B5565E2CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.ObjectiveC", "src\AirshipBindings.iOS.ObjectiveC\AirshipBindings.iOS.ObjectiveC.csproj", "{5E85A7FD-8C42-4DE6-B002-E3CC2DA529C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Airship.Net", "src\Airship.Net\Airship.Net.csproj", "{C419463A-31A8-477B-A99E-1B0947AA416B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.NotificationServiceExtension", "src\AirshipBindings.iOS.NotificationServiceExtension\AirshipBindings.iOS.NotificationServiceExtension.csproj", "{2C453988-C24E-431A-A17C-6989E93C795E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirshipBindings.iOS.PreferenceCenter", "src\AirshipBindings.iOS.PreferenceCenter\AirshipBindings.iOS.PreferenceCenter.csproj", "{13E9ACF2-4FE5-4FA6-96C4-BDFB6FF7C3A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F4B616B3-15BA-45DB-AA24-97270963158F}"
 EndProject

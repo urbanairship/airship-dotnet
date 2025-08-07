@@ -1,5 +1,18 @@
 # Airship DotNet Changelog
 
+## Version 20.0.0 - August 1, 2025
+Major release with complete interface modernization and architectural improvements.
+
+### Changes
+- Updated iOS SDK to 19.6.1
+- Updated Android SDK to 19.8.0
+- Complete interface modernization - split monolithic IAirship into module-specific interfaces
+- Changed access pattern from instance-based to static module properties
+- All async operations now return Tasks
+- Merged Message Center functionality into main Airship.Net package
+- Added iOS AirshipWrapper to handle Swift async method compatibility
+- Improved type safety and separation of concerns across modules
+
 ## Version 19.5.0 - Feb 7, 2025
 Minor release that updates the Android SDK to 18.7.0, including AndroidX library updates.
 
@@ -50,7 +63,7 @@ Minor release that updates the Airship SDK to iOS 17.7.3 and Android 17.7.2, fix
 - Deprecated iOS `Trace` log level and add the replacement `Verbose` log level.
 
 ## Version 19.0.0 - Nov 21, 2023
-Major release that updates the Airship bindings and cross-platform libraries to target .NET 8.0. The Airship .NET SDK now requires .NET 8.0 (`net8.0-android` and `net8.0-ios`) as the minimum target framework, and iOS 14+ as the minimum deployment version with Xcode 15+.
+Major release that updates the Airship bindings and cross-platform libraries to target .NET 8.0. The Airship .NET SDK now requires .NET 8.0 (`net8.0-android` and `net8.0-ios`) as the minimum target framework, and iOS 14+ as the minimum deployment version with Xcode 16+.
 
 ### Changes
 - Updated iOS SDK to 17.6.1

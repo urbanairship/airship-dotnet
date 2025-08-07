@@ -6,7 +6,7 @@ using Foundation;
 using Airship;
 using UserNotifications;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.iOS.Modules
 {
     /// <summary>
     /// iOS implementation of Airship Push module.

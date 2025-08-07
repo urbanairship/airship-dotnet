@@ -1,5 +1,3 @@
-import com.airship.PublishExtension
-
 ext {
     artifactId = "Airship.Net.iOS.ObjectiveC"
     projectName = "Airship iOS SDK - ObjectiveC"
@@ -7,4 +5,33 @@ ext {
     project = findProject(":src:AirshipBindings.iOS.ObjectiveC")
 }
 
-apply from: rootProject.file("../AirshipBindings.iOS.common/build.gradle")
+task clean(type: Delete) {
+    doLast() {
+        project.delete "bin"
+        project.delete "obj"
+    }
+}
+
+task build {
+    def BuildConfiguration=project.properties['build_configuration'] ?: "Release"
+    doLast() {
+        // Ensure wrapper framework exists
+        if (!file("lib/AirshipWrapper.xcframework").exists()) {
+            throw new GradleException("AirshipWrapper.xcframework not found. Please run the root build task to build iOS dependencies.")
+        }
+        
+        exec {
+            commandLine "dotnet", "build", "--configuration=${BuildConfiguration}", "AirshipBindings.iOS.ObjectiveC.csproj"
+        }
+    }
+}
+
+task pack {
+    mustRunAfter 'build'
+    
+    doLast() {
+        exec {
+            commandLine "dotnet", "pack", "AirshipBindings.iOS.ObjectiveC.csproj", "-o=${rootProject.buildDir}"
+        }
+    }
+}

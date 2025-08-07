@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using UrbanAirship;
 using UrbanAirship.Automation;
 
-namespace AirshipDotNet
+namespace AirshipDotNet.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship InApp module.
