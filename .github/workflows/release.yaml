@@ -45,7 +45,7 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-          
+
       # - name: Setup GCP Auth
       #   uses: google-github-actions/auth@v1
       #   with:
@@ -73,6 +73,56 @@ jobs:
         run: |
           dotnet workload install android ios maui-android maui-ios maui-maccatalyst
 
+      - name: Install Carthage
+        run: |
+          brew install carthage
+
+      - name: Bootstrap Carthage
+        env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          carthage version
+
+          # Bootstrap with xcframeworks, using binary downloads when available
+          carthage bootstrap --use-xcframeworks --platform iOS --cache-builds --use-netrc
+
+          # Verify the build directory was created
+          if [ ! -d "Carthage/Build" ]; then
+            echo "ERROR: Carthage/Build directory not found. This likely failed due to GitHub API rate limits or network issues."
+            exit 1
+          fi
+
+      - name: Build AirshipWrapper
+        run: |
+          # Debug: Show current directory and AirshipWrapper contents
+          echo "Current directory: $(pwd)"
+          echo "AirshipWrapper directory contents:"
+          ls -la AirshipWrapper/
+
+          # Run build-wrapper.sh from root directory to maintain correct relative paths
+          cd AirshipWrapper && ./build-wrapper.sh && cd ..
+
+          # Debug: Show what was built
+          echo "Contents after build:"
+          ls -la AirshipWrapper/
+          if [ -d "AirshipWrapper/lib" ]; then
+            echo "lib directory contents:"
+            ls -la AirshipWrapper/lib/
+          else
+            echo "lib directory not found"
+          fi
+
+          # Verify the framework was built
+          if [ ! -d "AirshipWrapper/lib/AirshipWrapper.xcframework" ]; then
+            echo "ERROR: AirshipWrapper.xcframework not found after build!"
+            echo "Build may have failed. Check the build output above."
+            exit 1
+          fi
+
+          # Copy the built wrapper to the binding project
+          mkdir -p src/AirshipBindings.iOS.ObjectiveC/lib
+          cp -R AirshipWrapper/lib/AirshipWrapper.xcframework src/AirshipBindings.iOS.ObjectiveC/lib/
+
       # - name: Install doc dependencies
       #   run: |
       #     brew install doxygen
@@ -81,7 +131,7 @@ jobs:
       - name: Build and Publish Nugets
         env:
           NUGET_PRODUCTION_API_KEY: ${{ secrets.NUGET_PRODUCTION_API_KEY }}
-        run: ./gradlew build pack publishToProduction
+        run: ./gradlew build pack publishToProduction --warning-mode=summary --no-parallel
         #run: ./gradlew build pack packageDocs
         
       - name: Create Github Release
