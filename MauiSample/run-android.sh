@@ -46,11 +46,11 @@ fi
 
 # Clean previous builds to ensure fresh build
 echo -e "${YELLOW}🧹 Cleaning previous builds...${NC}"
-~/.dotnet/dotnet clean -f net8.0-android
+dotnet clean -f net8.0-android
 
 # Build the app
 echo -e "${YELLOW}🔨 Building Android APK...${NC}"
-if ! ~/.dotnet/dotnet build -f net8.0-android; then
+if ! dotnet build -f net8.0-android; then
     echo -e "${RED}❌ Error: Failed to build Android APK${NC}"
     exit 1
 fi

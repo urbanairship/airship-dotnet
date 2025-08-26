@@ -3,31 +3,22 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		25284C4BDA71D280C8BB1D8C /* AirshipObjectiveC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EB3A5E6F4AD95AE0B395E01C /* AirshipObjectiveC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		4EA3CC0CBE77A7ED517E641D /* AWAirshipWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 109769D5157B1120463434E4 /* AWAirshipWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6E1CAEB02E5D33CF001CC1DC /* AirshipAutomation.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E26E0E00F569E933145941 /* AirshipAutomation.xcframework */; };
+		6E1CAEB22E5D33CF001CC1DC /* AirshipBasement.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C35FA47C8428D6E224F65B2 /* AirshipBasement.xcframework */; };
+		6E1CAEB42E5D33CF001CC1DC /* AirshipCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10F49A6FCBDCFC70B2256918 /* AirshipCore.xcframework */; };
+		6E1CAEB62E5D33CF001CC1DC /* AirshipFeatureFlags.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F93ED2CA4CF614E9DBBB071D /* AirshipFeatureFlags.xcframework */; };
+		6E1CAEB82E5D33CF001CC1DC /* AirshipMessageCenter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DFBC95C256204401035D12F /* AirshipMessageCenter.xcframework */; };
+		6E1CAEBA2E5D33CF001CC1DC /* AirshipObjectiveC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FE4AB48294B2EEE918A265B /* AirshipObjectiveC.xcframework */; };
+		6E1CAEBC2E5D33CF001CC1DC /* AirshipPreferenceCenter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B56CFBD35061668DFD7A926 /* AirshipPreferenceCenter.xcframework */; };
 		750E1E2ECD26AD06F4480BF0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA003529B07C47D0E427238D /* Foundation.framework */; };
 		92A2C02617EE4B13E6EADBFF /* AirshipWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = C8679CB2177B318DE463308D /* AirshipWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A4D0483970A1DFEA60ADF958 /* AirshipObjectiveC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FE4AB48294B2EEE918A265B /* AirshipObjectiveC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D65CF4CA1E707DCD8BA7F464 /* AWAirshipWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = E50A971F9CC72E96B2D5FF51 /* AWAirshipWrapper.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		6E35386E4CCBF83695819602 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				25284C4BDA71D280C8BB1D8C /* AirshipObjectiveC.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		109769D5157B1120463434E4 /* AWAirshipWrapper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AWAirshipWrapper.h; path = AirshipWrapper/AWAirshipWrapper.h; sourceTree = "<group>"; };
@@ -41,7 +32,6 @@
 		BA003529B07C47D0E427238D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		C8679CB2177B318DE463308D /* AirshipWrapper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AirshipWrapper.h; path = AirshipWrapper/AirshipWrapper.h; sourceTree = "<group>"; };
 		E50A971F9CC72E96B2D5FF51 /* AWAirshipWrapper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AWAirshipWrapper.m; path = AirshipWrapper/AWAirshipWrapper.m; sourceTree = "<group>"; };
-		EB3A5E6F4AD95AE0B395E01C /* AirshipObjectiveC.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipObjectiveC.xcframework; path = ../Carthage/Build/AirshipObjectiveC.xcframework; sourceTree = "<group>"; };
 		F93ED2CA4CF614E9DBBB071D /* AirshipFeatureFlags.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipFeatureFlags.xcframework; path = ../Carthage/Build/AirshipFeatureFlags.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -51,7 +41,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				750E1E2ECD26AD06F4480BF0 /* Foundation.framework in Frameworks */,
-				A4D0483970A1DFEA60ADF958 /* AirshipObjectiveC.xcframework in Frameworks */,
+				6E1CAEB22E5D33CF001CC1DC /* AirshipBasement.xcframework in Frameworks */,
+				6E1CAEBC2E5D33CF001CC1DC /* AirshipPreferenceCenter.xcframework in Frameworks */,
+				6E1CAEB62E5D33CF001CC1DC /* AirshipFeatureFlags.xcframework in Frameworks */,
+				6E1CAEB02E5D33CF001CC1DC /* AirshipAutomation.xcframework in Frameworks */,
+				6E1CAEB82E5D33CF001CC1DC /* AirshipMessageCenter.xcframework in Frameworks */,
+				6E1CAEBA2E5D33CF001CC1DC /* AirshipObjectiveC.xcframework in Frameworks */,
+				6E1CAEB42E5D33CF001CC1DC /* AirshipCore.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,7 +77,6 @@
 			isa = PBXGroup;
 			children = (
 				CD9D49929E73B75CB965519C /* iOS */,
-				EB3A5E6F4AD95AE0B395E01C /* AirshipObjectiveC.xcframework */,
 				6FE4AB48294B2EEE918A265B /* AirshipObjectiveC.xcframework */,
 				10F49A6FCBDCFC70B2256918 /* AirshipCore.xcframework */,
 				2C35FA47C8428D6E224F65B2 /* AirshipBasement.xcframework */,
@@ -132,7 +127,6 @@
 				FA915BAA0D5037409426CC67 /* Sources */,
 				4DDD8EFB0EEDED318111A499 /* Frameworks */,
 				AAFF6E35A5221AE85FC46BEF /* Resources */,
-				6E35386E4CCBF83695819602 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

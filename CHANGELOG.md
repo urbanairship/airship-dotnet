@@ -1,5 +1,14 @@
 # Airship DotNet Changelog
 
+## Version 20.1.0 - August 25, 2025
+Minor release that updates the SDKs and fixes a build signing issue with iOS.
+
+### Changes
+- Removed embedded framework that failed to be signed during a release build.
+- Updated iOS SDK to 19.8.2
+- Updated Android SDK to 19.11.0
+
+
 ## Version 20.0.0 - August 1, 2025
 Major release with complete interface modernization and architectural improvements.
 
