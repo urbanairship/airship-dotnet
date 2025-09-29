@@ -48,7 +48,7 @@ The iOS bindings require building the Airship iOS SDK and the AirshipWrapper fra
 2. **Build the AirshipWrapper framework:**
    ```bash
    cd AirshipWrapper
-   ./build_ios.sh
+   ./build-wrapper.sh 
    ```
 
 The AirshipWrapper is an Objective-C wrapper that handles problematic Swift async methods and Swift types that cause marshaling issues in Xamarin.iOS/.NET8. The wrapper implements:

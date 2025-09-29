@@ -23,6 +23,22 @@ namespace AirshipDotNet.MessageCenter.Platforms.Android.Modules
             _module = module;
         }
 
+        internal class AirshipMessageCenterDisplayDelegate : Java.Lang.Object, MessageCenterClass.IOnShowMessageCenterListener
+        {
+            private readonly Action<string?> handler;
+
+            public AirshipMessageCenterDisplayDelegate(Action<string?> handler)
+            {
+                this.handler = handler;
+            }
+
+            public bool OnShowMessageCenter(string? messageId)
+            {
+                handler?.Invoke(messageId);
+                return true;
+            }
+        }
+
         /// <summary>
         /// Displays the message center.
         /// </summary>
@@ -164,6 +180,33 @@ namespace AirshipDotNet.MessageCenter.Platforms.Android.Modules
         {
             MessageCenterClass.Shared().Inbox.DeleteMessages(messageIds);
             return Task.CompletedTask;
+        }
+
+        private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
+
+        /// <summary>
+        /// Add/remove the Message Center display listener.
+        /// </summary>
+        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
+        {
+            add
+            {
+                onMessageCenterDisplay += value;
+                AirshipMessageCenterDisplayDelegate messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
+                {
+                    onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
+                });
+                MessageCenterClass.Shared().SetOnShowMessageCenterListener(messageCenterDisplayDelegate);
+            }
+            remove
+            {
+                onMessageCenterDisplay -= value;
+
+                if (onMessageCenterDisplay == null)
+                {
+                    MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
+                }
+            }
         }
 
         private static DateTime? FromDate(Date? date)
