@@ -23,6 +23,31 @@ namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
             _module = module;
         }
 
+        internal class AirshipMessageCenterDisplayDelegate : global::Airship.UAMessageCenterDisplayDelegate
+        {
+            private readonly Action<string?> handler;
+
+            public AirshipMessageCenterDisplayDelegate(Action<string?> handler)
+            {
+                this.handler = handler;
+            }
+
+            public override void DisplayMessageCenterForMessageID(string messageId)
+            {
+                handler?.Invoke(messageId);
+            }
+
+            public override void DisplayMessageCenter()
+            {
+
+            }
+
+            public override void DismissMessageCenter()
+            {
+                handler?.Invoke(null);
+            }
+        }
+
         /// <summary>
         /// Gets all messages from the message center.
         /// </summary>
@@ -127,7 +152,7 @@ namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
         {
             return Task.Run(() =>
             {
-                UAirship.MessageCenter.Inbox.DeleteWithMessageIDs(messageIds, () => { });
+                AWAirshipWrapper.Shared.MessageCenter.Inbox.DeleteWithMessageIDs(messageIds, () => { });
             });
         }
 
@@ -140,7 +165,7 @@ namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
 
             NSRunLoop.Main.InvokeOnMainThread(() =>
             {
-                UAirship.MessageCenter.Display();
+                AWAirshipWrapper.Shared.MessageCenter.Display();
                 tcs.SetResult(true);
             });
 
@@ -157,7 +182,7 @@ namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
 
             NSRunLoop.Main.InvokeOnMainThread(() =>
             {
-                UAirship.MessageCenter.DisplayWithMessageID(messageId);
+                AWAirshipWrapper.Shared.MessageCenter.DisplayWithMessageID(messageId);
                 tcs.SetResult(true);
             });
 
@@ -174,7 +199,37 @@ namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
             return epoch.AddSeconds(date.SecondsSince1970);
         }
 
-        // Event handlers will be added in a future phase to maintain existing event patterns
-        // For now, users can still use the legacy events through Airship.Instance if needed
+        private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
+        private AirshipMessageCenterDisplayDelegate? messageCenterDisplayDelegate;
+
+        /// <summary>
+        /// Add/remove the Message Center display listener.
+        /// </summary>
+        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
+        {
+            add
+            {
+                onMessageCenterDisplay += value;
+                if (messageCenterDisplayDelegate == null)
+                {
+                    messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
+                    {
+                        onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
+                    });
+                    UAirship.MessageCenter.WeakDisplayDelegate = messageCenterDisplayDelegate;
+                }
+            }
+            remove
+            {
+                onMessageCenterDisplay -= value;
+
+                if (onMessageCenterDisplay == null)
+                {
+                    UAirship.MessageCenter.WeakDisplayDelegate = null;
+                    messageCenterDisplayDelegate = null;
+                }
+            }
+        }
+
     }
 }
