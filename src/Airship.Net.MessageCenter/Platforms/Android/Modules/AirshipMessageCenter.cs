@@ -183,6 +183,7 @@ namespace AirshipDotNet.MessageCenter.Platforms.Android.Modules
         }
 
         private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
+        private AirshipMessageCenterDisplayDelegate? messageCenterDisplayDelegate;
 
         /// <summary>
         /// Add/remove the Message Center display listener.
@@ -192,11 +193,14 @@ namespace AirshipDotNet.MessageCenter.Platforms.Android.Modules
             add
             {
                 onMessageCenterDisplay += value;
-                AirshipMessageCenterDisplayDelegate messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
+                if (messageCenterDisplayDelegate == null)
                 {
-                    onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
-                });
-                MessageCenterClass.Shared().SetOnShowMessageCenterListener(messageCenterDisplayDelegate);
+                    messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
+                    {
+                        onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
+                    });
+                    MessageCenterClass.Shared().SetOnShowMessageCenterListener(messageCenterDisplayDelegate);
+                }
             }
             remove
             {
@@ -205,6 +209,7 @@ namespace AirshipDotNet.MessageCenter.Platforms.Android.Modules
                 if (onMessageCenterDisplay == null)
                 {
                     MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
+                    messageCenterDisplayDelegate = null;
                 }
             }
         }

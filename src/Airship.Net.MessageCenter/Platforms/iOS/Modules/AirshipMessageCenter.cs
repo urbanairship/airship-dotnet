@@ -200,6 +200,7 @@ namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
         }
 
         private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
+        private AirshipMessageCenterDisplayDelegate? messageCenterDisplayDelegate;
 
         /// <summary>
         /// Add/remove the Message Center display listener.
@@ -209,11 +210,14 @@ namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
             add
             {
                 onMessageCenterDisplay += value;
-                AirshipMessageCenterDisplayDelegate messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
-                     {
-                         onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
-                     });
-                UAirship.MessageCenter.WeakDisplayDelegate = messageCenterDisplayDelegate;
+                if (messageCenterDisplayDelegate == null)
+                {
+                    messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
+                    {
+                        onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
+                    });
+                    UAirship.MessageCenter.WeakDisplayDelegate = messageCenterDisplayDelegate;
+                }
             }
             remove
             {
@@ -222,6 +226,7 @@ namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
                 if (onMessageCenterDisplay == null)
                 {
                     UAirship.MessageCenter.WeakDisplayDelegate = null;
+                    messageCenterDisplayDelegate = null;
                 }
             }
         }
