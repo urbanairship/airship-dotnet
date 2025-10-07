@@ -4,6 +4,7 @@ using Foundation;
 using Airship;
 using AirshipDotNet.Analytics;
 using AirshipDotNet.Attributes;
+using AirshipDotNet.MessageCenter;
 using AirshipDotNet.Platforms.iOS;
 using AirshipDotNet.Platforms.iOS.Modules;
 
@@ -115,6 +116,64 @@ namespace AirshipDotNet
                 {
                     UAirship.DeepLinkDelegate = null;
                     deepLinkDelegate = null;
+                }
+            }
+        }
+
+        // Internal delegate class for Message Center display
+        internal class AirshipMessageCenterDisplayDelegate : global::Airship.UAMessageCenterDisplayDelegate
+        {
+            private readonly Action<string?> handler;
+
+            public AirshipMessageCenterDisplayDelegate(Action<string?> handler)
+            {
+                this.handler = handler;
+            }
+
+            public override void DisplayMessageCenterForMessageID(string messageId)
+            {
+                handler?.Invoke(messageId);
+            }
+
+            public override void DisplayMessageCenter()
+            {
+                handler?.Invoke(null);
+            }
+
+            public override void DismissMessageCenter()
+            {
+                handler?.Invoke(null);
+            }
+        }
+
+        private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
+        private AirshipMessageCenterDisplayDelegate? messageCenterDisplayDelegate;
+
+        /// <summary>
+        /// Add/remove the Message Center display listener.
+        /// </summary>
+        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
+        {
+            add
+            {
+                onMessageCenterDisplay += value;
+                if (messageCenterDisplayDelegate == null)
+                {
+                    messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
+                    {
+                        onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
+                    });
+                    UAirship.MessageCenter.WeakDisplayDelegate = messageCenterDisplayDelegate;
+                }
+            }
+            remove
+            {
+                onMessageCenterDisplay -= value;
+
+                if (onMessageCenterDisplay == null)
+                {
+                    UAirship.MessageCenter.WeakDisplayDelegate = null;
+                    messageCenterDisplayDelegate = null;
                 }
             }
         }

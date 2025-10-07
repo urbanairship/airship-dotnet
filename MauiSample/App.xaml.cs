@@ -15,8 +15,7 @@ public partial class App : Application
         // Register deep link event handler
         AirshipDotNet.Airship.Instance.OnDeepLinkReceived += OnDeepLinkReceived;
 
-        // Register message center display handler
-        AirshipDotNet.Airship.Instance.MessageCenter().OnMessageCenterDisplay += OnMessageCenterDisplay;
+        AirshipDotNet.Airship.Instance.OnMessageCenterDisplay += OnMessageCenterDisplay;
     }
 
     private void OnDeepLinkReceived(object sender, DeepLinkEventArgs e)
