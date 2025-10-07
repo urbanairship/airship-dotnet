@@ -1,5 +1,13 @@
 # Airship DotNet Changelog
 
+## Version 20.2.0 - October 7, 2025
+Minor release that updates the SDKs and restores onMessageCenterDisplay.
+
+### Changes
+- Restored onMessageCenterDisplay that was erroneously removed in version 20.0.0.
+- Updated iOS SDK to 19.11.0
+- Updated Android SDK to 19.13.4
+
 ## Version 20.1.0 - August 25, 2025
 Minor release that updates the SDKs and fixes a build signing issue with iOS.
 
