@@ -141,6 +141,8 @@ jobs:
           cp -R AirshipWrapper/lib/AirshipWrapper.xcframework src/AirshipBindings.iOS.ObjectiveC/lib/
 
       - name: Build
+        env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Use pretty build wrapper for formatted output
           # Add --no-parallel to avoid CreateBindingResourcePackage thread-safety issues
