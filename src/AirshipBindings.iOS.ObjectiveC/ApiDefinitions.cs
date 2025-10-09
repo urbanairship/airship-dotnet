@@ -1401,6 +1401,11 @@ namespace Airship
 		[Export ("openPreferenceCenter:")]
 		void OpenPreferenceCenter (string preferenceCenterID);
 
+		// -(UAPreferenceCenterConfig * _Nullable)configWithPreferenceCenterID:(NSString * _Nonnull)preferenceCenterID error:(NSError * _Nullable * _Nullable)error;
+		[Export ("configWithPreferenceCenterID:error:")]
+		[return: NullAllowed]
+		UAPreferenceCenterConfig Config (string preferenceCenterID, [NullAllowed] out NSError error);
+
 		// -(void)jsonConfigWithPreferenceCenterID:(NSString * _Nonnull)preferenceCenterID completionHandler:(void (^ _Nonnull)(NSData * _Nullable, NSError * _Nullable))completionHandler;
 		[Export ("jsonConfigWithPreferenceCenterID:completionHandler:")]
 		void JsonConfigWithPreferenceCenterID (string preferenceCenterID, Action<NSData, NSError> completionHandler);
@@ -1437,6 +1442,286 @@ namespace Airship
 		[Export ("embedWithPreferenceCenterID:preferenceCenterThemePlist:in:error:")]
 		[return: NullAllowed]
 		UIView EmbedWithPreferenceCenterID (string preferenceCenterID, [NullAllowed] string preferenceCenterThemePlist, UIViewController parentViewController, [NullAllowed] out NSError error);
+	}
+
+	// MARK: - Preference Center Config Interfaces
+
+	// @interface UAPreferenceCenterConfig : NSObject
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfig
+	{
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Export ("identifier")]
+		string Identifier { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceConfigCommonDisplay * _Nullable display;
+		[NullAllowed, Export ("display", ArgumentSemantic.Strong)]
+		UAPreferenceConfigCommonDisplay Display { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceCenterConfigOptions * _Nullable options;
+		[NullAllowed, Export ("options", ArgumentSemantic.Strong)]
+		UAPreferenceCenterConfigOptions Options { get; }
+	}
+
+	// @interface UAPreferenceCenterConfigOptions : NSObject
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfigOptions
+	{
+		// @property (readonly, nonatomic) BOOL mergeChannelDataToContact;
+		[Export ("mergeChannelDataToContact")]
+		bool MergeChannelDataToContact { get; }
+	}
+
+	// @interface UAPreferenceConfigCommonDisplay : NSObject
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceConfigCommonDisplay
+	{
+		// @property (readonly, copy, nonatomic) NSString * _Nullable title;
+		[NullAllowed, Export ("title")]
+		string Title { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nullable subtitle;
+		[NullAllowed, Export ("subtitle")]
+		string Subtitle { get; }
+	}
+
+	// @protocol UAPreferenceConfigCondition
+	[Protocol, Model]
+	[BaseType (typeof(NSObject))]
+	interface UAPreferenceConfigCondition
+	{
+		// @required @property (readonly, nonatomic) UAPreferenceCenterConfigConditionType type;
+		[Abstract]
+		[Export ("type")]
+		UAPreferenceCenterConfigConditionType Type { get; }
+	}
+
+	[Protocol]
+	interface IUAPreferenceConfigCondition { }
+
+	// @interface UAPreferenceCenterConfigNotificationOptInCondition : NSObject <UAPreferenceConfigCondition>
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfigNotificationOptInCondition : IUAPreferenceConfigCondition
+	{
+		// @property (readonly, nonatomic) UAPreferenceCenterConfigConditionType type;
+		[Export ("type")]
+		UAPreferenceCenterConfigConditionType Type { get; }
+
+		// @property (readonly, nonatomic) UANotificationOptInConditionStatus optInStatus;
+		[Export ("optInStatus")]
+		UANotificationOptInConditionStatus OptInStatus { get; }
+	}
+
+	// @protocol UAPreferenceCenterConfigSection
+	[Protocol, Model]
+	[BaseType (typeof(NSObject))]
+	interface UAPreferenceCenterConfigSection
+	{
+		// @required @property (readonly, nonatomic) UAPreferenceCenterConfigSectionType type;
+		[Abstract]
+		[Export ("type")]
+		UAPreferenceCenterConfigSectionType Type { get; }
+
+		// @required @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Abstract]
+		[Export ("identifier")]
+		string Identifier { get; }
+	}
+
+	[Protocol]
+	interface IUAPreferenceCenterConfigSection { }
+
+	// @interface UAPreferenceCenterConfigCommonSection : NSObject <UAPreferenceCenterConfigSection>
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfigCommonSection : IUAPreferenceCenterConfigSection
+	{
+		// @property (readonly, nonatomic) UAPreferenceCenterConfigSectionType type;
+		[Export ("type")]
+		UAPreferenceCenterConfigSectionType Type { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Export ("identifier")]
+		string Identifier { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceConfigCommonDisplay * _Nullable display;
+		[NullAllowed, Export ("display", ArgumentSemantic.Strong)]
+		UAPreferenceConfigCommonDisplay Display { get; }
+	}
+
+	// @interface UAPreferenceLabeledSectionBreak : NSObject <UAPreferenceCenterConfigSection>
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceLabeledSectionBreak : IUAPreferenceCenterConfigSection
+	{
+		// @property (readonly, nonatomic) UAPreferenceCenterConfigSectionType type;
+		[Export ("type")]
+		UAPreferenceCenterConfigSectionType Type { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Export ("identifier")]
+		string Identifier { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceConfigCommonDisplay * _Nullable display;
+		[NullAllowed, Export ("display", ArgumentSemantic.Strong)]
+		UAPreferenceConfigCommonDisplay Display { get; }
+	}
+
+	// @protocol UAPreferenceCenterConfigItem
+	[Protocol, Model]
+	[BaseType (typeof(NSObject))]
+	interface UAPreferenceCenterConfigItem
+	{
+		// @required @property (readonly, nonatomic) UAPreferenceCenterConfigItemType type;
+		[Abstract]
+		[Export ("type")]
+		UAPreferenceCenterConfigItemType Type { get; }
+
+		// @required @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Abstract]
+		[Export ("identifier")]
+		string Identifier { get; }
+	}
+
+	[Protocol]
+	interface IUAPreferenceCenterConfigItem { }
+
+	// @interface UAPreferenceCenterConfigChannelSubscription : NSObject <UAPreferenceCenterConfigItem>
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfigChannelSubscription : IUAPreferenceCenterConfigItem
+	{
+		// @property (readonly, nonatomic) UAPreferenceCenterConfigItemType type;
+		[Export ("type")]
+		UAPreferenceCenterConfigItemType Type { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Export ("identifier")]
+		string Identifier { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull subscriptionID;
+		[Export ("subscriptionID")]
+		string SubscriptionID { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceConfigCommonDisplay * _Nullable display;
+		[NullAllowed, Export ("display", ArgumentSemantic.Strong)]
+		UAPreferenceConfigCommonDisplay Display { get; }
+	}
+
+	// @interface UAPreferenceCenterConfigContactSubscriptionGroup : NSObject <UAPreferenceCenterConfigItem>
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfigContactSubscriptionGroup : IUAPreferenceCenterConfigItem
+	{
+		// @property (readonly, nonatomic) UAPreferenceCenterConfigItemType type;
+		[Export ("type")]
+		UAPreferenceCenterConfigItemType Type { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Export ("identifier")]
+		string Identifier { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull subscriptionID;
+		[Export ("subscriptionID")]
+		string SubscriptionID { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceConfigCommonDisplay * _Nullable display;
+		[NullAllowed, Export ("display", ArgumentSemantic.Strong)]
+		UAPreferenceConfigCommonDisplay Display { get; }
+	}
+
+	// @interface UAPreferenceContactSubscriptionGroupComponent : NSObject
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceContactSubscriptionGroupComponent
+	{
+		// @property (readonly, nonatomic, strong) UAPreferenceConfigCommonDisplay * _Nullable display;
+		[NullAllowed, Export ("display", ArgumentSemantic.Strong)]
+		UAPreferenceConfigCommonDisplay Display { get; }
+	}
+
+	// @interface UAPreferenceCenterConfigContactSubscription : NSObject <UAPreferenceCenterConfigItem>
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfigContactSubscription : IUAPreferenceCenterConfigItem
+	{
+		// @property (readonly, nonatomic) UAPreferenceCenterConfigItemType type;
+		[Export ("type")]
+		UAPreferenceCenterConfigItemType Type { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Export ("identifier")]
+		string Identifier { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceConfigCommonDisplay * _Nullable display;
+		[NullAllowed, Export ("display", ArgumentSemantic.Strong)]
+		UAPreferenceConfigCommonDisplay Display { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull subscriptionID;
+		[Export ("subscriptionID")]
+		string SubscriptionID { get; }
+	}
+
+	// @interface UAPreferenceCenterConfigAlert : NSObject <UAPreferenceCenterConfigItem>
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfigAlert : IUAPreferenceCenterConfigItem
+	{
+		// @property (readonly, nonatomic) UAPreferenceCenterConfigItemType type;
+		[Export ("type")]
+		UAPreferenceCenterConfigItemType Type { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull identifier;
+		[Export ("identifier")]
+		string Identifier { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceConfigAlertDisplay * _Nullable display;
+		[NullAllowed, Export ("display", ArgumentSemantic.Strong)]
+		UAPreferenceConfigAlertDisplay Display { get; }
+
+		// @property (readonly, nonatomic, strong) UAPreferenceCenterConfigAlertButton * _Nullable button;
+		[NullAllowed, Export ("button", ArgumentSemantic.Strong)]
+		UAPreferenceCenterConfigAlertButton Button { get; }
+	}
+
+	// @interface UAPreferenceCenterConfigAlertButton : NSObject
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceCenterConfigAlertButton
+	{
+		// @property (readonly, copy, nonatomic) NSString * _Nonnull text;
+		[Export ("text")]
+		string Text { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nullable contentDescription;
+		[NullAllowed, Export ("contentDescription")]
+		string ContentDescription { get; }
+
+		// @property (readonly, nonatomic) NSObject * _Nullable actions;
+		[NullAllowed, Export ("actions")]
+		NSObject Actions { get; }
+	}
+
+	// @interface UAPreferenceConfigAlertDisplay : NSObject
+	[BaseType (typeof(NSObject))]
+	[DisableDefaultCtor]
+	interface UAPreferenceConfigAlertDisplay
+	{
+		// @property (readonly, copy, nonatomic) NSString * _Nullable title;
+		[NullAllowed, Export ("title")]
+		string Title { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nullable subtitle;
+		[NullAllowed, Export ("subtitle")]
+		string Subtitle { get; }
+
+		// @property (readonly, copy, nonatomic) NSString * _Nullable iconURL;
+		[NullAllowed, Export ("iconURL")]
+		string IconURL { get; }
 	}
 
 	// @interface UAPrivacyManager : NSObject

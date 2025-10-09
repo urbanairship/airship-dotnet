@@ -37,4 +37,37 @@ namespace Airship
 		Us = 0,
 		Eu = 1
 	}
+
+	// Preference center config condition type
+	[Native]
+	public enum UAPreferenceCenterConfigConditionType : long
+	{
+		NotificationOptIn = 0
+	}
+
+	// Preference center config section type
+	[Native]
+	public enum UAPreferenceCenterConfigSectionType : long
+	{
+		Common = 0,
+		LabeledSectionBreak = 1
+	}
+
+	// Preference center config item type
+	[Native]
+	public enum UAPreferenceCenterConfigItemType : long
+	{
+		ChannelSubscription = 0,
+		ContactSubscription = 1,
+		ContactSubscriptionGroup = 2,
+		Alert = 3
+	}
+
+	// Notification opt-in status
+	[Native]
+	public enum UANotificationOptInConditionStatus : long
+	{
+		OptedIn = 0,
+		OptedOut = 1
+	}
 }
