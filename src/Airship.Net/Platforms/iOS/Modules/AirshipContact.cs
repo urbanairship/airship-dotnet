@@ -54,7 +54,8 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <param name="namedUserId">The named user ID.</param>
         public Task Identify(string namedUserId)
         {
-            return Task.Run(() => UAirship.Contact.Identify(namedUserId));
+            NSRunLoop.Main.BeginInvokeOnMainThread(() => UAirship.Contact.Identify(namedUserId));
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -62,7 +63,8 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// </summary>
         public Task Reset()
         {
-            return Task.Run(() => UAirship.Contact.Reset());
+            NSRunLoop.Main.BeginInvokeOnMainThread(() => UAirship.Contact.Reset());
+            return Task.CompletedTask;
         }
 
         /// <summary>

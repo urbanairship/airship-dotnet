@@ -27,13 +27,13 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <param name="customEvent">The custom event to track.</param>
         public Task TrackEvent(CustomEvent customEvent)
         {
-            return Task.Run(() =>
+            if (customEvent == null || string.IsNullOrEmpty(customEvent.EventName))
             {
-                if (customEvent == null || string.IsNullOrEmpty(customEvent.EventName))
-                {
-                    return;
-                }
+                return Task.CompletedTask;
+            }
 
+            NSRunLoop.Main.BeginInvokeOnMainThread(() =>
+            {
                 var eventName = customEvent.EventName;
                 var eventValue = customEvent.EventValue;
                 var transactionId = customEvent.TransactionId;
@@ -114,15 +114,18 @@ namespace AirshipDotNet.Platforms.iOS.Modules
 
                 UAirship.Analytics.RecordCustomEvent(uaEvent);
             });
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Tracks a screen view.
         /// </summary>
         /// <param name="screen">The screen name.</param>
-        public Task TrackScreen(string screen)
+        public Task TrackScreen(string screen) 
         {
-            return Task.Run(() => UAirship.Analytics.TrackScreen(screen));
+            NSRunLoop.Main.BeginInvokeOnMainThread(() => UAirship.Analytics.TrackScreen(screen));
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -132,12 +135,13 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <param name="identifier">The identifier value.</param>
         public Task AssociateIdentifier(string key, string identifier)
         {
-            return Task.Run(() =>
+            NSRunLoop.Main.BeginInvokeOnMainThread(() =>
             {
                 UAAssociatedIdentifiers identifiers = UAirship.Analytics.CurrentAssociatedDeviceIdentifiers;
                 identifiers.SetWithIdentifier(identifier, key);
                 UAirship.Analytics.AssociateDeviceIdentifier(identifiers);
             });
+            return Task.CompletedTask;
         }
     }
 }
