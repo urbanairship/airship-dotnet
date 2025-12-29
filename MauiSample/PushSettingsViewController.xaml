@@ -22,14 +22,11 @@
                     <TextCell Text="Channel ID"
                               x:Name="channelId"
                               Tapped="CopyChannelID"/>
-
                 </TableSection>
 
                 <TableSection Title="Contacts">
-                    
-
                     <EntryCell Label="Named user"
-                               Completed="AddNamedUser"
+                               Completed="OnIdentifyContactClicked"
                                x:Name="namedUserLabel">
 
                         <EntryCell.Keyboard>
@@ -39,7 +36,6 @@
                                 </x:Arguments>
                             </Keyboard>
                         </EntryCell.Keyboard>
-
                     </EntryCell>
                 </TableSection>
 
@@ -64,8 +60,27 @@
                             <Label Text="" x:Name="tagsList"/>
                         </StackLayout>
                     </ViewCell>
-
                 </TableSection>
+
+                <TableSection Title="Analytics">
+                    <ViewCell>
+                        <Button Text="Track Custom Event" Clicked="OnTrackEventClicked" Margin="10,5" />
+                    </ViewCell>
+                    <ViewCell>
+                        <Button Text="Associate Identifier" Clicked="OnAssociateIdentifierClicked" Margin="10,5" />
+                    </ViewCell>
+                </TableSection>
+
+                <TableSection Title="In-App Automation">
+                    <SwitchCell Text="Set Paused"
+                                OnChanged="OnSetPausedClicked"
+                                x:Name="pauseAutomationSwitch"
+                                Tapped="OnSetPausedClicked"/>
+                    <ViewCell>
+                        <Button Text="Set Display Interval (30s)" Clicked="OnSetDisplayIntervalClicked" Margin="10,5" />
+                    </ViewCell>
+                </TableSection>
+            
             </TableRoot>
         </TableView>
     </ContentPage.Content>

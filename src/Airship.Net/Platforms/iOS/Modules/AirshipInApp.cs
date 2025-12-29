@@ -33,10 +33,8 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <param name="paused">True to pause, false to resume.</param>
         public Task SetPaused(bool paused)
         {
-            return Task.Run(() =>
-            {
-                UAirship.InAppAutomation.IsPaused = paused;
-            });
+            NSRunLoop.Main.BeginInvokeOnMainThread(() => UAirship.InAppAutomation.IsPaused = paused);
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -54,10 +52,8 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <param name="interval">The display interval.</param>
         public Task SetDisplayInterval(TimeSpan interval)
         {
-            return Task.Run(() =>
-            {
-                UAirship.InAppAutomation.DisplayInterval = interval.TotalSeconds;
-            });
+            NSRunLoop.Main.BeginInvokeOnMainThread(() => UAirship.InAppAutomation.DisplayInterval = interval.TotalSeconds);
+            return Task.CompletedTask;
         }
 
         // Additional in-app automation methods would be added here as the SDK bindings are updated
