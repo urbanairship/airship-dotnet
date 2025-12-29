@@ -1,5 +1,13 @@
 # Airship DotNet Changelog
 
+## Version 20.2.1 - Decembre 30, 2025
+Minor release to update SDKs and resolve crashes caused by calling iOS SDK methods on background threads instead of the main thread.
+
+### Changes
+- Resolve crashes caused by calling iOS SDK methods on background threads instead of the main thread.
+- Updated iOS SDK to 19.11.5
+- Updated Android SDK to 19.13.6
+
 ## Version 20.2.0 - October 7, 2025
 Minor release that updates the SDKs and restores onMessageCenterDisplay.
 
