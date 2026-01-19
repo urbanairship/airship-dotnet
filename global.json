@@ -2,7 +2,7 @@
   "sdk":
     {
       "version": "8.0.413",
-      "rollForward": "patch"
+      "rollForward": "latestMajor"
     },
   "msbuild-sdks":
     {

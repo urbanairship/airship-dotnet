@@ -40,6 +40,9 @@
   <attr path="/api/package[@name='com.urbanairship']/class[@name='AirshipInitializer']/method[@name='create']" name="managedReturn">Java.Lang.Object</attr>
   <attr path="/api/package[@name='com.urbanairship']/class[@name='NoDependencyAirshipInitializer']/method[@name='create']" name="managedReturn">Java.Lang.Object</attr>
 
+  <!-- Fix IPushProvider.GetDeliveryType() - make it a property to match implementations -->
+  <attr path="/api/package[@name='com.urbanairship.push']/interface[@name='PushProvider']/method[@name='getDeliveryType']" name="propertyName">DeliveryType</attr>
+
   <!-- Remove remote config package to prevent public/protected conflicts-->
   <remove-node path="/api/package[@name='com.urbanairship.remoteconfig']" />
  
