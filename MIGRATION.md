@@ -8,8 +8,8 @@ This version of the plugin now requires .NET 9.0 (`net9.0-android` and `net9.0-i
 
 ### Minimum SDK Versions
 
-- **iOS**: Requires iOS 14+ and Xcode 15.2+
-- **Android**: Requires `compileSdk` 36 and `minSdk` 23
+- **iOS**: Requires iOS 16+ and Xcode 16+ (Swift 6.0)
+- **Android**: Requires Android API 21+ (`SupportedOSPlatformVersion` 21.0)
 
 ### Native SDK Updates
 
@@ -35,12 +35,14 @@ The `-core` modules contain data models and API functionality, while the origina
 
 #### ActionRegistry
 
-The `ActionRegistry.Entry.Predicate` property is now read-only. Use `ActionRegistry.UpdateEntry()` to modify predicates:
+The `ActionRegistry.Entry.Predicate` property is now read-only and the `Entry.SetPredicate()` method has been removed. Use `ActionRegistry.UpdateEntry()` to modify predicates:
 
 ```csharp
 // 20.x
 var entry = Airship.ActionRegistry.GetEntry("my_action");
-entry.SetPredicate(myPredicate);
+entry.SetPredicate(args => args.Situation == Situation.ManualInvocation);
+// or
+entry.Predicate = myPredicate;
 
 // 21.x
 Airship.ActionRegistry.UpdateEntry("my_action", myPredicate);
@@ -50,7 +52,7 @@ The `IPredicate` interface has been renamed to `IActionPredicate`. Update any cu
 
 ```csharp
 // 20.x
-public class MyPredicate : Java.Lang.Object, ActionRegistry.IPredicate
+public class MyPredicate : Java.Lang.Object, IPredicate
 {
     public bool Apply(ActionArguments args) => true;
 }
@@ -64,17 +66,14 @@ public class MyPredicate : Java.Lang.Object, IActionPredicate
 
 #### PreferenceDataStore
 
-The `OnPreferenceChange` event has been removed. Use `IPreferenceChangeListener` directly if needed:
+The `OnPreferenceChange` event and underlying `AddListener`/`RemoveListener` methods have been removed from the native SDK:
 
 ```csharp
 // 20.x
-preferenceDataStore.OnPreferenceChange += (key) => { ... };
+preferenceDataStore.OnPreferenceChange += (key) => { Console.WriteLine($"Changed: {key}"); };
 
-// 21.x - implement IPreferenceChangeListener directly
-public class MyListener : Java.Lang.Object, IPreferenceChangeListener
-{
-    public void OnPreferenceChange(string key) { ... }
-}
+// 21.x - this API is no longer available
+// Consider using alternative state management approaches
 ```
 
 ### Dependency Updates
