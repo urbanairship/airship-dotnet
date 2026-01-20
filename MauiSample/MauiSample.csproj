@@ -1,18 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0-android;net8.0-ios</TargetFrameworks>
+    <TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>MauiSample</RootNamespace>
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>
     <ImplicitUsings>enable</ImplicitUsings>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <!-- Suppress AndroidX Lifecycle package version constraint warnings -->
+    <NoWarn>$(NoWarn);NU1608</NoWarn>
     <!-- Display name -->
     <ApplicationTitle>MauiSample</ApplicationTitle>
     <!-- App Identifier -->
-    <ApplicationId Condition="'$(TargetFramework)' == 'net8.0-ios'">com.urbanairship.richpush</ApplicationId>
-    <ApplicationId Condition="'$(TargetFramework)' == 'net8.0-android'">com.urbanairship.sample</ApplicationId>
+    <ApplicationId Condition="'$(TargetFramework)' == 'net9.0-ios'">com.urbanairship.richpush</ApplicationId>
+    <ApplicationId Condition="'$(TargetFramework)' == 'net9.0-android'">com.urbanairship.sample</ApplicationId>
     <ApplicationIdGuid>f6a79f57-dd45-4efa-9d46-98b431478fa1</ApplicationIdGuid>
     <!-- Versions -->
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -27,7 +29,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net8.0-ios'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net9.0-ios'">
     <CodesignProvision></CodesignProvision>
     <CodesignKey>-</CodesignKey> 
     <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
@@ -37,7 +39,7 @@
     <RuntimeIdentifier Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'arm64'">iossimulator-arm64</RuntimeIdentifier> 
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net8.0-ios'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net9.0-ios'">
     <CodesignKey>iPhone Developer</CodesignKey>
     <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
     <MtouchLink>None</MtouchLink>
@@ -59,12 +61,12 @@
     <Optimize>false</Optimize>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup Label="Common Package Dependencies" Condition="!$(UseProjectReferences)">
@@ -72,7 +74,7 @@
     <PackageReference Include="Airship.Net.MessageCenter" Version="$(AirshipCrossPlatformNugetVersion)" />
   </ItemGroup>
 
-  <ItemGroup Label="iOS Package Dependencies" Condition="'$(TargetFramework)' == 'net8.0-ios' And !$(UseProjectReferences)">
+  <ItemGroup Label="iOS Package Dependencies" Condition="'$(TargetFramework)' == 'net9.0-ios' And !$(UseProjectReferences)">
     <PackageReference Include="Airship.Net.iOS.Basement" Version="$(AirshipIosNugetVersion)" />
     <PackageReference Include="Airship.Net.iOS.Core" Version="$(AirshipIosNugetVersion)" />
     <PackageReference Include="Airship.Net.iOS.MessageCenter" Version="$(AirshipIosNugetVersion)" />
@@ -80,7 +82,7 @@
     <PackageReference Include="Airship.Net.iOS.PreferenceCenter" Version="$(AirshipIosNugetVersion)" />
   </ItemGroup>
 
-  <ItemGroup Label="Android Package Dependencies" Condition="'$(TargetFramework)' == 'net8.0-android' And !$(UseProjectReferences)">
+  <ItemGroup Label="Android Package Dependencies" Condition="'$(TargetFramework)' == 'net9.0-android' And !$(UseProjectReferences)">
     <PackageReference Include="Airship.Net.Android.Core" Version="$(AirshipAndroidNugetVersion)" />
     <PackageReference Include="Airship.Net.Android.MessageCenter" Version="$(AirshipAndroidNugetVersion)" />
     <PackageReference Include="Airship.Net.Android.Layout" Version="$(AirshipAndroidNugetVersion)" />
@@ -98,11 +100,11 @@
     <ProjectReference Condition="$(UseProjectReferences)" Include="..\src\Airship.Net.MessageCenter\Airship.Net.MessageCenter.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="iOS Project Dependencies" Condition="'$(TargetFramework)' == 'net8.0-ios' And '$(UseProjectReferences)'">
+  <ItemGroup Label="iOS Project Dependencies" Condition="'$(TargetFramework)' == 'net9.0-ios' And '$(UseProjectReferences)'">
     <ProjectReference Include="..\src\AirshipBindings.iOS.ObjectiveC\AirshipBindings.iOS.ObjectiveC.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Android Project Dependencies" Condition="'$(TargetFramework)' == 'net8.0-android' And $(UseProjectReferences)">
+  <ItemGroup Label="Android Project Dependencies" Condition="'$(TargetFramework)' == 'net9.0-android' And $(UseProjectReferences)">
     <ProjectReference Include="..\binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj" />
     <ProjectReference Include="..\binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj" />
     <ProjectReference Include="..\binderator\generated\Airship.Net.Android.Layout\Airship.Net.Android.Layout.csproj" />
@@ -126,12 +128,12 @@
 
   <!-- Resources -->
 
-  <ItemGroup Label="iOS Resources" Condition="'$(TargetFramework)' == 'net8.0-ios'">
+  <ItemGroup Label="iOS Resources" Condition="'$(TargetFramework)' == 'net9.0-ios'">
     <BundleResource Include="Platforms\iOS\AirshipConfig.plist" Link="AirshipConfig.plist" />
     <BundleResource Include="Platforms\iOS\MessageCenterTheme.plist" Link="MessageCenterTheme.plist" />
   </ItemGroup>
 
-  <ItemGroup Label="Android Resources" Condition="'$(TargetFramework)' == 'net8.0-android'">
+  <ItemGroup Label="Android Resources" Condition="'$(TargetFramework)' == 'net9.0-android'">
     <GoogleServicesJson Include="Platforms\Android\Assets\google-services.json" />
     <MauiImage Include="Platforms\Android\Resources\Images\ic_notification.svg" BaseSize="24,24" />
     <Folder Include="Platforms\Android\Properties\" />

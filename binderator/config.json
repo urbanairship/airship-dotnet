@@ -122,7 +122,7 @@
         "groupId": "androidx.appcompat",
         "artifactId": "appcompat",
         "version": "1.7.1",
-        "nugetVersion": "1.7.0.3",
+        "nugetVersion": "1.7.1.1",
         "nugetId": "Xamarin.AndroidX.AppCompat",
         "dependencyOnly": true
       },
@@ -138,7 +138,7 @@
         "groupId": "androidx.constraintlayout",
         "artifactId": "constraintlayout",
         "version": "2.2.1",
-        "nugetVersion": "2.1.4.16",
+        "nugetVersion": "2.2.1.3",
         "nugetId": "Xamarin.AndroidX.ConstraintLayout",
         "dependencyOnly": true
       },
@@ -242,7 +242,7 @@
         "groupId": "androidx.recyclerview",
         "artifactId": "recyclerview",
         "version": "1.4.0",
-        "nugetVersion": "1.4.0",
+        "nugetVersion": "1.4.0.3",
         "nugetId": "Xamarin.AndroidX.RecyclerView",
         "dependencyOnly": true
       },
@@ -290,7 +290,7 @@
         "groupId": "androidx.webkit",
         "artifactId": "webkit",
         "version": "1.14.0",
-        "nugetVersion": "1.12.1.1",
+        "nugetVersion": "1.14.0.1",
         "nugetId": "Xamarin.AndroidX.WebKit",
         "dependencyOnly": true
       },
@@ -298,7 +298,7 @@
         "groupId": "androidx.work",
         "artifactId": "work-runtime",
         "version": "2.11.0",
-        "nugetVersion": "2.10.0.1",
+        "nugetVersion": "2.11.0",
         "nugetId": "Xamarin.AndroidX.Work.Runtime",
         "dependencyOnly": true
       },
@@ -314,7 +314,7 @@
         "groupId": "com.github.bumptech.glide",
         "artifactId": "glide",
         "version": "5.0.5",
-        "nugetVersion": "4.16.0.6",
+        "nugetVersion": "5.0.5",
         "nugetId": "Xamarin.Android.Glide",
         "dependencyOnly": true
       },
@@ -322,7 +322,7 @@
         "groupId": "com.google.android.gms",
         "artifactId": "play-services-base",
         "version": "18.9.0",
-        "nugetVersion": "118.5.0.3",
+        "nugetVersion": "118.9.0",
         "nugetId": "Xamarin.GooglePlayServices.Base",
         "dependencyOnly": true
       },
@@ -330,7 +330,7 @@
         "groupId": "com.google.android.material",
         "artifactId": "material",
         "version": "1.13.0",
-        "nugetVersion": "1.11.0.3",
+        "nugetVersion": "1.13.0",
         "nugetId": "Xamarin.Google.Android.Material",
         "dependencyOnly": true
       },
@@ -338,7 +338,7 @@
         "groupId": "com.google.firebase",
         "artifactId": "firebase-messaging",
         "version": "25.0.1",
-        "nugetVersion": "124.1.0",
+        "nugetVersion": "125.0.1",
         "nugetId": "Xamarin.Firebase.Messaging",
         "dependencyOnly": true
       },

@@ -1,5 +1,117 @@
 # Migration Guide
 
+## 20.x to 21.x
+
+### .NET Version
+
+This version of the plugin now requires .NET 9.0 (`net9.0-android` and `net9.0-ios`) as the minimum target framework.
+
+### Minimum SDK Versions
+
+- **iOS**: Requires iOS 14+ and Xcode 15.2+
+- **Android**: Requires `compileSdk` 36 and `minSdk` 23
+
+### Native SDK Updates
+
+The underlying native SDKs have been updated to version 20.1.1:
+
+| Platform | Previous Version | New Version |
+|----------|-----------------|-------------|
+| iOS | 19.11.x | 20.1.1 |
+| Android | 19.13.x | 20.1.1 |
+
+### Android Module Changes
+
+The Message Center and Preference Center modules have been split into core and UI modules:
+
+| Previous Module | New Modules |
+|-----------------|-------------|
+| `urbanairship-message-center` | `urbanairship-message-center-core` + `urbanairship-message-center` |
+| `urbanairship-preference-center` | `urbanairship-preference-center-core` + `urbanairship-preference-center` |
+
+The `-core` modules contain data models and API functionality, while the original modules now contain only the View-based UI components and depend on `-core`.
+
+### Android API Changes
+
+#### ActionRegistry
+
+The `ActionRegistry.Entry.Predicate` property is now read-only. Use `ActionRegistry.UpdateEntry()` to modify predicates:
+
+```csharp
+// 20.x
+var entry = Airship.ActionRegistry.GetEntry("my_action");
+entry.SetPredicate(myPredicate);
+
+// 21.x
+Airship.ActionRegistry.UpdateEntry("my_action", myPredicate);
+```
+
+The `IPredicate` interface has been renamed to `IActionPredicate`. Update any custom predicate implementations:
+
+```csharp
+// 20.x
+public class MyPredicate : Java.Lang.Object, ActionRegistry.IPredicate
+{
+    public bool Apply(ActionArguments args) => true;
+}
+
+// 21.x
+public class MyPredicate : Java.Lang.Object, IActionPredicate
+{
+    public bool Apply(ActionArguments args) => true;
+}
+```
+
+#### PreferenceDataStore
+
+The `OnPreferenceChange` event has been removed. Use `IPreferenceChangeListener` directly if needed:
+
+```csharp
+// 20.x
+preferenceDataStore.OnPreferenceChange += (key) => { ... };
+
+// 21.x - implement IPreferenceChangeListener directly
+public class MyListener : Java.Lang.Object, IPreferenceChangeListener
+{
+    public void OnPreferenceChange(string key) { ... }
+}
+```
+
+### Dependency Updates
+
+AndroidX and other dependencies have been updated. Key version changes:
+
+| Dependency | Previous | New |
+|------------|----------|-----|
+| androidx.lifecycle | 2.8.x | 2.9.x |
+| androidx.fragment | 1.8.2 | 1.8.9 |
+| androidx.core | 1.13.x | 1.17.x |
+| androidx.room | 2.6.x | 2.8.x |
+| kotlin-stdlib | 2.0.x | 2.2.x |
+| kotlinx-coroutines | 1.9.x | 1.10.x |
+
+### Build Configuration
+
+Update your project files to target .NET 9:
+
+```xml
+<!-- Before -->
+<TargetFrameworks>net8.0-android;net8.0-ios</TargetFrameworks>
+
+<!-- After -->
+<TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
+```
+
+Update conditional compilation checks:
+
+```xml
+<!-- Before -->
+<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+
+<!-- After -->
+<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+```
+
 ## 19.x to 20.x
 
 ### Architecture Changes

@@ -9,7 +9,7 @@
     <AssemblyName>Airship.Net.iOS.ObjectiveC</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - ObjectiveC</AssemblyTitle>
     <Description>Objective-C bindings for Airship SDK</Description>
-    <TargetFramework>net8.0-ios</TargetFramework>
+    <TargetFramework>net9.0-ios</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>

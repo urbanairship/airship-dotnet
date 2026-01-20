@@ -75,7 +75,6 @@ namespace AirshipDotNet
 
             // Note: Push notification status update event is not directly available in SDK 19
             // This functionality may need to be implemented differently using the new SDK APIs
-
         }
 
         /// <summary>

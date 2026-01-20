@@ -217,6 +217,9 @@ docs/doxygen.tag
 # Gradle
 .gradle
 
+# Android local properties (SDK path)
+local.properties
+
 # Local nuget feed
 local-nuget-feed/
 
