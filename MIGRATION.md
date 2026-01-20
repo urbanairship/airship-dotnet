@@ -20,6 +20,33 @@ The underlying native SDKs have been updated to version 20.1.1:
 | iOS | 19.11.x | 20.1.1 |
 | Android | 19.13.x | 20.1.1 |
 
+### Message Center API Changes
+
+Message Center inbox functionality has been moved from the `Airship.Net.MessageCenter` package into the main `Airship.Net` package. The access pattern has changed from an extension method to a static property:
+
+```csharp
+// 20.x - Extension method
+var messages = await Airship.Instance.MessageCenter().GetMessages();
+await Airship.Instance.MessageCenter().MarkRead(messageId);
+await Airship.Instance.MessageCenter().Display();
+
+// 21.x - Static property
+var messages = await Airship.MessageCenter.GetMessages();
+await Airship.MessageCenter.MarkRead(messageId);
+await Airship.MessageCenter.Display();
+```
+
+### Package Changes
+
+The `Airship.Net.MessageCenter` package now contains **only MAUI UI components** (Controls). All core Message Center functionality (inbox operations, message models) is now in the main `Airship.Net` package.
+
+| Package | 20.x Contents | 21.x Contents |
+|---------|--------------|---------------|
+| `Airship.Net` | Core SDK functionality | Core SDK + Message Center inbox API |
+| `Airship.Net.MessageCenter` | Message Center API + MAUI UI | MAUI UI components only |
+
+If you only need Message Center inbox functionality (getting messages, marking read, etc.) without the MAUI UI components, you no longer need to reference `Airship.Net.MessageCenter`.
+
 ### Android Module Changes
 
 The Message Center and Preference Center modules have been split into core and UI modules:
@@ -122,12 +149,14 @@ The monolithic `IAirship` interface has been split into focused, module-specific
 | Push | `IAirshipPush` | `Airship.Push` |
 | Channel | `IAirshipChannel` | `Airship.Channel` |
 | Contact | `IAirshipContact` | `Airship.Contact` |
-| Message Center | `IAirshipMessageCenter` | `Airship.MessageCenter` |
+| Message Center | `IAirshipMessageCenter` | `Airship.Instance.MessageCenter()` * |
 | Analytics | `IAirshipAnalytics` | `Airship.Analytics` |
 | In-App | `IAirshipInApp` | `Airship.InApp` |
 | Privacy | `IAirshipPrivacyManager` | `Airship.PrivacyManager` |
 | Feature Flags | `IAirshipFeatureFlagManager` | `Airship.FeatureFlagManager` |
 | Preference Center | `IAirshipPreferenceCenter` | `Airship.PreferenceCenter` |
+
+\* Message Center was accessed via extension method in 20.x. In 21.x, it was changed to `Airship.MessageCenter` for consistency with other modules.
 
 ### API Changes
 

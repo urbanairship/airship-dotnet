@@ -1,6 +1,20 @@
 # Airship DotNet Changelog
 
-## Version 20.2.1 - Decembre 30, 2025
+## Version 21.0.0 - January 19, 2026
+Major release that moves Message Center inbox functionality into the main package and updates native SDKs to 20.1.1.
+
+### Changes
+- Updated iOS SDK to 20.1.1
+- Updated Android SDK to 20.1.1
+- Moved Message Center inbox functionality (`IAirshipMessageCenter`, `Message` model) from `Airship.Net.MessageCenter` to `Airship.Net`
+- Changed Message Center access pattern from extension method to static property: `Airship.Instance.MessageCenter()` → `Airship.MessageCenter`
+- `Airship.Net.MessageCenter` package now contains only MAUI UI components (Controls)
+- Updated iOS minimum version to iOS 16+
+- Updated MAUI Controls dependency to 9.0.0
+
+See the [Migration Guide](MIGRATION.md) for upgrade instructions.
+
+## Version 20.2.1 - December 30, 2025
 Minor release to update SDKs and resolve crashes caused by calling iOS SDK methods on background threads instead of the main thread.
 
 ### Changes
