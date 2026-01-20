@@ -10,7 +10,7 @@
 		<IsTrimmable>false</IsTrimmable>
 		<UseMaui>true</UseMaui>
 
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
@@ -18,7 +18,7 @@
 		<PackageId>Airship.Net.MessageCenter</PackageId>
 		<Title>Airship Message Center SDK</Title>
 		<Summary>Airship Message Center SDK .NET Library</Summary>
-		<Description>Message Center UI components and functionality for Airship SDK</Description>
+		<Description>Message Center UI (MAUI) components for Airship SDK</Description>
 		<AssemblyVersion>$(AirshipCrossPlatformVersion)</AssemblyVersion>
 		<PackageVersion>$(AirshipCrossPlatformNugetVersion)</PackageVersion>
 		<!-- Include symbol files (*.pdb) in the built .nupkg -->
@@ -42,7 +42,7 @@
 
 	<!-- MAUI Package References -->
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.0" />
 	</ItemGroup>
 
 	<!-- Dependencies -->

@@ -9,7 +9,7 @@ using AirshipDotNet.Platforms.iOS;
 using Foundation;
 using Airship;
 
-namespace AirshipDotNet.MessageCenter.Platforms.iOS.Modules
+namespace AirshipDotNet.Platforms.iOS.Modules
 {
     /// <summary>
     /// iOS implementation of Airship Message Center module.

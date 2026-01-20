@@ -1,4 +1,4 @@
-﻿/* Copyright Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 namespace AirshipDotNet.MessageCenter
 {
