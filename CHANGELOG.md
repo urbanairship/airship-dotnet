@@ -1,9 +1,10 @@
 # Airship DotNet Changelog
 
-## Version 21.0.0 - January 19, 2026
-Major release that moves Message Center inbox functionality into the main package and updates native SDKs to 20.1.1.
+## Version 21.0.0 - January 20, 2026
+Major release that moves Message Center inbox functionality into the main package, updates native SDKs to 20.1.1, and upgrades to .NET 10.
 
 ### Changes
+- Updated to .NET 10.0 (`net10.0-android` and `net10.0-ios`)
 - Updated iOS SDK to 20.1.1
 - Updated Android SDK to 20.1.1
 - Moved Message Center inbox functionality (`IAirshipMessageCenter`, `Message` model) from `Airship.Net.MessageCenter` to `Airship.Net`

@@ -4,7 +4,7 @@
 
 ### .NET Version
 
-This version of the plugin now requires .NET 9.0 (`net9.0-android` and `net9.0-ios`) as the minimum target framework.
+This version of the plugin now requires .NET 10.0 (`net10.0-android` and `net10.0-ios`) as the minimum target framework.
 
 ### Minimum SDK Versions
 
@@ -118,24 +118,24 @@ AndroidX and other dependencies have been updated. Key version changes:
 
 ### Build Configuration
 
-Update your project files to target .NET 9:
+Update your project files to target .NET 10:
 
 ```xml
 <!-- Before -->
-<TargetFrameworks>net8.0-android;net8.0-ios</TargetFrameworks>
+<TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
 
 <!-- After -->
-<TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
+<TargetFrameworks>net10.0-android;net10.0-ios</TargetFrameworks>
 ```
 
 Update conditional compilation checks:
 
 ```xml
 <!-- Before -->
-<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
 
 <!-- After -->
-<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
 ```
 
 ## 19.x to 20.x

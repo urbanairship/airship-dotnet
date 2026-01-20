@@ -54,12 +54,12 @@ fi
 # Clean previous builds (skip if --fast)
 if [[ "$FAST_BUILD" != "true" ]]; then
     echo -e "${YELLOW}🧹 Cleaning previous builds...${NC}"
-    dotnet clean -f net9.0-android
+    dotnet clean -f net10.0-android
 fi
 
 # Build the app
 echo -e "${YELLOW}🔨 Building Android APK...${NC}"
-if ! dotnet build -f net9.0-android -p:NoWarn=NU1608 -v quiet --nologo; then
+if ! dotnet build -f net10.0-android -p:NoWarn=NU1608 -v quiet --nologo; then
     echo -e "${RED}❌ Error: Failed to build Android APK${NC}"
     exit 1
 fi
@@ -70,7 +70,7 @@ adb uninstall com.urbanairship.sample 2>/dev/null || true
 
 # Install the new APK
 echo -e "${YELLOW}📦 Installing APK...${NC}"
-if ! adb install -r bin/Debug/net9.0-android/com.urbanairship.sample-Signed.apk; then
+if ! adb install -r bin/Debug/net10.0-android/com.urbanairship.sample-Signed.apk; then
     echo -e "${RED}❌ Error: Failed to install APK${NC}"
     exit 1
 fi

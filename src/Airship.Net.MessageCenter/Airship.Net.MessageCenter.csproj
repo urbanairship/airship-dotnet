@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0;net9.0-android;net9.0-ios</TargetFrameworks>
+		<TargetFrameworks>net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
@@ -25,19 +25,19 @@
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	  <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="Platforms/Android/**" Condition="'$(TargetFramework)' != 'net9.0-android'" />
-		<Compile Remove="Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net9.0-ios'" />
-		<Compile Remove="Controls/Platforms/Android/**" Condition="'$(TargetFramework)' != 'net9.0-android'" />
-		<Compile Remove="Controls/Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net9.0-ios'" />
+		<Compile Remove="Platforms/Android/**" Condition="'$(TargetFramework)' != 'net10.0-android'" />
+		<Compile Remove="Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net10.0-ios'" />
+		<Compile Remove="Controls/Platforms/Android/**" Condition="'$(TargetFramework)' != 'net10.0-android'" />
+		<Compile Remove="Controls/Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net10.0-ios'" />
 	</ItemGroup>
 
 	<!-- MAUI Package References -->
@@ -51,12 +51,12 @@
 	</ItemGroup>
 
 	<!-- Android-specific dependencies -->
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
 	</ItemGroup>
 
 	<!-- iOS-specific dependencies -->
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-ios'">
 		<ProjectReference Include="..\AirshipBindings.iOS.ObjectiveC\AirshipBindings.iOS.ObjectiveC.csproj" />
 	</ItemGroup>
 
