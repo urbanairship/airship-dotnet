@@ -1,19 +1,19 @@
 # Airship .NET
 
 The Airship .NET SDK exposes a common subset of functionality between
-the iOS and Android SDKs. This library is built against .NET 8.0, and can be used
+the iOS and Android SDKs. This library is built against .NET 10.0, and can be used
 within shared codebases (e.g., a MAUI app).
 
 ## Compatibility
 
 The Airship .NET SDK targets the following platforms:
-- `net8.0`
-- `net8.0-android`
-- `net8.0-ios`
+- `net10.0`
+- `net10.0-android`
+- `net10.0-ios`
 
 The Airship .NET SDK is compatible with:
 - Android 5.0 (API 21) or higher.
-- iOS 14 or higher, using the latest supported release of Xcode.
+- iOS 16 or higher, using the latest supported release of Xcode.
 
 ## Resources
 - [Getting started guide](https://docs.airship.com/platform/mobile/setup/sdk/maui/)

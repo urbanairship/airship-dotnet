@@ -146,10 +146,10 @@ cd "$PROJECT_DIR"
 
 # Clean previous builds to ensure fresh build
 echo "🧹 Cleaning previous builds..."
-dotnet clean MauiSample.csproj -f net9.0-ios -v quiet
+dotnet clean MauiSample.csproj -f net10.0-ios -v quiet
 
 # Build the app
-dotnet build MauiSample.csproj -f net9.0-ios \
+dotnet build MauiSample.csproj -f net10.0-ios \
     -p:RuntimeIdentifier=iossimulator-arm64 \
     -p:ValidateXcodeVersion=false \
     -p:CodesignEntitlements="" \
@@ -168,7 +168,7 @@ echo "🗑️  Uninstalling existing app..."
 xcrun simctl uninstall "$DEVICE_ID" com.urbanairship.richpush 2>/dev/null || true
 
 echo "📱 Installing app to simulator (Device: $DEVICE_ID)..."
-xcrun simctl install "$DEVICE_ID" "$PROJECT_DIR/bin/Debug/net9.0-ios/iossimulator-arm64/MauiSample.app"
+xcrun simctl install "$DEVICE_ID" "$PROJECT_DIR/bin/Debug/net10.0-ios/iossimulator-arm64/MauiSample.app"
 
 echo "🚀 Launching app..."
 
