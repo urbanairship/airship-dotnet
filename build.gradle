@@ -104,8 +104,6 @@ tasks.register('carthageUpdate') {
 }
 
 tasks.register('buildWrapper') {
-    mustRunAfter('carthageUpdate')
-    
     doLast() {
         exec {
             workingDir "$projectDir/AirshipWrapper"
@@ -244,7 +242,6 @@ tasks.register('build') {
     mustRunAfter('clean')
 
     dependsOn('syncVersion',
-            'carthageUpdate',
             'buildWrapper',
             'copyWrapper',
             ':binderator:build',
