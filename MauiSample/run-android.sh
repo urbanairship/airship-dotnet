@@ -9,6 +9,13 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}🤖 Airship .NET MAUI Android Sample Runner${NC}"
 echo "==========================================="
 
+# Parse command line arguments
+FAST_BUILD=false
+if [[ "$1" == "--fast" ]]; then
+    FAST_BUILD=true
+    echo "🚀 Fast build requested - skipping clean"
+fi
+
 # Check if we're in the right directory
 if [ ! -f "MauiSample.csproj" ]; then
     echo -e "${RED}❌ Error: MauiSample.csproj not found. Please run this script from the MauiSample directory.${NC}"
@@ -44,13 +51,15 @@ if ! adb devices | grep -q "device$"; then
     exit 1
 fi
 
-# Clean previous builds to ensure fresh build
-echo -e "${YELLOW}🧹 Cleaning previous builds...${NC}"
-dotnet clean -f net8.0-android
+# Clean previous builds (skip if --fast)
+if [[ "$FAST_BUILD" != "true" ]]; then
+    echo -e "${YELLOW}🧹 Cleaning previous builds...${NC}"
+    dotnet clean -f net10.0-android
+fi
 
 # Build the app
 echo -e "${YELLOW}🔨 Building Android APK...${NC}"
-if ! dotnet build -f net8.0-android; then
+if ! dotnet build -f net10.0-android -p:NoWarn=NU1608 -v quiet --nologo; then
     echo -e "${RED}❌ Error: Failed to build Android APK${NC}"
     exit 1
 fi
@@ -61,7 +70,7 @@ adb uninstall com.urbanairship.sample 2>/dev/null || true
 
 # Install the new APK
 echo -e "${YELLOW}📦 Installing APK...${NC}"
-if ! adb install -r bin/Debug/net8.0-android/com.urbanairship.sample-Signed.apk; then
+if ! adb install -r bin/Debug/net10.0-android/com.urbanairship.sample-Signed.apk; then
     echo -e "${RED}❌ Error: Failed to install APK${NC}"
     exit 1
 fi
@@ -114,6 +123,19 @@ echo -e "${YELLOW}📋 Logging to directory: $LOG_DIR${NC}"
 echo -e "${YELLOW}   Device logs: logcat.log${NC}"
 echo ""
 
-# Stream logs with color and filtering for our app and Airship
-# Tee to both console and file
-adb logcat -v time com.urbanairship.sample:V Airship:V UALib:V *:S | tee "$LOG_FILE"
+# Stream logs with filtering for our app and Airship
+# - Using Info level (I) instead of Verbose (V) for less noise
+# - brief format for cleaner output
+# - AndroidRuntime:E to catch crashes
+# Tee to both console and file, with colors added for terminal
+RESET='\033[0m'
+adb logcat -v brief com.urbanairship.sample:I Airship:I UALib:I AndroidRuntime:E *:S 2>&1 | \
+    while IFS= read -r line; do
+        case "$line" in
+            I/*) echo -e "${GREEN}${line}${RESET}" ;;
+            D/*) echo -e "\033[0;36m${line}${RESET}" ;;
+            W/*) echo -e "${YELLOW}${line}${RESET}" ;;
+            E/*) echo -e "${RED}${line}${RESET}" ;;
+            *)   echo "$line" ;;
+        esac
+    done | tee "$LOG_FILE"

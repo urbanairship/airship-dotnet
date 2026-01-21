@@ -1,15 +1,6 @@
-﻿/*
+/*
  Copyright Airship and Contributors
 */
 
-namespace UrbanAirship.MessageCenter
-{
-	public partial class Message
-	{
-		// int Java.Lang.IComparable.CompareTo(Java.Lang.Object obj)
-		// {
-		// 	return CompareTo((Message) obj);
-		// }
-	}
-}
-
+// NOTE: In SDK version 20.x, the Message class was moved to the urbanairship-message-center-core module.
+// This file is intentionally empty - Message class is now in MessageCenterCore.

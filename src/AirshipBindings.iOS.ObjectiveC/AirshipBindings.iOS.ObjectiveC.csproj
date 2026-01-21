@@ -9,7 +9,7 @@
     <AssemblyName>Airship.Net.iOS.ObjectiveC</AssemblyName>
     <AssemblyTitle>Airship iOS SDK - ObjectiveC</AssemblyTitle>
     <Description>Objective-C bindings for Airship SDK</Description>
-    <TargetFramework>net8.0-ios</TargetFramework>
+    <TargetFramework>net10.0-ios</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <IsBindingProject>true</IsBindingProject>
@@ -17,7 +17,7 @@
     <AssemblyVersion>$(AirshipIosVersion)</AssemblyVersion>
     <PackageVersion>$(AirshipIosNugetVersion)</PackageVersion>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>16.0</SupportedOSPlatformVersion>
     <!-- Avoid zip command issues on macOS-14 CI runners -->
     <CompressBindingResourcePackage>false</CompressBindingResourcePackage>
   </PropertyGroup>

@@ -12,5 +12,5 @@ tasks.register("restore", Exec) {
 tasks.register("buildSample", Exec) {
     dependsOn restore
 
-    commandLine "dotnet", "build", "-c", "Release", "--no-dependencies", "-f", "net8.0-android", "MauiSample.csproj"
+    commandLine "dotnet", "build", "-c", "Release", "--no-dependencies", "-f", "net10.0-android", "MauiSample.csproj"
 }

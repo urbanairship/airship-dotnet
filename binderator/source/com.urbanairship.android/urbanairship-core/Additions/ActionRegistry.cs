@@ -3,32 +3,26 @@
 namespace UrbanAirship.Actions
 {
 	public partial class ActionRegistry
-	{		
-		public partial class Entry
+	{
+		// NOTE: In SDK version 20.x, the Predicate property on Entry became read-only.
+		// To set a predicate, use ActionRegistry.UpdateEntry(name, predicate) instead.
+		// The FuncPredicate helper class is still available to wrap Func<> delegates.
+
+		/// <summary>
+		/// Helper class to wrap a Func delegate as an IActionPredicate
+		/// </summary>
+		public class FuncPredicate : Java.Lang.Object, IActionPredicate
 		{
-			public void SetPredicate(Func<ActionArguments, Boolean> predicate)
-			{
-				Predicate = new FuncPredicate(predicate);
-			}
-		}
+			private readonly Func<ActionArguments, bool> predicate;
 
-		internal class FuncPredicate : Java.Lang.Object, IPredicate
-		{
-			Func<ActionArguments, Boolean> predicate;
-
-			public FuncPredicate(Func<ActionArguments, Boolean> predicate)
+			public FuncPredicate(Func<ActionArguments, bool> predicate)
 			{
-				this.predicate = predicate;
+				this.predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
 			}
 
-			public Boolean Apply(ActionArguments arguments)
+			public bool Apply(ActionArguments arguments)
 			{
-				Boolean result = false;
-				if (predicate != null)
-				{
-					result = predicate.Invoke((ActionArguments)arguments);
-				}
-				return result;
+				return predicate.Invoke(arguments);
 			}
 		}
 	}

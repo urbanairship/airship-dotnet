@@ -9,7 +9,7 @@ using AirshipDotNet.Platforms.Android;
 using UrbanAirship.MessageCenter;
 using Java.Util;
 
-namespace AirshipDotNet.MessageCenter.Platforms.Android.Modules
+namespace AirshipDotNet.Platforms.Android.Modules
 {
     /// <summary>
     /// Android implementation of Airship MessageCenter module.

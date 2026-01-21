@@ -114,7 +114,7 @@ namespace MauiSample
         {
             try
             {
-                await AirshipDotNet.Airship.Instance.MessageCenter().Display();
+                await AirshipDotNet.Airship.MessageCenter.Display();
             }
             catch (Exception ex)
             {

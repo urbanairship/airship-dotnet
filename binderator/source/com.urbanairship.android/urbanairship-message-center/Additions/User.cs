@@ -1,38 +1,11 @@
-﻿/*
+/*
  Copyright Airship and Contributors
 */
 
-using System;
-using System.Collections.Generic;
+// NOTE: In SDK version 20.x, the User class was moved to the urbanairship-message-center-core module.
+// The User Additions are now in the Airship.Net.Android.MessageCenterCore package.
 
 namespace UrbanAirship.MessageCenter
 {
-	public partial class User
-	{
-		private Dictionary<Action<bool>, Listener> eventHandlers = new();
-		
-		public event Action<bool> OnUserUpdated
-		{
-			add
-			{
-				var listener = new Listener(value);
-				AddListener(listener);
-				eventHandlers.Add(value, listener);
-			}
-
-			remove
-			{
-				if (eventHandlers.ContainsKey(value))
-				{
-					RemoveListener(eventHandlers[value]);
-					eventHandlers.Remove(value);
-				}
-			}
-		}
-
-		internal class Listener(Action<bool> listener) : Java.Lang.Object, IListener
-		{
-			public void OnUserUpdated(bool success) => listener.Invoke(success);
-		}
-	}
+	// This file is intentionally empty - User class is now in MessageCenterCore
 }

@@ -1,4 +1,7 @@
 ﻿<metadata>
   <attr path="/api/package[@name='com.urbanairship.push.fcm']" name="managedName">UrbanAirship.Push.Fcm</attr>
+
+  <!-- Keep getDeliveryType as method (not property) to match IPushProvider interface -->
+  <attr path="/api/package[@name='com.urbanairship.push.fcm']/class[@name='FcmPushProvider']/method[@name='getDeliveryType']" name="propertyName"></attr>
 </metadata>
 
