@@ -1,6 +1,2 @@
 <Project>
-  <PropertyGroup>
-    <!-- Suppress AndroidX Lifecycle package version constraint warnings -->
-    <NoWarn>$(NoWarn);NU1608</NoWarn>
-  </PropertyGroup>
 </Project>

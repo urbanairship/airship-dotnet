@@ -149,14 +149,14 @@ The monolithic `IAirship` interface has been split into focused, module-specific
 | Push | `IAirshipPush` | `Airship.Push` |
 | Channel | `IAirshipChannel` | `Airship.Channel` |
 | Contact | `IAirshipContact` | `Airship.Contact` |
-| Message Center | `IAirshipMessageCenter` | `Airship.Instance.MessageCenter()` * |
+| Message Center | `IAirshipMessageCenter` | `Airship.Instance.MessageCenter()` |
 | Analytics | `IAirshipAnalytics` | `Airship.Analytics` |
 | In-App | `IAirshipInApp` | `Airship.InApp` |
 | Privacy | `IAirshipPrivacyManager` | `Airship.PrivacyManager` |
 | Feature Flags | `IAirshipFeatureFlagManager` | `Airship.FeatureFlagManager` |
 | Preference Center | `IAirshipPreferenceCenter` | `Airship.PreferenceCenter` |
 
-\* Message Center was accessed via extension method in 20.x. In 21.x, it was changed to `Airship.MessageCenter` for consistency with other modules.
+**Note:** Message Center access changed in 21.x from `Airship.Instance.MessageCenter()` to `Airship.MessageCenter`. See the [20.x to 21.x](#20x-to-21x) section for details.
 
 ### API Changes
 
