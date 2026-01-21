@@ -66,31 +66,35 @@ jobs:
         with:
           global-json-file: global.json
           dotnet-version: |
-            7.0.x
-            8.0.x
+            10.0.x
 
       - name: Restore workloads
         run: |
           dotnet workload install android ios maui-android maui-ios maui-maccatalyst
 
-      - name: Install Carthage
-        run: |
-          brew install carthage
-
-      - name: Bootstrap Carthage
+      - name: Download iOS SDK xcframeworks
         env:
-          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.CARTHAGE_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          carthage version
+          # Get iOS SDK version from airship.properties
+          IOS_VERSION=$(grep '^iosVersion' airship.properties | cut -d'=' -f2 | tr -d ' ')
+          echo "Downloading Airship iOS SDK xcframeworks version $IOS_VERSION"
 
-          # Bootstrap with xcframeworks, using binary downloads when available
-          carthage bootstrap --use-xcframeworks --platform iOS --cache-builds --use-netrc
+          # Download the .NET-specific xcframeworks (no visionOS, smaller package size)
+          gh release download "$IOS_VERSION" \
+            --repo urbanairship/ios-library \
+            --pattern "Airship.dotnet.xcframeworks.zip" \
+            --output Airship.dotnet.xcframeworks.zip
 
-          # Verify the build directory was created
-          if [ ! -d "Carthage/Build" ]; then
-            echo "ERROR: Carthage/Build directory not found. This likely failed due to GitHub API rate limits or network issues."
-            exit 1
-          fi
+          # Extract to Carthage/Build to maintain compatibility with project paths
+          mkdir -p Carthage/Build
+          unzip -q Airship.dotnet.xcframeworks.zip
+          mv dotnet-xcframeworks/*.xcframework Carthage/Build/
+          rm -rf dotnet-xcframeworks Airship.dotnet.xcframeworks.zip
+
+          # Verify frameworks exist
+          echo "Downloaded xcframeworks:"
+          ls -la Carthage/Build/
 
       - name: Build AirshipWrapper
         run: |

@@ -18,8 +18,6 @@
     <PackageVersion>$(AirshipIosNugetVersion)</PackageVersion>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <SupportedOSPlatformVersion>16.0</SupportedOSPlatformVersion>
-    <!-- Avoid zip command issues on macOS-14 CI runners -->
-    <CompressBindingResourcePackage>false</CompressBindingResourcePackage>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
