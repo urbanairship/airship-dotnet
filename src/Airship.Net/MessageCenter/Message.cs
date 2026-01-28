@@ -36,7 +36,14 @@ namespace AirshipDotNet.MessageCenter
         /// Gets the unread status boolean value.
         /// </summary>
         /// <value>The unread status.</value>
+        [Obsolete("Use IsRead instead.")]
         public bool Unread { get; }
+
+        /// <summary>
+        /// Gets the read status of the message.
+        /// </summary>
+        /// <value>True if the message has been read, false otherwise.</value>
+        public bool IsRead => !Unread;
 
         /// <summary>
         /// Gets the message icon url.

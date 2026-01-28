@@ -46,6 +46,22 @@ namespace AirshipDotNet.Platforms.Android.Modules
         {
             var nativeStatus = _module.UAirship.PushManager.PushNotificationStatus;
 
+            // Derive permission status from available information
+            PermissionStatus permissionStatus;
+            if (nativeStatus.AreNotificationsAllowed)
+            {
+                permissionStatus = PermissionStatus.Granted;
+            }
+            else if (nativeStatus.IsUserNotificationsEnabled)
+            {
+                // User enabled notifications but system doesn't allow - permission was denied
+                permissionStatus = PermissionStatus.Denied;
+            }
+            else
+            {
+                permissionStatus = PermissionStatus.NotDetermined;
+            }
+
             var status = new PushNotificationStatus
             {
                 IsUserNotificationsEnabled = nativeStatus.IsUserNotificationsEnabled,
@@ -53,7 +69,8 @@ namespace AirshipDotNet.Platforms.Android.Modules
                 IsPushPrivacyFeatureEnabled = nativeStatus.IsPushPrivacyFeatureEnabled,
                 IsPushTokenRegistered = nativeStatus.IsPushTokenRegistered,
                 IsUserOptedIn = nativeStatus.IsUserOptedIn,
-                IsOptIn = nativeStatus.IsOptIn
+                IsOptIn = nativeStatus.IsOptIn,
+                NotificationPermissionStatus = permissionStatus
             };
 
             return Task.FromResult(status);
@@ -79,6 +96,29 @@ namespace AirshipDotNet.Platforms.Android.Modules
         }
 
         /// <summary>
+        /// Enables user notifications and prompts for permission if needed.
+        /// </summary>
+        /// <param name="args">Optional arguments for enabling user notifications.</param>
+        /// <returns>True if notifications were enabled successfully, false otherwise.</returns>
+        public Task<bool> EnableUserNotifications(EnableUserPushNotificationsArgs? args = null)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            Com.Urbanairship.Permission.PermissionPromptFallback fallback = args?.Fallback switch
+            {
+                PromptPermissionFallback.SystemSettings => Com.Urbanairship.Permission.PermissionPromptFallback.SystemSettings.Instance,
+                _ => Com.Urbanairship.Permission.PermissionPromptFallback.None.Instance
+            };
+
+            _module.UAirship.PushManager.EnableUserNotifications(fallback, new EnableUserNotificationsCallback((result) =>
+            {
+                tcs.SetResult(result);
+            }));
+
+            return tcs.Task;
+        }
+
+        /// <summary>
         /// Resets the badge count.
         /// </summary>
         /// <returns>A task that completes when the badge is reset.</returns>
@@ -87,6 +127,22 @@ namespace AirshipDotNet.Platforms.Android.Modules
             // Badge management is handled differently on Android
             // Most Android launchers don't support badges like iOS
             return Task.CompletedTask;
+        }
+
+        internal class EnableUserNotificationsCallback : Java.Lang.Object, AndroidX.Core.Util.IConsumer
+        {
+            private readonly Action<bool> _callback;
+
+            public EnableUserNotificationsCallback(Action<bool> callback)
+            {
+                _callback = callback;
+            }
+
+            public void Accept(Java.Lang.Object? result)
+            {
+                var boolResult = result as Java.Lang.Boolean;
+                _callback?.Invoke(boolResult?.BooleanValue() ?? false);
+            }
         }
     }
 }

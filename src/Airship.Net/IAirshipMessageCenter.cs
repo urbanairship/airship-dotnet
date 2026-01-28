@@ -63,5 +63,11 @@ namespace AirshipDotNet
         /// Add/remove the Message Center display listener.
         /// </summary>
         public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// Called when the message center inbox is updated.
+        /// </summary>
+        public event EventHandler<MessageCenterUpdatedEventArgs> OnMessageUpdated;
     }
 }

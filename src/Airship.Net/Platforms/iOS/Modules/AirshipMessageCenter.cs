@@ -231,5 +231,41 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             }
         }
 
+        private EventHandler<MessageCenterUpdatedEventArgs>? onMessageUpdated;
+        private NSObject? messageCenterUpdatedObserver;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        public event EventHandler<MessageCenterUpdatedEventArgs> OnMessageUpdated
+        {
+            add
+            {
+                onMessageUpdated += value;
+                if (messageCenterUpdatedObserver == null)
+                {
+                    messageCenterUpdatedObserver = NSNotificationCenter.DefaultCenter.AddObserver(
+                        aName: (NSString)"com.urbanairship.notification.message_list_updated",
+                        notify: async (notification) =>
+                        {
+                            var messageCount = await GetCount();
+                            var unreadCount = await GetUnreadCount();
+                            onMessageUpdated?.Invoke(this, new MessageCenterUpdatedEventArgs(messageCount, unreadCount));
+                        }
+                    );
+                }
+            }
+            remove
+            {
+                onMessageUpdated -= value;
+
+                if (onMessageUpdated == null && messageCenterUpdatedObserver != null)
+                {
+                    NSNotificationCenter.DefaultCenter.RemoveObserver(messageCenterUpdatedObserver);
+                    messageCenterUpdatedObserver = null;
+                }
+            }
+        }
+
     }
 }

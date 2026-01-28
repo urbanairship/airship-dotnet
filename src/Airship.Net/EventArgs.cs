@@ -86,4 +86,31 @@ namespace AirshipDotNet.MessageCenter
             MessageId = messageId;
         }
     }
+
+    /// <summary>
+    /// Event args for message center updated events.
+    /// </summary>
+    public class MessageCenterUpdatedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the total message count.
+        /// </summary>
+        public int MessageCount { get; }
+
+        /// <summary>
+        /// Gets the unread message count.
+        /// </summary>
+        public int MessageUnreadCount { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the MessageCenterUpdatedEventArgs class.
+        /// </summary>
+        /// <param name="messageCount">The total message count.</param>
+        /// <param name="messageUnreadCount">The unread message count.</param>
+        public MessageCenterUpdatedEventArgs(int messageCount, int messageUnreadCount)
+        {
+            MessageCount = messageCount;
+            MessageUnreadCount = messageUnreadCount;
+        }
+    }
 }

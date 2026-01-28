@@ -27,6 +27,13 @@ namespace AirshipDotNet
         Task SetUserNotificationsEnabled(bool enabled);
 
         /// <summary>
+        /// Enables user notifications and prompts for permission if needed.
+        /// </summary>
+        /// <param name="args">Optional arguments for enabling user notifications.</param>
+        /// <returns>True if notifications were enabled successfully, false otherwise.</returns>
+        Task<bool> EnableUserNotifications(EnableUserPushNotificationsArgs? args = null);
+
+        /// <summary>
         /// Checks if notifications are opted in.
         /// </summary>
         /// <returns>True if opted in, false otherwise.</returns>

@@ -214,6 +214,40 @@ namespace AirshipDotNet.Platforms.Android.Modules
             }
         }
 
+        private EventHandler<MessageCenterUpdatedEventArgs>? onMessageUpdated;
+        private Action? inboxUpdatedHandler;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        public event EventHandler<MessageCenterUpdatedEventArgs> OnMessageUpdated
+        {
+            add
+            {
+                onMessageUpdated += value;
+                if (inboxUpdatedHandler == null)
+                {
+                    inboxUpdatedHandler = async () =>
+                    {
+                        var messageCount = await GetCount();
+                        var unreadCount = await GetUnreadCount();
+                        onMessageUpdated?.Invoke(this, new MessageCenterUpdatedEventArgs(messageCount, unreadCount));
+                    };
+                    MessageCenterClass.Shared().Inbox.OnInboxUpdated += inboxUpdatedHandler;
+                }
+            }
+            remove
+            {
+                onMessageUpdated -= value;
+
+                if (onMessageUpdated == null && inboxUpdatedHandler != null)
+                {
+                    MessageCenterClass.Shared().Inbox.OnInboxUpdated -= inboxUpdatedHandler;
+                    inboxUpdatedHandler = null;
+                }
+            }
+        }
+
         private static DateTime? FromDate(Date? date)
         {
             if (date == null)
