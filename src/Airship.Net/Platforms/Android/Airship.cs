@@ -17,7 +17,7 @@ namespace AirshipDotNet
     /// <summary>
     /// Provides cross-platform access to a common subset of functionality between the iOS and Android SDKs
     /// </summary>
-    public class Airship : Java.Lang.Object, IDeepLinkListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener
+    public class Airship : Java.Lang.Object, IDeepLinkListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener, UrbanAirship.MessageCenter.IInboxListener
     {
         private static readonly Lazy<Airship> sharedAirship = new(() =>
         {
@@ -72,6 +72,11 @@ namespace AirshipDotNet
         /// Add/remove the push notification status listener.
         /// </summary>
         public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        internal event EventHandler<EventArgs>? OnMessagesUpdated;
 
         private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
 

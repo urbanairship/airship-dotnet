@@ -58,9 +58,12 @@ public partial class App : Application
         Console.WriteLine("Ready to display message center message" + e.MessageId);
     }
 
-    private void OnMessagesUpdated(object sender, EventArgs e)
+    private async void OnMessagesUpdated(object sender, EventArgs e)
     {
-        Console.WriteLine("Message center messages updated");
+        // Fetch counts when inbox is updated (e.g., to update a badge)
+        var unreadCount = await AirshipDotNet.Airship.MessageCenter.GetUnreadCount();
+        var totalCount = await AirshipDotNet.Airship.MessageCenter.GetCount();
+        Console.WriteLine($"Message center updated: {unreadCount} unread of {totalCount} total");
     }
 }
 

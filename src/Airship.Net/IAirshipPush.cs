@@ -43,5 +43,12 @@ namespace AirshipDotNet
         /// </summary>
         /// <returns>A task that completes when the badge is reset.</returns>
         Task ResetBadge();
+
+        /// <summary>
+        /// Enables user notifications with optional fallback behavior.
+        /// </summary>
+        /// <param name="args">Optional arguments for enabling notifications.</param>
+        /// <returns>True if notifications were enabled, false otherwise.</returns>
+        Task<bool> EnableUserNotifications(EnableUserPushNotificationsArgs? args = null);
     }
 }

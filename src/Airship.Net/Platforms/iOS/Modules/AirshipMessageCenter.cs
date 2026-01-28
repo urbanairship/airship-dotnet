@@ -231,5 +231,37 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             }
         }
 
+        private EventHandler<EventArgs>? onMessagesUpdated;
+        private EventHandler<EventArgs>? airshipMessagesUpdatedHandler;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        public event EventHandler<EventArgs> OnMessagesUpdated
+        {
+            add
+            {
+                onMessagesUpdated += value;
+                if (airshipMessagesUpdatedHandler == null)
+                {
+                    airshipMessagesUpdatedHandler = (sender, e) =>
+                    {
+                        onMessagesUpdated?.Invoke(this, e);
+                    };
+                    Airship.Instance.OnMessagesUpdated += airshipMessagesUpdatedHandler;
+                }
+            }
+            remove
+            {
+                onMessagesUpdated -= value;
+
+                if (onMessagesUpdated == null && airshipMessagesUpdatedHandler != null)
+                {
+                    Airship.Instance.OnMessagesUpdated -= airshipMessagesUpdatedHandler;
+                    airshipMessagesUpdatedHandler = null;
+                }
+            }
+        }
+
     }
 }

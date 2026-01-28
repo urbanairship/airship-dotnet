@@ -69,20 +69,28 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <returns>The current push notification status.</returns>
         public Task<PushNotificationStatus> GetPushNotificationStatus()
         {
-            // TODO: The AirshipObjectiveC xcframework doesn't expose all properties needed for full status.
-            // Missing: IsPushPrivacyFeatureEnabled, IsPushTokenRegistered, IsUserOptedIn
-            // Available: AuthorizationStatus, AuthorizedNotificationSettings, UserPushNotificationsEnabled
-            var isAuthorized = UAirship.Push.AuthorizationStatus != UserNotifications.UNAuthorizationStatus.Denied &&
-                               UAirship.Push.AuthorizationStatus != UserNotifications.UNAuthorizationStatus.NotDetermined;
+            var authStatus = UAirship.Push.AuthorizationStatus;
+            var isAuthorized = authStatus != UNAuthorizationStatus.Denied &&
+                               authStatus != UNAuthorizationStatus.NotDetermined;
+
+            var permissionStatus = authStatus switch
+            {
+                UNAuthorizationStatus.Authorized => PermissionStatus.Granted,
+                UNAuthorizationStatus.Provisional => PermissionStatus.Granted,
+                UNAuthorizationStatus.Ephemeral => PermissionStatus.Granted,
+                UNAuthorizationStatus.Denied => PermissionStatus.Denied,
+                _ => PermissionStatus.NotDetermined
+            };
 
             var status = new PushNotificationStatus
             {
                 IsUserNotificationsEnabled = UAirship.Push.UserPushNotificationsEnabled,
                 AreNotificationsAllowed = isAuthorized,
-                IsPushPrivacyFeatureEnabled = true, // Assuming enabled if push module is available
+                IsPushPrivacyFeatureEnabled = true,
                 IsPushTokenRegistered = !string.IsNullOrEmpty(UAirship.Push.DeviceToken),
                 IsUserOptedIn = UAirship.Push.UserPushNotificationsEnabled,
-                IsOptIn = UAirship.Push.UserPushNotificationsEnabled && isAuthorized
+                IsOptIn = UAirship.Push.UserPushNotificationsEnabled && isAuthorized,
+                NotificationPermissionStatus = permissionStatus
             };
             return Task.FromResult(status);
         }
@@ -110,7 +118,21 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             return tcs.Task;
         }
 
-        // Event handlers will be added in a future phase to maintain existing event patterns
-        // For now, users can still use the legacy events through Airship.Instance if needed
+        /// <summary>
+        /// Enables user notifications with optional fallback behavior.
+        /// </summary>
+        /// <param name="args">Optional arguments for enabling notifications.</param>
+        /// <returns>True if notifications were enabled, false otherwise.</returns>
+        public Task<bool> EnableUserNotifications(EnableUserPushNotificationsArgs? args = null)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            UAirship.Push.EnableUserPushNotificationsWithCompletionHandler((success) =>
+            {
+                tcs.SetResult(success);
+            });
+
+            return tcs.Task;
+        }
     }
 }

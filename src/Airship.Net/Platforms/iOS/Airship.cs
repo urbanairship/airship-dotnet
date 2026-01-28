@@ -79,10 +79,10 @@ namespace AirshipDotNet
             // This functionality may need to be implemented differently using the new SDK APIs
 
             // Message Center updated notification
-            /// TODO: "com.urbanairship.notification.message_list_updated" is a temporary workaround.
+            // TODO: "com.urbanairship.notification.message_list_updated" is a temporary workaround.
             NSNotificationCenter.DefaultCenter.AddObserver(aName: "com.urbanairship.notification.message_list_updated", (notification) =>
             {
-                OnMessageCenterUpdated?.Invoke(this, new EventArgs());
+                OnMessagesUpdated?.Invoke(this, new EventArgs());
             });
         }
         /// <summary>
@@ -93,7 +93,7 @@ namespace AirshipDotNet
         /// <summary>
         /// Add/remove the Message Center updated listener.
         /// </summary>
-        private EventHandler<EventArgs>? OnMessageCenterUpdated;
+        internal event EventHandler<EventArgs>? OnMessagesUpdated;
 
         /// <summary>
         /// Add/remove the push notification status listener.
