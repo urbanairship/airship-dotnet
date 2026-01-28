@@ -63,5 +63,10 @@ namespace AirshipDotNet
         /// Add/remove the Message Center display listener.
         /// </summary>
         public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        public event EventHandler<EventArgs> OnMessagesUpdated;
     }
 }

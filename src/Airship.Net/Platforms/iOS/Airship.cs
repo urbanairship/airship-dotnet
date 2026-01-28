@@ -77,12 +77,23 @@ namespace AirshipDotNet
 
             // Note: Push notification status update event is not directly available in SDK 19
             // This functionality may need to be implemented differently using the new SDK APIs
-        }
 
+            // Message Center updated notification
+            /// TODO: "com.urbanairship.notification.message_list_updated" is a temporary workaround.
+            NSNotificationCenter.DefaultCenter.AddObserver(aName: "com.urbanairship.notification.message_list_updated", (notification) =>
+            {
+                OnMessagesUpdated?.Invoke(this, new EventArgs());
+            });
+        }
         /// <summary>
         /// Add/remove the channel creation listener.
         /// </summary>
         public event EventHandler<ChannelEventArgs>? OnChannelCreation;
+        
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        private EventHandler<EventArgs>? OnMessageCenterUpdated;
 
         /// <summary>
         /// Add/remove the push notification status listener.

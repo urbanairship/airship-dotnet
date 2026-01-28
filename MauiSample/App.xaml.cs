@@ -16,6 +16,8 @@ public partial class App : Application
         AirshipDotNet.Airship.Instance.OnDeepLinkReceived += OnDeepLinkReceived;
 
         AirshipDotNet.Airship.Instance.OnMessageCenterDisplay += OnMessageCenterDisplay;
+
+        AirshipDotNet.Airship.Instance.MessageCenter.OnMessagesUpdated += OnMessagesUpdated;
     }
 
     private void OnDeepLinkReceived(object sender, DeepLinkEventArgs e)
@@ -56,5 +58,9 @@ public partial class App : Application
         Console.WriteLine("Ready to display message center message" + e.MessageId);
     }
 
+    private void OnMessagesUpdated(object sender, EventArgs e)
+    {
+        Console.WriteLine("Message center messages updated");
+    }
 }
 
