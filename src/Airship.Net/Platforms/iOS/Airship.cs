@@ -82,7 +82,7 @@ namespace AirshipDotNet
             /// TODO: "com.urbanairship.notification.message_list_updated" is a temporary workaround.
             NSNotificationCenter.DefaultCenter.AddObserver(aName: "com.urbanairship.notification.message_list_updated", (notification) =>
             {
-                OnMessagesUpdated?.Invoke(this, new EventArgs());
+                OnMessageCenterUpdated?.Invoke(this, new EventArgs());
             });
         }
         /// <summary>
