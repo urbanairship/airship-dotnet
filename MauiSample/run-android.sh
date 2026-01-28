@@ -47,8 +47,53 @@ fi
 
 # Check if any device is connected
 if ! adb devices | grep -q "device$"; then
-    echo -e "${RED}❌ No Android device detected. Please start an emulator or connect a device.${NC}"
-    exit 1
+    echo -e "${YELLOW}⚠️  No Android device detected. Checking for available emulators...${NC}"
+
+    # Get list of available AVDs
+    AVDS=$(emulator -list-avds 2>/dev/null)
+
+    if [ -z "$AVDS" ]; then
+        echo -e "${RED}❌ No Android emulators found. Please create an AVD in Android Studio or connect a physical device.${NC}"
+        exit 1
+    fi
+
+    # Use the first available AVD
+    AVD_NAME=$(echo "$AVDS" | head -n 1)
+    echo -e "${GREEN}📱 Starting emulator: $AVD_NAME${NC}"
+
+    # Start emulator in background
+    emulator -avd "$AVD_NAME" -no-snapshot-load &
+    EMULATOR_PID=$!
+
+    # Wait for emulator to boot (check every 2 seconds, timeout after 120 seconds)
+    echo -e "${YELLOW}⏳ Waiting for emulator to boot...${NC}"
+    BOOT_TIMEOUT=120
+    ELAPSED=0
+
+    while [ $ELAPSED -lt $BOOT_TIMEOUT ]; do
+        # Check if device is online and boot completed
+        if adb devices | grep -q "device$"; then
+            BOOT_COMPLETED=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            if [ "$BOOT_COMPLETED" = "1" ]; then
+                echo -e "${GREEN}✅ Emulator booted successfully${NC}"
+                break
+            fi
+        fi
+        sleep 2
+        ELAPSED=$((ELAPSED + 2))
+        echo -ne "\r⏳ Waiting for emulator to boot... ${ELAPSED}s"
+    done
+    echo ""
+
+    if [ $ELAPSED -ge $BOOT_TIMEOUT ]; then
+        echo -e "${RED}❌ Emulator failed to boot within ${BOOT_TIMEOUT} seconds${NC}"
+        kill $EMULATOR_PID 2>/dev/null
+        exit 1
+    fi
+
+    # Give it a few more seconds for the system to stabilize
+    echo -e "${YELLOW}⏳ Waiting for system to stabilize...${NC}"
+    sleep 5
 fi
 
 # Clean previous builds (skip if --fast)

@@ -16,6 +16,15 @@ public partial class App : Application
         AirshipDotNet.Airship.Instance.OnDeepLinkReceived += OnDeepLinkReceived;
 
         AirshipDotNet.Airship.Instance.OnMessageCenterDisplay += OnMessageCenterDisplay;
+
+        // Listen for message center updates to refresh UI badges or indicators
+        AirshipDotNet.Airship.MessageCenter.OnMessageUpdated += OnMessageCenterUpdated;
+    }
+
+    private void OnMessageCenterUpdated(object sender, MessageCenterUpdatedEventArgs e)
+    {
+        // Update your app's unread badge or message count indicator
+        Console.WriteLine($"Message Center updated: {e.MessageUnreadCount} unread of {e.MessageCount} total");
     }
 
     private void OnDeepLinkReceived(object sender, DeepLinkEventArgs e)

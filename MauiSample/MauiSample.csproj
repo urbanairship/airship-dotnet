@@ -31,12 +31,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net10.0-ios'">
     <CodesignProvision></CodesignProvision>
-    <CodesignKey>-</CodesignKey> 
+    <CodesignKey>-</CodesignKey>
     <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
-    <MtouchLink>None</MtouchLink>
+    <MtouchLink>SdkOnly</MtouchLink>
     <CreatePackage>false</CreatePackage>
     <RuntimeIdentifier Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' != 'arm64'">iossimulator-x64</RuntimeIdentifier>
-    <RuntimeIdentifier Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'arm64'">iossimulator-arm64</RuntimeIdentifier> 
+    <RuntimeIdentifier Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'arm64'">iossimulator-arm64</RuntimeIdentifier>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net10.0-ios'">
