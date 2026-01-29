@@ -173,6 +173,19 @@ namespace AirshipDotNet
         public static IAirshipMessageCenter MessageCenter => Instance._messageCenter;
         public static IAirshipPermissionsManager PermissionsManager => Instance._permissionsManager;
 
+        /// <summary>
+        /// Processes a deep link.
+        /// For uairship:// scheme URLs, Airship will handle the deep link internally.
+        /// For other URLs, Airship will forward the deep link to the deep link listener if set.
+        /// </summary>
+        /// <param name="url">The deep link URL.</param>
+        /// <returns>True if the deep link was handled, false otherwise.</returns>
+        public static Task<bool> ProcessDeepLink(string url)
+        {
+            var result = UAirship.Shared().DeepLink(url);
+            return Task.FromResult(result);
+        }
+
         // Interface implementations
         public bool OnDeepLink(string deepLink)
         {
