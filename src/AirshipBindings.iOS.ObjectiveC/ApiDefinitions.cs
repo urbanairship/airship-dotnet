@@ -1763,21 +1763,6 @@ namespace Airship
 		bool IsOptedIn { get; }
 	}
 
-	// @enum UAPermission
-	public enum UAPermission : long
-	{
-		DisplayNotifications = 0,
-		Location = 1
-	}
-
-	// @enum UAPermissionStatus
-	public enum UAPermissionStatus : long
-	{
-		NotDetermined = 0,
-		Granted = 1,
-		Denied = 2
-	}
-
 	// @protocol UAAirshipPermissionDelegate
 	[Protocol (Name = "_TtP17AirshipObjectiveC27UAAirshipPermissionDelegate_"), Model]
 	[BaseType (typeof(NSObject))]
@@ -1883,10 +1868,5 @@ namespace Airship
 		[Static]
 		[Export ("takeOff:launchOptions:error:")]
 		bool TakeOff ([NullAllowed] UAConfig config, [NullAllowed] NSDictionary<NSString, NSObject> launchOptions, [NullAllowed] out NSError error);
-
-		// +(void)processDeepLink:(NSURL * _Nonnull)url completionHandler:(void (^ _Nonnull)(BOOL))completionHandler;
-		[Static]
-		[Export ("processDeepLink:completionHandler:")]
-		void ProcessDeepLink (NSUrl url, Action<bool> completionHandler);
 	}
 }
