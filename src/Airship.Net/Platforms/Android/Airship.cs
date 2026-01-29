@@ -157,9 +157,9 @@ namespace AirshipDotNet
         public static Airship Instance => sharedAirship.Value;
 
         /// <summary>
-        /// Gets the Airship SDK version.
+        /// Gets the Airship .NET library version.
         /// </summary>
-        public static string Version => UAirship.Version;
+        public static string Version => "20.2.1";
 
         // Module properties
         public static IAirshipPush Push => Instance._push;

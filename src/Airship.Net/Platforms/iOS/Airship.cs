@@ -195,16 +195,9 @@ namespace AirshipDotNet
         public static Airship Instance => sharedAirship.Value;
 
         /// <summary>
-        /// Gets the Airship SDK version.
+        /// Gets the Airship .NET library version.
         /// </summary>
-        public static string Version
-        {
-            get
-            {
-                var bundle = NSBundle.FromClass(new ObjCRuntime.Class(typeof(UAirship)));
-                return bundle?.InfoDictionary?["CFBundleShortVersionString"]?.ToString() ?? "unknown";
-            }
-        }
+        public static string Version => "20.2.1";
 
         // Module properties
         public static IAirshipPush Push => Instance._push;

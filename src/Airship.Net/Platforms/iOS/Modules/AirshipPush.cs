@@ -56,11 +56,14 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <returns>True if opted in, false otherwise.</returns>
         public Task<bool> IsOptedIn()
         {
-            // TODO: The AirshipObjectiveC xcframework doesn't expose IsOptedIn property directly.
-            // This would require checking both UserPushNotificationsEnabled AND system authorization status.
-            // For now, returning UserPushNotificationsEnabled as a partial implementation.
-            // Full implementation would need: UAirship.Push.AuthorizationStatus != Denied
-            return Task.FromResult(UAirship.Push.UserPushNotificationsEnabled);
+            var tcs = new TaskCompletionSource<bool>();
+
+            UAirship.Push.GetNotificationStatus((nativeStatus) =>
+            {
+                tcs.SetResult(nativeStatus.IsOptedIn);
+            });
+
+            return tcs.Task;
         }
 
         /// <summary>
@@ -69,30 +72,31 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         /// <returns>The current push notification status.</returns>
         public Task<PushNotificationStatus> GetPushNotificationStatus()
         {
-            var authStatus = UAirship.Push.AuthorizationStatus;
-            var isAuthorized = authStatus != UNAuthorizationStatus.Denied &&
-                               authStatus != UNAuthorizationStatus.NotDetermined;
+            var tcs = new TaskCompletionSource<PushNotificationStatus>();
 
-            var permissionStatus = authStatus switch
+            UAirship.Push.GetNotificationStatus((nativeStatus) =>
             {
-                UNAuthorizationStatus.Authorized => PermissionStatus.Granted,
-                UNAuthorizationStatus.Provisional => PermissionStatus.Granted,
-                UNAuthorizationStatus.Ephemeral => PermissionStatus.Granted,
-                UNAuthorizationStatus.Denied => PermissionStatus.Denied,
-                _ => PermissionStatus.NotDetermined
-            };
+                var permissionStatus = nativeStatus.NotificationPermissionStatus switch
+                {
+                    UAPermissionStatus.Granted => PermissionStatus.Granted,
+                    UAPermissionStatus.Denied => PermissionStatus.Denied,
+                    _ => PermissionStatus.NotDetermined
+                };
 
-            var status = new PushNotificationStatus
-            {
-                IsUserNotificationsEnabled = UAirship.Push.UserPushNotificationsEnabled,
-                AreNotificationsAllowed = isAuthorized,
-                IsPushPrivacyFeatureEnabled = true,
-                IsPushTokenRegistered = !string.IsNullOrEmpty(UAirship.Push.DeviceToken),
-                IsUserOptedIn = UAirship.Push.UserPushNotificationsEnabled,
-                IsOptIn = UAirship.Push.UserPushNotificationsEnabled && isAuthorized,
-                NotificationPermissionStatus = permissionStatus
-            };
-            return Task.FromResult(status);
+                var status = new PushNotificationStatus
+                {
+                    IsUserNotificationsEnabled = nativeStatus.IsUserNotificationsEnabled,
+                    AreNotificationsAllowed = nativeStatus.AreNotificationsAllowed,
+                    IsPushPrivacyFeatureEnabled = nativeStatus.IsPushPrivacyFeatureEnabled,
+                    IsPushTokenRegistered = nativeStatus.IsPushTokenRegistered,
+                    IsUserOptedIn = nativeStatus.IsUserOptedIn,
+                    IsOptIn = nativeStatus.IsOptedIn,
+                    NotificationPermissionStatus = permissionStatus
+                };
+                tcs.SetResult(status);
+            });
+
+            return tcs.Task;
         }
 
         /// <summary>
