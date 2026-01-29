@@ -97,6 +97,10 @@ Note that `crossPlatformVersion` should be bumped according to the native SDK ve
 
 Revision numbers can be used to make minor updates to previously released NuGet packages, in cases where no updates to the native SDK versions are needed. If any revision properties are set to a value greater than zero, the revision number will be added to the NuGet package version as a 4th segment (`MAJOR.MINOR.PATCH.REVISION`). A revision number of zero will be ignored, resulting in a 3-segment package version (`MAJOR.MINOR.PATCH`).
 
+### Releasing
+
+Run `./scripts/update_version.sh <version>` to bump the .NET library version. Use `-p <proxy_version>` to also update native SDK versions.
+
 ### Documentation
 
 Doxygen is used to generate documentation from the .NET sources, via the `./gradlew docs:build` task. HTML documentation is output to the `docs/build/html` directory and archived to a versioned `.tar.gz` file in the `docs/build` dir.

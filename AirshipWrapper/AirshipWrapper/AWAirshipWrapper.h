@@ -10,6 +10,7 @@
 @class UAAnalytics;
 @class UAPrivacyManager;
 @class UAPreferenceCenter;
+@class UAPermissionsManager;
 @class NSError;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -29,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UAAnalytics *analytics;
 @property (nonatomic, readonly) UAPrivacyManager *privacyManager;
 @property (nonatomic, readonly) UAPreferenceCenter *preferenceCenter;
+@property (nonatomic, readonly) UAPermissionsManager *permissionsManager;
 
 #pragma mark - Method Wrappers
 

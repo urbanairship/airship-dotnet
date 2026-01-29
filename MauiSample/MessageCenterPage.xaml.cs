@@ -37,6 +37,11 @@ public partial class MessageCenterPage : ContentPage
         try
         {
             var messages = await AirshipDotNet.Airship.MessageCenter.GetMessages();
+
+            // Example: Filter or style messages based on read status
+            var unreadCount = messages.Count(m => !m.IsRead);
+            Console.WriteLine($"Loaded {messages.Count} messages ({unreadCount} unread)");
+
             listView.ItemsSource = messages;
             refreshView.IsRefreshing = false;
         }

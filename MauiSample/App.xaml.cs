@@ -16,6 +16,8 @@ public partial class App : Application
         AirshipDotNet.Airship.Instance.OnDeepLinkReceived += OnDeepLinkReceived;
 
         AirshipDotNet.Airship.Instance.OnMessageCenterDisplay += OnMessageCenterDisplay;
+
+        AirshipDotNet.Airship.MessageCenter.OnMessagesUpdated += OnMessagesUpdated;
     }
 
     private void OnDeepLinkReceived(object sender, DeepLinkEventArgs e)
@@ -56,5 +58,12 @@ public partial class App : Application
         Console.WriteLine("Ready to display message center message" + e.MessageId);
     }
 
+    private async void OnMessagesUpdated(object sender, EventArgs e)
+    {
+        // Fetch counts when inbox is updated (e.g., to update a badge)
+        var unreadCount = await AirshipDotNet.Airship.MessageCenter.GetUnreadCount();
+        var totalCount = await AirshipDotNet.Airship.MessageCenter.GetCount();
+        Console.WriteLine($"Message center updated: {unreadCount} unread of {totalCount} total");
+    }
 }
 

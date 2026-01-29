@@ -82,7 +82,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
                             message.Title,
                             sentDate,
                             expirationDate,
-                            message.Unread,
+                            !message.Unread,
                             message.ListIcon,
                             extras);
 
@@ -114,7 +114,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         public async Task<int> GetUnreadCount()
         {
             var messages = await GetMessages();
-            return messages.Count(m => m.Unread);
+            return messages.Count(m => !m.IsRead);
         }
 
         /// <summary>
@@ -227,6 +227,38 @@ namespace AirshipDotNet.Platforms.iOS.Modules
                 {
                     UAirship.MessageCenter.WeakDisplayDelegate = null;
                     messageCenterDisplayDelegate = null;
+                }
+            }
+        }
+
+        private EventHandler<EventArgs>? onMessagesUpdated;
+        private EventHandler<EventArgs>? airshipMessagesUpdatedHandler;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        public event EventHandler<EventArgs> OnMessagesUpdated
+        {
+            add
+            {
+                onMessagesUpdated += value;
+                if (airshipMessagesUpdatedHandler == null)
+                {
+                    airshipMessagesUpdatedHandler = (sender, e) =>
+                    {
+                        onMessagesUpdated?.Invoke(this, e);
+                    };
+                    Airship.Instance.OnMessagesUpdated += airshipMessagesUpdatedHandler;
+                }
+            }
+            remove
+            {
+                onMessagesUpdated -= value;
+
+                if (onMessagesUpdated == null && airshipMessagesUpdatedHandler != null)
+                {
+                    Airship.Instance.OnMessagesUpdated -= airshipMessagesUpdatedHandler;
+                    airshipMessagesUpdatedHandler = null;
                 }
             }
         }
