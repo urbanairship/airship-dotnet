@@ -62,6 +62,10 @@ static AWAirshipWrapper *_shared = nil;
     return [UAirship preferenceCenter];
 }
 
+- (UAPermissionsManager *)permissionsManager {
+    return [UAirship permissionsManager];
+}
+
 #pragma mark - Method Wrappers
 
 + (void)getMessages:(void(^)(NSArray<UAMessageCenterMessage *> *))completion {

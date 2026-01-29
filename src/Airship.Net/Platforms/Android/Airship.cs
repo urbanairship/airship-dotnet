@@ -37,6 +37,7 @@ namespace AirshipDotNet
         private readonly IAirshipFeatureFlagManager _featureFlagManager;
         private readonly IAirshipPreferenceCenter _preferenceCenter;
         private readonly IAirshipMessageCenter _messageCenter;
+        private readonly IAirshipPermissionsManager _permissionsManager;
 
         public Airship()
         {
@@ -50,6 +51,7 @@ namespace AirshipDotNet
             _featureFlagManager = new AirshipFeatureFlagManager(_module);
             _preferenceCenter = new AirshipPreferenceCenter(_module);
             _messageCenter = new AirshipDotNet.Platforms.Android.Modules.AirshipMessageCenter(_module);
+            _permissionsManager = new AirshipDotNet.Platforms.Android.Modules.AirshipPermissionsManager(_module);
         }
 
         private void Init()
@@ -154,6 +156,11 @@ namespace AirshipDotNet
 
         public static Airship Instance => sharedAirship.Value;
 
+        /// <summary>
+        /// Gets the Airship SDK version.
+        /// </summary>
+        public static string Version => UAirship.Version;
+
         // Module properties
         public static IAirshipPush Push => Instance._push;
         public static IAirshipChannel Channel => Instance._channel;
@@ -164,6 +171,7 @@ namespace AirshipDotNet
         public static IAirshipFeatureFlagManager FeatureFlagManager => Instance._featureFlagManager;
         public static IAirshipPreferenceCenter PreferenceCenter => Instance._preferenceCenter;
         public static IAirshipMessageCenter MessageCenter => Instance._messageCenter;
+        public static IAirshipPermissionsManager PermissionsManager => Instance._permissionsManager;
 
         // Interface implementations
         public bool OnDeepLink(string deepLink)
