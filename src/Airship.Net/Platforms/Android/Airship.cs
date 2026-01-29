@@ -59,7 +59,7 @@ namespace AirshipDotNet
             //Adding Push notification status listener
             UAirship.Shared().PushManager.AddNotificationStatusListener(this);
 
-            UAirship.Shared().MessageCenter.AddListener(this);
+            UrbanAirship.MessageCenter.MessageCenterClass.Shared().Inbox.AddListener(this);
 
         }
 

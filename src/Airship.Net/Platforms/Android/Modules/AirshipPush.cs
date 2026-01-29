@@ -110,21 +110,21 @@ namespace AirshipDotNet.Platforms.Android.Modules
                 _ => Com.Urbanairship.Permission.PermissionPromptFallback.None.Instance
             };
 
-            _module.UAirship.PushManager.EnableUserNotifications(fallback, new EnableUserNotificationsCallback(tcs));
+            _module.UAirship.PushManager.EnableUserNotifications(fallback, new EnableUserNotificationsConsumer(tcs));
 
             return tcs.Task;
         }
 
-        private class EnableUserNotificationsCallback : Java.Lang.Object, UrbanAirship.AirshipComponent.IPendingResultCallback
+        private class EnableUserNotificationsConsumer : Java.Lang.Object, AndroidX.Core.Util.IConsumer
         {
             private readonly TaskCompletionSource<bool> _tcs;
 
-            public EnableUserNotificationsCallback(TaskCompletionSource<bool> tcs)
+            public EnableUserNotificationsConsumer(TaskCompletionSource<bool> tcs)
             {
                 _tcs = tcs;
             }
 
-            public void OnResult(Java.Lang.Object? result)
+            public void Accept(Java.Lang.Object? result)
             {
                 var enabled = result as Java.Lang.Boolean;
                 _tcs.SetResult(enabled?.BooleanValue() ?? false);
