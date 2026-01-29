@@ -33,17 +33,17 @@ namespace AirshipDotNet.MessageCenter
         public DateTime? ExpirationDate { get; }
 
         /// <summary>
+        /// Gets the read status of the message.
+        /// </summary>
+        /// <value>True if the message has been read, false otherwise.</value>
+        public bool IsRead { get; }
+
+        /// <summary>
         /// Gets the unread status boolean value.
         /// </summary>
         /// <value>The unread status.</value>
         [Obsolete("Use IsRead instead.")]
-        public bool Unread { get; }
-
-        /// <summary>
-        /// Gets the read status of the message.
-        /// </summary>
-        /// <value>True if the message has been read, false otherwise.</value>
-        public bool IsRead => !Unread;
+        public bool Unread => !IsRead;
 
         /// <summary>
         /// Gets the message icon url.
@@ -60,13 +60,13 @@ namespace AirshipDotNet.MessageCenter
         /// <summary>
         /// Initializes a new instance of the <see cref="Message"/> class.
         /// </summary>
-        public Message(string messageId, string title, DateTime? sentDate, DateTime? expirationDate, bool unread, string? iconUrl, Dictionary<string, string?>? extras)
+        public Message(string messageId, string title, DateTime? sentDate, DateTime? expirationDate, bool isRead, string? iconUrl, Dictionary<string, string?>? extras)
         {
             MessageId = messageId;
             Title = title;
             SentDate = sentDate;
             ExpirationDate = expirationDate;
-            Unread = unread;
+            IsRead = isRead;
             IconUrl = iconUrl;
             Extras = extras;
         }

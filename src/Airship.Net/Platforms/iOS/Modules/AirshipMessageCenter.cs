@@ -82,7 +82,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
                             message.Title,
                             sentDate,
                             expirationDate,
-                            message.Unread,
+                            !message.Unread,
                             message.ListIcon,
                             extras);
 
@@ -114,7 +114,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
         public async Task<int> GetUnreadCount()
         {
             var messages = await GetMessages();
-            return messages.Count(m => m.Unread);
+            return messages.Count(m => !m.IsRead);
         }
 
         /// <summary>
