@@ -18,6 +18,9 @@ public partial class App : Application
         AirshipDotNet.Airship.Instance.OnMessageCenterDisplay += OnMessageCenterDisplay;
 
         AirshipDotNet.Airship.MessageCenter.OnMessagesUpdated += OnMessagesUpdated;
+
+        Boolean result = AirshipDotNet.Airship.ProcessDeepLink("myapp://deeplink/home").Result;
+        Console.WriteLine("ProcessDeepLink result = " + result);
     }
 
     private void OnDeepLinkReceived(object sender, DeepLinkEventArgs e)

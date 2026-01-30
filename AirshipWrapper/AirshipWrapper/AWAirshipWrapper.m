@@ -68,6 +68,10 @@ static AWAirshipWrapper *_shared = nil;
 
 #pragma mark - Method Wrappers
 
++ (void) processDeepLink:(NSURL *)url completionHandler:(void (^)(BOOL))completion {
+    [UAirship ProcessDeepLink:url completionHandler:completionHandler];
+}
+
 + (void)getMessages:(void(^)(NSArray<UAMessageCenterMessage *> *))completion {
     [[UAirship messageCenter].inbox getMessagesWithCompletionHandler:completion];
 }

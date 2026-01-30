@@ -133,6 +133,25 @@ namespace AirshipDotNet
             }
         }
 
+
+        /// <summary>
+        /// Processes a deep link.
+        /// For uairship:// scheme URLs, Airship will handle the deep link internally.
+        /// For other URLs, Airship will forward the deep link to the deep link delegate if set.
+        /// </summary>
+        /// <param name="url">The deep link URL.</param>
+        /// <returns>True if the deep link was handled, false otherwise.</returns>
+        public static Task<bool> ProcessDeepLink(string url)
+        {
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+            var nsUrl = new NSUrl(url);
+            UAirship.ProcessDeepLink(nsUrl, (handled) =>
+            {
+                taskCompletionSource.SetResult(handled);
+            });
+            return taskCompletionSource.Task;
+        }
+
         // Internal delegate class for Message Center display
         internal class AirshipMessageCenterDisplayDelegate : global::Airship.UAMessageCenterDisplayDelegate
         {
