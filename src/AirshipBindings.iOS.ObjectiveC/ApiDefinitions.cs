@@ -50,6 +50,10 @@ namespace Airship
 		[Export ("preferenceCenter")]
 		UAPreferenceCenter PreferenceCenter { get; }
 
+		// @property (nonatomic, readonly) UAPermissionsManager *permissionsManager;
+		[Export ("permissionsManager")]
+		UAPermissionsManager PermissionsManager { get; }
+
 		// + (void)getMessages:(void(^)(NSArray<UAMessageCenterMessage *> *))completion;
 		[Static]
 		[Export ("getMessages:")]
@@ -1574,6 +1578,10 @@ namespace Airship
 		// -(void)setQuietTimeStartHour:(NSInteger)startHour startMinute:(NSInteger)startMinute endHour:(NSInteger)endHour endMinute:(NSInteger)endMinute;
 		[Export ("setQuietTimeStartHour:startMinute:endHour:endMinute:")]
 		void SetQuietTimeStartHour (nint startHour, nint startMinute, nint endHour, nint endMinute);
+
+		// -(void)getNotificationStatusWithCompletionHandler:(void (^ _Nonnull)(UAPushNotificationStatus * _Nonnull))completionHandler;
+		[Export ("getNotificationStatusWithCompletionHandler:")]
+		void GetNotificationStatus (Action<UAPushNotificationStatus> completionHandler);
 	}
 
 	// @protocol UAPushNotificationDelegate
@@ -1721,6 +1729,78 @@ namespace Airship
 		void Apply ();
 	}
 
+	// @interface UAPushNotificationStatus : NSObject
+	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC24UAPushNotificationStatus")]
+	[DisableDefaultCtor]
+	interface UAPushNotificationStatus
+	{
+		// @property (readonly, nonatomic) BOOL isUserNotificationsEnabled;
+		[Export ("isUserNotificationsEnabled")]
+		bool IsUserNotificationsEnabled { get; }
+
+		// @property (readonly, nonatomic) BOOL areNotificationsAllowed;
+		[Export ("areNotificationsAllowed")]
+		bool AreNotificationsAllowed { get; }
+
+		// @property (readonly, nonatomic) BOOL isPushPrivacyFeatureEnabled;
+		[Export ("isPushPrivacyFeatureEnabled")]
+		bool IsPushPrivacyFeatureEnabled { get; }
+
+		// @property (readonly, nonatomic) BOOL isPushTokenRegistered;
+		[Export ("isPushTokenRegistered")]
+		bool IsPushTokenRegistered { get; }
+
+		// @property (readonly, nonatomic) enum UAPermissionStatus notificationPermissionStatus;
+		[Export ("notificationPermissionStatus")]
+		UAPermissionStatus NotificationPermissionStatus { get; }
+
+		// @property (readonly, nonatomic) BOOL isUserOptedIn;
+		[Export ("isUserOptedIn")]
+		bool IsUserOptedIn { get; }
+
+		// @property (readonly, nonatomic) BOOL isOptedIn;
+		[Export ("isOptedIn")]
+		bool IsOptedIn { get; }
+	}
+
+	// @protocol UAAirshipPermissionDelegate
+	[Protocol (Name = "_TtP17AirshipObjectiveC27UAAirshipPermissionDelegate_"), Model]
+	[BaseType (typeof(NSObject))]
+	interface UAAirshipPermissionDelegate
+	{
+		// @required -(void)checkPermissionStatusWithCompletionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Abstract]
+		[Export ("checkPermissionStatusWithCompletionHandler:")]
+		void CheckPermissionStatus (Action<UAPermissionStatus> completionHandler);
+
+		// @required -(void)requestPermissionWithCompletionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Abstract]
+		[Export ("requestPermissionWithCompletionHandler:")]
+		void RequestPermission (Action<UAPermissionStatus> completionHandler);
+	}
+
+	// @interface UAPermissionsManager : NSObject
+	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC20UAPermissionsManager")]
+	[DisableDefaultCtor]
+	interface UAPermissionsManager
+	{
+		// -(void)setDelegate:(id<UAAirshipPermissionDelegate> _Nullable)delegate permission:(enum UAPermission)permission;
+		[Export ("setDelegate:permission:")]
+		void SetDelegate ([NullAllowed] UAAirshipPermissionDelegate @delegate, UAPermission permission);
+
+		// -(void)checkPermissionStatus:(enum UAPermission)permission completionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Export ("checkPermissionStatus:completionHandler:")]
+		void CheckPermissionStatus (UAPermission permission, Action<UAPermissionStatus> completionHandler);
+
+		// -(void)requestPermission:(enum UAPermission)permission completionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Export ("requestPermission:completionHandler:")]
+		void RequestPermission (UAPermission permission, Action<UAPermissionStatus> completionHandler);
+
+		// -(void)requestPermission:(enum UAPermission)permission enableAirshipUsageOnGrant:(BOOL)enableAirshipUsageOnGrant completionHandler:(void (^ _Nonnull)(enum UAPermissionStatus))completionHandler;
+		[Export ("requestPermission:enableAirshipUsageOnGrant:completionHandler:")]
+		void RequestPermission (UAPermission permission, bool enableAirshipUsageOnGrant, Action<UAPermissionStatus> completionHandler);
+	}
+
 	// @interface UAirship : NSObject
 	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC8UAirship")]
 	interface UAirship
@@ -1764,6 +1844,11 @@ namespace Airship
 		[Static]
 		[Export ("inAppAutomation", ArgumentSemantic.Strong)]
 		UAInAppAutomation InAppAutomation { get; }
+
+		// @property (readonly, nonatomic, strong, class) UAPermissionsManager * _Nonnull permissionsManager;
+		[Static]
+		[Export ("permissionsManager", ArgumentSemantic.Strong)]
+		UAPermissionsManager PermissionsManager { get; }
 
 		[Wrap ("WeakDeepLinkDelegate"), Static]
 		[NullAllowed]

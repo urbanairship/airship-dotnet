@@ -51,6 +51,7 @@ namespace AirshipDotNet
         private readonly IAirshipFeatureFlagManager _featureFlagManager;
         private readonly IAirshipPreferenceCenter _preferenceCenter;
         private readonly IAirshipMessageCenter _messageCenter;
+        private readonly IAirshipPermissionsManager _permissionsManager;
 
         public Airship()
         {
@@ -64,6 +65,7 @@ namespace AirshipDotNet
             _featureFlagManager = new AirshipFeatureFlagManager(_module);
             _preferenceCenter = new AirshipPreferenceCenter(_module);
             _messageCenter = new AirshipDotNet.Platforms.iOS.Modules.AirshipMessageCenter(_module);
+            _permissionsManager = new AirshipDotNet.Platforms.iOS.Modules.AirshipPermissionsManager(_module);
         }
 
         private void Initialize()
@@ -77,12 +79,22 @@ namespace AirshipDotNet
 
             // Note: Push notification status update event is not directly available in SDK 19
             // This functionality may need to be implemented differently using the new SDK APIs
-        }
 
+            // Message Center updated notification
+            NSNotificationCenter.DefaultCenter.AddObserver(aName: (NSString)"com.urbanairship.notification.message_list_updated", (notification) =>
+            {
+                OnMessagesUpdated?.Invoke(this, new EventArgs());
+            });
+        }
         /// <summary>
         /// Add/remove the channel creation listener.
         /// </summary>
         public event EventHandler<ChannelEventArgs>? OnChannelCreation;
+        
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        internal event EventHandler<EventArgs>? OnMessagesUpdated;
 
         /// <summary>
         /// Add/remove the push notification status listener.
@@ -182,6 +194,11 @@ namespace AirshipDotNet
 
         public static Airship Instance => sharedAirship.Value;
 
+        /// <summary>
+        /// Gets the Airship .NET library version.
+        /// </summary>
+        public static string Version => "21.1.0";
+
         // Module properties
         public static IAirshipPush Push => Instance._push;
         public static IAirshipChannel Channel => Instance._channel;
@@ -192,5 +209,7 @@ namespace AirshipDotNet
         public static IAirshipFeatureFlagManager FeatureFlagManager => Instance._featureFlagManager;
         public static IAirshipPreferenceCenter PreferenceCenter => Instance._preferenceCenter;
         public static IAirshipMessageCenter MessageCenter => Instance._messageCenter;
+        public static IAirshipPermissionsManager PermissionsManager => Instance._permissionsManager;
+
     }
 }

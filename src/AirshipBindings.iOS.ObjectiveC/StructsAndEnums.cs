@@ -37,4 +37,19 @@ namespace Airship
 		Us = 0,
 		Eu = 1
 	}
+
+	[Native]
+	public enum UAPermission : long
+	{
+		DisplayNotifications = 0,
+		Location = 1
+	}
+
+	[Native]
+	public enum UAPermissionStatus : long
+	{
+		NotDetermined = 0,
+		Granted = 1,
+		Denied = 2
+	}
 }

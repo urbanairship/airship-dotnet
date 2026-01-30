@@ -107,8 +107,8 @@ jobs:
           # Extract to Carthage/Build to maintain compatibility with project paths
           mkdir -p Carthage/Build
           unzip -q Airship.dotnet.xcframeworks.zip
-          mv dotnet-xcframeworks/*.xcframework Carthage/Build/
-          rm -rf dotnet-xcframeworks Airship.dotnet.xcframeworks.zip
+          mv xcframeworks/*.xcframework Carthage/Build/
+          rm -rf xcframeworks Airship.dotnet.xcframeworks.zip
 
           # Verify frameworks exist
           echo "Downloaded xcframeworks:"

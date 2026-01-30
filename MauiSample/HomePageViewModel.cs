@@ -105,9 +105,24 @@ namespace MauiSample
             }
         }
 
-        private static void PerformOnEnablePushButtonClicked()
+        private static async void PerformOnEnablePushButtonClicked()
         {
-            AirshipDotNet.Airship.Push.UserNotificationsEnabled = true;
+            try
+            {
+                // Enable push notifications with fallback to system settings if permission was denied
+                var args = new EnableUserPushNotificationsArgs(PromptPermissionFallback.SystemSettings);
+                var enabled = await AirshipDotNet.Airship.Push.EnableUserNotifications(args);
+
+                // Check the current notification permission status
+                var status = await AirshipDotNet.Airship.Push.GetPushNotificationStatus();
+
+                Console.WriteLine($"Push notifications enabled: {enabled}");
+                Console.WriteLine($"Permission status: {status.NotificationPermissionStatus}, Opt-in: {status.IsOptIn}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error enabling push notifications: {ex.Message}");
+            }
         }
 
         private static async void PerformOnMessageCenterButtonClicked()

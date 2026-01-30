@@ -17,7 +17,7 @@ namespace AirshipDotNet
     /// <summary>
     /// Provides cross-platform access to a common subset of functionality between the iOS and Android SDKs
     /// </summary>
-    public class Airship : Java.Lang.Object, IDeepLinkListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener
+    public class Airship : Java.Lang.Object, IDeepLinkListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener, UrbanAirship.MessageCenter.IInboxListener
     {
         private static readonly Lazy<Airship> sharedAirship = new(() =>
         {
@@ -37,6 +37,7 @@ namespace AirshipDotNet
         private readonly IAirshipFeatureFlagManager _featureFlagManager;
         private readonly IAirshipPreferenceCenter _preferenceCenter;
         private readonly IAirshipMessageCenter _messageCenter;
+        private readonly IAirshipPermissionsManager _permissionsManager;
 
         public Airship()
         {
@@ -50,6 +51,7 @@ namespace AirshipDotNet
             _featureFlagManager = new AirshipFeatureFlagManager(_module);
             _preferenceCenter = new AirshipPreferenceCenter(_module);
             _messageCenter = new AirshipDotNet.Platforms.Android.Modules.AirshipMessageCenter(_module);
+            _permissionsManager = new AirshipDotNet.Platforms.Android.Modules.AirshipPermissionsManager(_module);
         }
 
         private void Init()
@@ -58,6 +60,8 @@ namespace AirshipDotNet
 
             //Adding Push notification status listener
             UAirship.Shared().PushManager.AddNotificationStatusListener(this);
+
+            UrbanAirship.MessageCenter.MessageCenterClass.Shared().Inbox.AddListener(this);
 
         }
 
@@ -70,6 +74,11 @@ namespace AirshipDotNet
         /// Add/remove the push notification status listener.
         /// </summary>
         public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        internal event EventHandler<EventArgs>? OnMessagesUpdated;
 
         private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
 
@@ -147,6 +156,11 @@ namespace AirshipDotNet
 
         public static Airship Instance => sharedAirship.Value;
 
+        /// <summary>
+        /// Gets the Airship .NET library version.
+        /// </summary>
+        public static string Version => "21.1.0";
+
         // Module properties
         public static IAirshipPush Push => Instance._push;
         public static IAirshipChannel Channel => Instance._channel;
@@ -157,6 +171,20 @@ namespace AirshipDotNet
         public static IAirshipFeatureFlagManager FeatureFlagManager => Instance._featureFlagManager;
         public static IAirshipPreferenceCenter PreferenceCenter => Instance._preferenceCenter;
         public static IAirshipMessageCenter MessageCenter => Instance._messageCenter;
+        public static IAirshipPermissionsManager PermissionsManager => Instance._permissionsManager;
+
+        /// <summary>
+        /// Processes a deep link.
+        /// For uairship:// scheme URLs, Airship will handle the deep link internally.
+        /// For other URLs, Airship will forward the deep link to the deep link listener if set.
+        /// </summary>
+        /// <param name="url">The deep link URL.</param>
+        /// <returns>True if the deep link was handled, false otherwise.</returns>
+        public static Task<bool> ProcessDeepLink(string url)
+        {
+            var result = UAirship.Shared().DeepLink(url);
+            return Task.FromResult(result);
+        }
 
         // Interface implementations
         public bool OnDeepLink(string deepLink)
@@ -187,5 +215,7 @@ namespace AirshipDotNet
 
             OnPushNotificationStatusUpdate?.Invoke(this, new PushNotificationStatusEventArgs(pushStatus));
         }
+
+        public void OnInboxUpdated() => OnMessagesUpdated?.Invoke(this, new EventArgs());
     }
 }
