@@ -53,7 +53,7 @@ namespace Airship
 		// @property (nonatomic, readonly) UAPermissionsManager *permissionsManager;
 		[Export ("permissionsManager")]
 		UAPermissionsManager PermissionsManager { get; }
-
+	
 		// + (void)getMessages:(void(^)(NSArray<UAMessageCenterMessage *> *))completion;
 		[Static]
 		[Export ("getMessages:")]
@@ -1868,5 +1868,10 @@ namespace Airship
 		[Static]
 		[Export ("takeOff:launchOptions:error:")]
 		bool TakeOff ([NullAllowed] UAConfig config, [NullAllowed] NSDictionary<NSString, NSObject> launchOptions, [NullAllowed] out NSError error);
+	
+		// +(void)processDeepLink:(NSURL *)url completionHandler:(void (^)(BOOL))completion;
+    	[Static]
+    	[Export ("processDeepLink:completion:")]
+    	void ProcessDeepLink (NSUrl url, Action<bool> completion);
 	}
 }
