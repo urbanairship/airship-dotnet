@@ -197,7 +197,7 @@ namespace AirshipDotNet
         /// <summary>
         /// Gets the Airship .NET library version.
         /// </summary>
-        public static string Version => "21.1.0";
+        public static string Version => "21.2.0";
 
         // Module properties
         public static IAirshipPush Push => Instance._push;
@@ -210,6 +210,22 @@ namespace AirshipDotNet
         public static IAirshipPreferenceCenter PreferenceCenter => Instance._preferenceCenter;
         public static IAirshipMessageCenter MessageCenter => Instance._messageCenter;
         public static IAirshipPermissionsManager PermissionsManager => Instance._permissionsManager;
+
+        /// <summary>
+        /// Processes a deep link.
+        /// </summary>
+        /// <param name="url">The deep link URL.</param>
+        /// <returns>A task that completes with true if the deep link was handled, false otherwise.</returns>
+        public static Task<bool> ProcessDeepLink(string url)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            var nsUrl = new Foundation.NSUrl(url);
+            UAirship.ProcessDeepLink(nsUrl, (handled) =>
+            {
+                tcs.TrySetResult(handled);
+            });
+            return tcs.Task;
+        }
 
     }
 }

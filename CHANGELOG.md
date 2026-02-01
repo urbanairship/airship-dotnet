@@ -1,5 +1,21 @@
 # Airship DotNet Changelog
 
+## Version 21.2.0 - January 30, 2026
+Minor release that adds programmatic deep link handling for iOS.
+
+### Changes
+- Updated iOS SDK to 20.3.0
+- Added `Airship.ProcessDeepLink()` for programmatic deep link handling (iOS)
+
+## Version 21.1.0 - January 29, 2026
+Minor release that adds Permissions Manager API and Push Notification Status API for iOS.
+
+### Changes
+- Updated iOS SDK to 20.2.0
+- Updated Android SDK to 20.2.0
+- Added `Airship.PermissionsManager` for checking and requesting permissions (iOS)
+- Added `Airship.Push.GetNotificationStatus()` for querying push notification status (iOS)
+
 ## Version 21.0.0 - January 20, 2026
 Major release that moves Message Center inbox functionality into the main package, updates native SDKs to 20.1.1, and upgrades to .NET 10.
 
@@ -15,7 +31,7 @@ Major release that moves Message Center inbox functionality into the main packag
 
 See the [Migration Guide](MIGRATION.md) for upgrade instructions.
 
-## Version 20.2.1 - December 30, 2025
+## Version 20.3.0 - December 30, 2025
 Minor release to update SDKs and resolve crashes caused by calling iOS SDK methods on background threads instead of the main thread.
 
 ### Changes

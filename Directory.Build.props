@@ -8,12 +8,12 @@
     <AirshipAndroidVersion>20.2.0</AirshipAndroidVersion>
     <AirshipAndroidNugetVersion>20.2.0</AirshipAndroidNugetVersion>
 
-    <AirshipIosVersion>20.2.0</AirshipIosVersion>
-    <AirshipIosNugetVersion>20.2.0</AirshipIosNugetVersion>
+    <AirshipIosVersion>20.3.0</AirshipIosVersion>
+    <AirshipIosNugetVersion>20.3.0</AirshipIosNugetVersion>
 
     <!-- Airship.Net version -->
-    <AirshipCrossPlatformVersion>21.1.0</AirshipCrossPlatformVersion>
-    <AirshipCrossPlatformNugetVersion>21.1.0</AirshipCrossPlatformNugetVersion>
+    <AirshipCrossPlatformVersion>21.2.0</AirshipCrossPlatformVersion>
+    <AirshipCrossPlatformNugetVersion>21.2.0</AirshipCrossPlatformNugetVersion>
   </PropertyGroup>
 
   <!-- Nuget packaging metadata -->
