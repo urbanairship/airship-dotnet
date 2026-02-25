@@ -72,6 +72,7 @@
   <ItemGroup Label="Common Package Dependencies" Condition="!$(UseProjectReferences)">
     <PackageReference Include="Airship.Net" Version="$(AirshipCrossPlatformNugetVersion)" />
     <PackageReference Include="Airship.Net.MessageCenter" Version="$(AirshipCrossPlatformNugetVersion)" />
+    <PackageReference Include="Airship.Net.Embedded" Version="$(AirshipCrossPlatformNugetVersion)" />
   </ItemGroup>
 
   <ItemGroup Label="iOS Package Dependencies" Condition="'$(TargetFramework)' == 'net10.0-ios' And !$(UseProjectReferences)">
@@ -98,6 +99,7 @@
   <ItemGroup Label="Common Project Dependencies" Condition="$(UseProjectReferences)">
     <ProjectReference Condition="$(UseProjectReferences)" Include="..\src\Airship.Net\Airship.Net.csproj" />
     <ProjectReference Condition="$(UseProjectReferences)" Include="..\src\Airship.Net.MessageCenter\Airship.Net.MessageCenter.csproj" />
+    <ProjectReference Condition="$(UseProjectReferences)" Include="..\src\Airship.Net.Embedded\Airship.Net.Embedded.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="iOS Project Dependencies" Condition="'$(TargetFramework)' == 'net10.0-ios' And '$(UseProjectReferences)'">

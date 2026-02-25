@@ -1443,6 +1443,21 @@ namespace Airship
 		UIView EmbedWithPreferenceCenterID (string preferenceCenterID, [NullAllowed] string preferenceCenterThemePlist, UIViewController parentViewController, [NullAllowed] out NSError error);
 	}
 
+	// @interface UAEmbeddedViewControllerFactory : NSObject
+	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC31UAEmbeddedViewControllerFactory")]
+	interface UAEmbeddedViewControllerFactory
+	{
+		// +(UIViewController * _Nonnull)makeViewControllerWithEmbeddedID:(NSString * _Nonnull)embeddedID __attribute__((warn_unused_result("")));
+		[Static]
+		[Export ("makeViewControllerWithEmbeddedID:")]
+		UIViewController MakeViewControllerWithEmbeddedID (string embeddedID);
+
+		// +(UIView * _Nonnull)embedWithEmbeddedID:(NSString * _Nonnull)embeddedID in:(UIViewController * _Nonnull)parentViewController __attribute__((warn_unused_result("")));
+		[Static]
+		[Export ("embedWithEmbeddedID:in:")]
+		UIView EmbedWithEmbeddedID (string embeddedID, UIViewController parentViewController);
+	}
+
 	// @interface UAPrivacyManager : NSObject
 	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC16UAPrivacyManager")]
 	[DisableDefaultCtor]

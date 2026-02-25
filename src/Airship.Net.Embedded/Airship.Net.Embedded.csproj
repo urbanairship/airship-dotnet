@@ -6,50 +6,50 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
-		<RootNamespace>AirshipDotNet</RootNamespace>
+		<RootNamespace>AirshipDotNet.Embedded</RootNamespace>
 		<IsTrimmable>false</IsTrimmable>
-		<UseMaui>false</UseMaui>
+		<UseMaui>true</UseMaui>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>Airship.Net</PackageId>
-		<Title>Airship SDK</Title>
-		<Summary>Airship SDK .NET Library</Summary>
-		<Description>A full suite of mobile engagement tools for building next-generation apps</Description>
+		<PackageId>Airship.Net.Embedded</PackageId>
+		<Title>Airship Embedded View SDK</Title>
+		<Summary>Airship Embedded View SDK .NET Library</Summary>
+		<Description>Embedded view (MAUI) components for Airship SDK</Description>
 		<AssemblyVersion>$(AirshipCrossPlatformVersion)</AssemblyVersion>
 		<PackageVersion>$(AirshipCrossPlatformNugetVersion)</PackageVersion>
-		<!-- Include symbol files (*.pdb) in the built .nupkg -->
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
-	  <CreatePackage>false</CreatePackage>
-	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	  <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="Platforms/Android/**" Condition="'$(TargetFramework)' != 'net10.0-android'" />
-		<Compile Remove="Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net10.0-ios'" />
+		<Compile Remove="Controls/Platforms/Android/**" Condition="'$(TargetFramework)' != 'net10.0-android'" />
+		<Compile Remove="Controls/Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net10.0-ios'" />
 	</ItemGroup>
 
+	<!-- MAUI Package References -->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.0" />
+	</ItemGroup>
 
 	<!-- Dependencies -->
+	<ItemGroup>
+		<ProjectReference Include="..\Airship.Net\Airship.Net.csproj" />
+	</ItemGroup>
+
+	<!-- Android-specific dependencies -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
 		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Core\Airship.Net.Android.Core.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Layout\Airship.Net.Android.Layout.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.MessageCenter\Airship.Net.Android.MessageCenter.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.MessageCenterCore\Airship.Net.Android.MessageCenterCore.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.FeatureFlag\Airship.Net.Android.FeatureFlag.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.PreferenceCenter\Airship.Net.Android.PreferenceCenter.csproj" />
-		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.PreferenceCenterCore\Airship.Net.Android.PreferenceCenterCore.csproj" />
 	</ItemGroup>
+
+	<!-- iOS-specific dependencies -->
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-ios'">
 		<ProjectReference Include="..\AirshipBindings.iOS.ObjectiveC\AirshipBindings.iOS.ObjectiveC.csproj" />
 	</ItemGroup>
