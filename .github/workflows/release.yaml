@@ -144,7 +144,7 @@ jobs:
           path: docs/build/html
 
   deploy-docs:
-    needs: release-docs
+    needs: release
     runs-on: ubuntu-latest
     continue-on-error: true # Remove when migration to GH Pages is complete
     permissions:
