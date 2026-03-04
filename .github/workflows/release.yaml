@@ -46,15 +46,6 @@ jobs:
         with:
           python-version: '3.9'
 
-      # - name: Setup GCP Auth
-      #   uses: google-github-actions/auth@v1
-      #   with:
-      #     credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      # # Install gcloud, `setup-gcloud` automatically picks up authentication from `auth`.
-      # - name: Set up Google Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v1
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -127,16 +118,15 @@ jobs:
           mkdir -p src/AirshipBindings.iOS.ObjectiveC/lib
           cp -R AirshipWrapper/lib/AirshipWrapper.xcframework src/AirshipBindings.iOS.ObjectiveC/lib/
 
-      # - name: Install doc dependencies
-      #   run: |
-      #     brew install doxygen
-      #     brew install graphviz
+      - name: Install doc dependencies
+        run: |
+          brew install doxygen
+          brew install graphviz
 
       - name: Build and Publish Nugets
         env:
           NUGET_PRODUCTION_API_KEY: ${{ secrets.NUGET_PRODUCTION_API_KEY }}
-        run: ./gradlew build pack publishToProduction --warning-mode=summary --no-parallel
-        #run: ./gradlew build pack packageDocs
+        run: ./gradlew build pack packageDocs publishToProduction --warning-mode=summary --no-parallel
         
       - name: Create Github Release
         id: create_release
@@ -148,8 +138,22 @@ jobs:
           draft: false
           prerelease: false
 
-      # - name: Upload Docs
-      #   run: |
-      #     VERSION=${{ steps.get_version.outputs.VERSION }}
-      #     gsutil cp docs/build/$VERSION.tar.gz gs://ua-web-ci-prod-docs-transfer/libraries/maui/$VERSION.tar.gz
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/build/html
 
+  deploy-docs:
+    needs: release-docs
+    runs-on: ubuntu-latest
+    continue-on-error: true # Remove when migration to GH Pages is complete
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
