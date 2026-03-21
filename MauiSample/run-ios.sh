@@ -26,8 +26,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Ensure .NET is in PATH
-export PATH="$HOME/.dotnet:$PATH"
+# Ensure .NET is in PATH (prefer arm64 build if available)
+if [[ -f "$HOME/.dotnet10arm64/dotnet" ]]; then
+    export PATH="$HOME/.dotnet10arm64:$PATH"
+else
+    export PATH="$HOME/.dotnet:$PATH"
+fi
 
 # Check if dotnet is available
 if ! command -v dotnet &> /dev/null; then
