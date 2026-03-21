@@ -1347,6 +1347,36 @@ namespace Airship
 		string BasicAuthString { get; }
 	}
 
+	// @protocol UAMessageCenterNativeBridgeDelegate
+	[Protocol (Name = "_TtP17AirshipObjectiveC35UAMessageCenterNativeBridgeDelegate_"), Model]
+	[BaseType (typeof(NSObject))]
+	interface UAMessageCenterNativeBridgeDelegate
+	{
+		[Abstract]
+		[Export ("close")]
+		void Close ();
+	}
+
+	// @interface UAMessageCenterNativeBridge : NSObject
+	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC27UAMessageCenterNativeBridge")]
+	interface UAMessageCenterNativeBridge
+	{
+		// navigationDelegate is bound as NSObject because Swift's `any WKNavigationDelegate`
+		// produces WKNavigationDelegateWrapper in .NET (not an NSObject), so we use
+		// WKWebView.WeakNavigationDelegate instead of NavigationDelegate.
+		[Export ("navigationDelegate", ArgumentSemantic.Strong)]
+		NSObject NavigationDelegate { get; }
+
+		[NullAllowed, Export ("nativeBridgeDelegate", ArgumentSemantic.Weak)]
+		UAMessageCenterNativeBridgeDelegate NativeBridgeDelegate { get; set; }
+
+		[NullAllowed, Export ("forwardNavigationDelegate", ArgumentSemantic.Strong)]
+		WebKit.IWKNavigationDelegate ForwardNavigationDelegate { get; set; }
+
+		[Export ("setMessage:user:")]
+		void SetMessage (UAMessageCenterMessage message, UAMessageCenterUser user);
+	}
+
 	// @interface UAMessageCenterViewControllerFactory : NSObject
 	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC36UAMessageCenterViewControllerFactory")]
 	interface UAMessageCenterViewControllerFactory

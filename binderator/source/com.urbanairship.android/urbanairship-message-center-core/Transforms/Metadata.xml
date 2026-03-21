@@ -11,6 +11,21 @@
     <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
     <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
 
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.AssociatedData.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.AssociatedData.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.AssociatedData.ViewState.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.AssociatedData.ViewState.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.ContentType.Html.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.ContentType.Html.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.ContentType.Native.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.ContentType.Native.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.ContentType.Plain.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.messagecenter']/class[@name='Message.ContentType.Plain.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
     <attr path="/api/package[@name='com.urbanairship.messagecenter.ui.view']/class[@name='MessageListState.Content.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
     <attr path="/api/package[@name='com.urbanairship.messagecenter.ui.view']/class[@name='MessageListState.Content.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
 

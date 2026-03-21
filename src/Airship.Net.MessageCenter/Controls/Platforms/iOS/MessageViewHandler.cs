@@ -14,6 +14,7 @@ namespace AirshipDotNet.MessageCenter.Controls
         private UIView _containerView = null!;
         private WKWebView _webView = null!;
         private NSObject? _webViewObserver;
+        private UAMessageCenterNativeBridge _nativeBridge = null!;
 
         public MessageViewHandler() : base(PropertyMapper, CommandMapper)
         {
@@ -27,16 +28,19 @@ namespace AirshipDotNet.MessageCenter.Controls
         {
             _containerView = new UIView();
             _containerView.BackgroundColor = UIColor.SystemBackground;
-            
+
             // Create web view with configuration
             var config = new WKWebViewConfiguration();
             config.WebsiteDataStore = WKWebsiteDataStore.DefaultDataStore;
             config.Preferences.JavaScriptEnabled = true;
-            
+
             _webView = new WKWebView(_containerView.Bounds, config);
             _webView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
-            _webView.NavigationDelegate = new MessageWebViewDelegate(this);
-            
+
+            _nativeBridge = new UAMessageCenterNativeBridge();
+            _nativeBridge.ForwardNavigationDelegate = new MessageWebViewDelegate(this);
+            _webView.WeakNavigationDelegate = _nativeBridge.NavigationDelegate;
+
             _containerView.AddSubview(_webView);
             
             return _containerView;
@@ -59,7 +63,10 @@ namespace AirshipDotNet.MessageCenter.Controls
                 _webViewObserver.Dispose();
                 _webViewObserver = null;
             }
-            
+
+            _nativeBridge?.Dispose();
+            _nativeBridge = null!;
+
             _webView?.RemoveFromSuperview();
             _webView?.Dispose();
             _webView = null;
@@ -101,22 +108,21 @@ namespace AirshipDotNet.MessageCenter.Controls
                             var bodyUrl = message.BodyURL;
                             if (bodyUrl != null)
                             {
-                                // Get authentication credentials
-                                AWAirshipWrapper.GetMessageCenterUserAuth((authString) =>
+                                // Get user for native bridge and auth
+                                AWAirshipWrapper.Shared.MessageCenter.Inbox.GetUserWithCompletionHandler((user) =>
                                 {
                                     NSRunLoop.Main.InvokeOnMainThread(() =>
                                     {
-                                        if (authString != null)
+                                        if (user != null)
                                         {
-                                            // Create request with authentication header
+                                            _nativeBridge.SetMessage(message, user);
                                             var mutableRequest = new NSMutableUrlRequest(bodyUrl);
-                                            // The authString from basicAuthString already includes "Basic " prefix
-                                            mutableRequest["Authorization"] = authString;
+                                            mutableRequest["Authorization"] = user.BasicAuthString;
                                             _webView.LoadRequest(mutableRequest);
                                         }
                                         else
                                         {
-                                            // Fallback to loading without auth if auth retrieval fails
+                                            // Fallback to loading without auth if user retrieval fails
                                             var request = new NSUrlRequest(bodyUrl);
                                             _webView.LoadRequest(request);
                                         }
@@ -162,6 +168,21 @@ namespace AirshipDotNet.MessageCenter.Controls
             public void DidFailProvisionalNavigation(WKWebView webView, WKNavigation navigation, NSError error)
             {
                 _handler.VirtualView?.SendLoadFailed(error.LocalizedDescription);
+            }
+
+            [Export("webView:decidePolicyForNavigationAction:decisionHandler:")]
+            public void DecidePolicy(WKWebView webView, WKNavigationAction navigationAction, Action<WKNavigationActionPolicy> decisionHandler)
+            {
+                var url = navigationAction.Request.Url;
+                if (url != null && url.Scheme != "http" && url.Scheme != "https")
+                {
+                    decisionHandler(WKNavigationActionPolicy.Cancel);
+                    UAirship.ProcessDeepLink(url, (_) => { });
+                }
+                else
+                {
+                    decisionHandler(WKNavigationActionPolicy.Allow);
+                }
             }
         }
     }
