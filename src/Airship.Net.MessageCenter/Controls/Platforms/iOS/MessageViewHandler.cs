@@ -15,6 +15,7 @@ namespace AirshipDotNet.MessageCenter.Controls
         private WKWebView _webView = null!;
         private NSObject? _webViewObserver;
         private UAMessageCenterNativeBridge _nativeBridge = null!;
+        private MessageWebViewDelegate _webViewDelegate = null!;
 
         public MessageViewHandler() : base(PropertyMapper, CommandMapper)
         {
@@ -38,7 +39,8 @@ namespace AirshipDotNet.MessageCenter.Controls
             _webView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
 
             _nativeBridge = new UAMessageCenterNativeBridge();
-            _nativeBridge.ForwardNavigationDelegate = new MessageWebViewDelegate(this);
+            _webViewDelegate = new MessageWebViewDelegate(this);
+            _nativeBridge.ForwardNavigationDelegate = _webViewDelegate;
             _webView.WeakNavigationDelegate = _nativeBridge.NavigationDelegate;
 
             _containerView.AddSubview(_webView);
@@ -66,6 +68,7 @@ namespace AirshipDotNet.MessageCenter.Controls
 
             _nativeBridge?.Dispose();
             _nativeBridge = null!;
+            _webViewDelegate = null!;
 
             _webView?.RemoveFromSuperview();
             _webView?.Dispose();
@@ -174,15 +177,19 @@ namespace AirshipDotNet.MessageCenter.Controls
             public void DecidePolicy(WKWebView webView, WKNavigationAction navigationAction, Action<WKNavigationActionPolicy> decisionHandler)
             {
                 var url = navigationAction.Request.Url;
-                if (url != null && url.Scheme != "http" && url.Scheme != "https")
-                {
-                    decisionHandler(WKNavigationActionPolicy.Cancel);
-                    UAirship.ProcessDeepLink(url, (_) => { });
-                }
-                else
+
+                // Allow programmatic loads (the initial message body load).
+                // Cancel user-tapped link activations and route them through
+                // ProcessDeepLink so they open externally rather than navigating
+                // the WKWebView away from the message content.
+                if (url == null || navigationAction.NavigationType != WKNavigationType.LinkActivated)
                 {
                     decisionHandler(WKNavigationActionPolicy.Allow);
+                    return;
                 }
+
+                decisionHandler(WKNavigationActionPolicy.Cancel);
+                UAirship.ProcessDeepLink(url, (_) => { });
             }
         }
     }

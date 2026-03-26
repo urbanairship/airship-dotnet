@@ -43,6 +43,14 @@ public partial class App : Application
                         ((AppShell)App.Current.MainPage).SwitchtoTab(Tabs.settingsTab);
                         return;
 
+                    case "product":
+                        MainThread.BeginInvokeOnMainThread(async () =>
+                        {
+                            var currentPage = Shell.Current.CurrentPage;
+                            await currentPage.Navigation.PushAsync(new ProductPage());
+                        });
+                        return;
+
                     default:
                         break;
                 }
