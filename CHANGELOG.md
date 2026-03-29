@@ -1,5 +1,17 @@
 # Airship DotNet Changelog
 
+## Version 21.3.0 - March 20, 2026
+Minor release that updates the iOS SDK to 20.6.0 and Android SDK to 20.4.0, adding Native Message Center support, Scene improvements, and fixing deep links in Message Center messages on iOS.
+
+### Changes
+- Updated iOS SDK to 20.6.0
+- Updated Android SDK to 20.4.0
+- Fixed deep links inside Message Center messages not working on iOS
+- Adjusted Markdown rendering in Scenes to be less aggressive when interpreting styling delimiters inside words
+- Improved Scene border rendering when rounded corners are present
+- Improved accessibility for single choice and multiple choice questions in Scenes (iOS)
+- Fixed Message Center unread indicator to only show for unread messages (iOS)
+
 ## Version 21.2.0 - January 30, 2026
 Minor release that adds programmatic deep link handling for iOS.
 
