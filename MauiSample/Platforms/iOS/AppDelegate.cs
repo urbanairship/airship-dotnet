@@ -43,6 +43,11 @@ public class AppDelegate : MauiUIApplicationDelegate
             throw new InvalidOperationException($"Failed to initialize Airship: {error?.LocalizedDescription ?? "Unknown error"}");
         }
 
+        // Tag this device for embedded view testing
+        var tagEditor = UAirship.Channel?.EditTags;
+        tagEditor?.AddTag("ryan-embedded");
+        tagEditor?.Apply();
+
         // Log the actual runtime state after TakeOff
         Console.WriteLine("✅✅✅ AIRSHIP INITIALIZED ✅✅✅");
         Console.WriteLine($"✈️ Log Level: {config.DevelopmentLogLevel} (development), {config.ProductionLogLevel} (production)");

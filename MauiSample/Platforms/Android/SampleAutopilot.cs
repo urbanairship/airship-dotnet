@@ -21,26 +21,6 @@ namespace MauiSample
             airship.Channel.AddChannelListener(airshipListener);
         }
 
-        public override AirshipConfigOptions CreateAirshipConfigOptions(Context context)
-        {
-            /* Optionally set your config at runtime.
-            AirshipConfigOptions options = new AirshipConfigOptions.Builder()
-                 .SetInProduction(!BuildConfig.DEBUG)
-                 .SetDevelopmentAppKey("Your Development App Key")
-                 .SetDevelopmentAppSecret("Your Development App Secret")
-                 .SetProductionAppKey("Your Production App Key")
-                 .SetProductionAppSecret("Your Production App Secret")
-                 .SetDevelopmentLogLevel(2)
-                 .SetNotificationAccentColor(ContextCompat.getColor(this, MauiSample.Resource.Color.colorAccent))
-                 .SetNotificationIcon(MauiSample.Resource.Drawable.ic_notification)
-                 .Build();
-
-            return options;
-            */
-
-            // Load config from airshipconfig.properties file.
-            return base.CreateAirshipConfigOptions(context);
-        }
     }
 }
 

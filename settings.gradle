@@ -3,5 +3,6 @@ include ':docs'
 include ':src:AirshipBindings.iOS.ObjectiveC'
 include ':src:Airship.Net'
 include ':src:Airship.Net.MessageCenter'
+include ':src:Airship.Net.Embedded'
 
 include ':MauiSample'
