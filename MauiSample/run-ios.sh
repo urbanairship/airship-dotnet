@@ -89,9 +89,8 @@ build_wrapper() {
     if [[ "$CLEAN_BUILD" == "true" ]] || [[ ! -f "lib/AirshipWrapper.xcframework/Info.plist" ]]; then
         WRAPPER_NEEDS_BUILD=true
     else
-        # Check if source files are newer than the built framework
-        if [[ "AirshipWrapper/AWAirshipWrapper.m" -nt "lib/AirshipWrapper.xcframework/Info.plist" ]] || \
-           [[ "AirshipWrapper/AWAirshipWrapper.h" -nt "lib/AirshipWrapper.xcframework/Info.plist" ]]; then
+        # Check if any source file is newer than the built framework
+        if [[ -n "$(find AirshipWrapper -name "*.m" -o -name "*.h" -o -name "*.swift" | xargs -I{} find {} -newer lib/AirshipWrapper.xcframework/Info.plist 2>/dev/null)" ]]; then
             echo "📝 Source files changed, rebuilding wrapper..."
             WRAPPER_NEEDS_BUILD=true
         fi
