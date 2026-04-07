@@ -115,6 +115,10 @@ jobs:
           ls -la Carthage/Build/
 
       - name: Build AirshipWrapper
+        env:
+          # AirshipWrapper now contains Swift — must match the Swift version used to build
+          # the Airship xcframeworks (Swift 6.2.3). Xcode 16.0 (Swift 6.0) is too old.
+          DEVELOPER_DIR: /Applications/Xcode_26.2.app/Contents/Developer
         run: |
           # Debug: Show current directory and AirshipWrapper contents
           echo "Current directory: $(pwd)"
