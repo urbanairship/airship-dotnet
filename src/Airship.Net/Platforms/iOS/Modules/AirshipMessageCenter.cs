@@ -165,9 +165,7 @@ namespace AirshipDotNet.Platforms.iOS.Modules
 
             NSRunLoop.Main.InvokeOnMainThread(() =>
             {
-                var vc = UAMessageCenterViewControllerFactory.MakeWithTheme(null, null);
-                var top = GetTopViewController();
-                top?.PresentViewController(vc, animated: true, completionHandler: null);
+                AWAirshipWrapper.Shared.MessageCenter.Display();
                 tcs.SetResult(true);
             });
 
@@ -189,20 +187,6 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             });
 
             return tcs.Task;
-        }
-
-        private static UIKit.UIViewController? GetTopViewController()
-        {
-            var window = UIKit.UIApplication.SharedApplication.ConnectedScenes
-                .OfType<UIKit.UIWindowScene>()
-                .SelectMany(s => s.Windows)
-                .LastOrDefault(w => w.IsKeyWindow);
-
-            var root = window?.RootViewController;
-            while (root?.PresentedViewController != null)
-                root = root.PresentedViewController;
-
-            return root;
         }
 
         private static DateTime? FromNSDate(NSDate? date)

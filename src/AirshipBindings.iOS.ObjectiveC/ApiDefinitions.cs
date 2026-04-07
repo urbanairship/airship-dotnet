@@ -1404,16 +1404,6 @@ namespace Airship
 		UIView EmbedWithTheme ([NullAllowed] UAMessageCenterTheme theme, [NullAllowed] UAMessageCenterPredicate predicate, UIViewController parentViewController);
 	}
 
-	// @interface UAMessageCenterMessageViewController : UIViewController
-	[BaseType (typeof(UIKit.UIViewController), Name = "UAMessageCenterMessageViewController")]
-	[DisableDefaultCtor]
-	interface UAMessageCenterMessageViewController
-	{
-		// -(instancetype _Nonnull)initWithMessageID:(NSString * _Nonnull)messageID;
-		[Export ("initWithMessageID:")]
-		NativeHandle Constructor (string messageID);
-	}
-
 	// @interface UANotificationCategories : NSObject
 	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC24UANotificationCategories")]
 	interface UANotificationCategories

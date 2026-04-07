@@ -1,142 +1,188 @@
 using System;
 using Microsoft.Maui.Handlers;
+using Microsoft.Maui.Platform;
 using UIKit;
 using Foundation;
 using Airship;
+using CoreGraphics;
+using WebKit;
 
 namespace AirshipDotNet.MessageCenter.Controls
 {
     public partial class MessageViewHandler : ViewHandler<MessageView, UIView>
     {
-        private UAMessageCenterMessageViewController? _messageVC;
-        private MessageContainerView? _containerView;
+        private UIView _containerView = null!;
+        private WKWebView _webView = null!;
+        private NSObject? _webViewObserver;
+        private UAMessageCenterNativeBridge _nativeBridge = null!;
 
         public MessageViewHandler() : base(PropertyMapper, CommandMapper)
         {
         }
 
-        public MessageViewHandler(IPropertyMapper? mapper, CommandMapper? commandMapper = null)
-            : base(mapper ?? PropertyMapper, commandMapper ?? CommandMapper)
+        public MessageViewHandler(IPropertyMapper? mapper, CommandMapper? commandMapper = null) : base(mapper ?? PropertyMapper, commandMapper ?? CommandMapper)
         {
         }
 
         protected override UIView CreatePlatformView()
         {
-            _containerView = new MessageContainerView();
+            _containerView = new UIView();
             _containerView.BackgroundColor = UIColor.SystemBackground;
-            _containerView.OnMovedToWindow = InstallMessageVC;
+
+            // Create web view with configuration
+            var config = new WKWebViewConfiguration();
+            config.WebsiteDataStore = WKWebsiteDataStore.DefaultDataStore;
+            config.Preferences.JavaScriptEnabled = true;
+
+            _webView = new WKWebView(_containerView.Bounds, config);
+            _webView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+
+            _nativeBridge = new UAMessageCenterNativeBridge();
+            _nativeBridge.ForwardNavigationDelegate = new MessageWebViewDelegate(this);
+            _webView.WeakNavigationDelegate = _nativeBridge.NavigationDelegate;
+
+            _containerView.AddSubview(_webView);
+            
             return _containerView;
         }
 
         protected override void ConnectHandler(UIView platformView)
         {
             base.ConnectHandler(platformView);
-
+            
             if (VirtualView != null && !string.IsNullOrEmpty(VirtualView.MessageId))
+            {
                 LoadMessage(VirtualView.MessageId);
+            }
         }
 
         protected override void DisconnectHandler(UIView platformView)
         {
-            UnloadMessageVC();
-            if (_containerView != null)
+            if (_webViewObserver != null)
             {
-                _containerView.OnMovedToWindow = null;
-                _containerView = null;
+                _webViewObserver.Dispose();
+                _webViewObserver = null;
             }
+
+            _nativeBridge?.Dispose();
+            _nativeBridge = null!;
+
+            _webView?.RemoveFromSuperview();
+            _webView?.Dispose();
+            _webView = null;
+            
             base.DisconnectHandler(platformView);
         }
 
         static partial void MapMessageId(IViewHandler handler, MessageView view)
         {
-            if (!string.IsNullOrEmpty(view.MessageId) && handler is MessageViewHandler h)
-                h.LoadMessage(view.MessageId);
+            if (!string.IsNullOrEmpty(view.MessageId) && handler is MessageViewHandler messageViewHandler)
+            {
+                messageViewHandler.LoadMessage(view.MessageId);
+            }
         }
 
         private void LoadMessage(string messageId)
         {
-            MainThread.BeginInvokeOnMainThread(() =>
+            NSRunLoop.Main.InvokeOnMainThread(() =>
             {
-                // Swap out any existing message VC before installing a new one
-                if (_messageVC != null)
-                    UnloadMessageVC();
+                try
+                {
+                    VirtualView?.SendLoadStarted();
 
-                VirtualView?.SendLoadStarted();
+                    // Get message using wrapper
+                    AWAirshipWrapper.GetMessageForID(messageId, (message) =>
+                    {
+                        if (message == null)
+                        {
+                            VirtualView?.SendLoadFailed("Message not found");
+                            return;
+                        }
 
-                _messageVC = new UAMessageCenterMessageViewController(messageId);
+                        NSRunLoop.Main.InvokeOnMainThread(() =>
+                        {
+                            // Mark as read
+                            AWAirshipWrapper.MarkReadWithMessageIDs(new[] { messageId }, () => { });
 
-                // Install immediately if the container is already in the window hierarchy;
-                // otherwise MovedToWindow will trigger installation.
-                if (_containerView?.Window != null)
-                    InstallMessageVC();
+                            // Get message URL
+                            var bodyUrl = message.BodyURL;
+                            if (bodyUrl != null)
+                            {
+                                // Get user for native bridge and auth
+                                AWAirshipWrapper.Shared.MessageCenter.Inbox.GetUserWithCompletionHandler((user) =>
+                                {
+                                    NSRunLoop.Main.InvokeOnMainThread(() =>
+                                    {
+                                        if (user != null)
+                                        {
+                                            _nativeBridge.SetMessage(message, user);
+                                            var mutableRequest = new NSMutableUrlRequest(bodyUrl);
+                                            mutableRequest["Authorization"] = user.BasicAuthString;
+                                            _webView.LoadRequest(mutableRequest);
+                                        }
+                                        else
+                                        {
+                                            // Fallback to loading without auth if user retrieval fails
+                                            var request = new NSUrlRequest(bodyUrl);
+                                            _webView.LoadRequest(request);
+                                        }
+                                    });
+                                });
+                            }
+                            else
+                            {
+                                VirtualView?.SendLoadFailed("No message body URL available");
+                            }
+                        });
+                    });
+                }
+                catch (Exception ex)
+                {
+                    VirtualView?.SendLoadFailed(ex.Message);
+                }
             });
         }
 
-        private void InstallMessageVC()
+        private class MessageWebViewDelegate : NSObject, IWKNavigationDelegate
         {
-            if (_messageVC == null || _containerView == null)
-                return;
+            private readonly MessageViewHandler _handler;
 
-            // Guard against double-installation
-            if (_messageVC.ParentViewController != null)
-                return;
-
-            var parentVC = FindViewController(_containerView);
-            if (parentVC == null)
-                return;
-
-            parentVC.AddChildViewController(_messageVC);
-
-            var vcView = _messageVC.View!;
-            vcView.TranslatesAutoresizingMaskIntoConstraints = false;
-            _containerView.AddSubview(vcView);
-
-            NSLayoutConstraint.ActivateConstraints(new[]
+            public MessageWebViewDelegate(MessageViewHandler handler)
             {
-                vcView.TopAnchor.ConstraintEqualTo(_containerView.TopAnchor),
-                vcView.LeadingAnchor.ConstraintEqualTo(_containerView.LeadingAnchor),
-                vcView.TrailingAnchor.ConstraintEqualTo(_containerView.TrailingAnchor),
-                vcView.BottomAnchor.ConstraintEqualTo(_containerView.BottomAnchor),
-            });
-
-            _messageVC.DidMoveToParentViewController(parentVC);
-            VirtualView?.SendLoadFinished();
-        }
-
-        private void UnloadMessageVC()
-        {
-            if (_messageVC == null)
-                return;
-
-            _messageVC.WillMoveToParentViewController(null);
-            _messageVC.View?.RemoveFromSuperview();
-            _messageVC.RemoveFromParentViewController();
-            _messageVC.Dispose();
-            _messageVC = null;
-        }
-
-        private static UIViewController? FindViewController(UIView view)
-        {
-            var responder = view.NextResponder;
-            while (responder != null)
-            {
-                if (responder is UIViewController vc)
-                    return vc;
-                responder = responder.NextResponder;
+                _handler = handler;
             }
-            return null;
-        }
 
-        // UIView subclass that notifies when it enters the window hierarchy
-        private sealed class MessageContainerView : UIView
-        {
-            internal Action? OnMovedToWindow;
-
-            public override void MovedToWindow()
+            [Export("webView:didFinishNavigation:")]
+            public void DidFinishNavigation(WKWebView webView, WKNavigation navigation)
             {
-                base.MovedToWindow();
-                if (Window != null)
-                    OnMovedToWindow?.Invoke();
+                _handler.VirtualView?.SendLoadFinished();
+            }
+
+            [Export("webView:didFailNavigation:withError:")]
+            public void DidFailNavigation(WKWebView webView, WKNavigation navigation, NSError error)
+            {
+                _handler.VirtualView?.SendLoadFailed(error.LocalizedDescription);
+            }
+
+            [Export("webView:didFailProvisionalNavigation:withError:")]
+            public void DidFailProvisionalNavigation(WKWebView webView, WKNavigation navigation, NSError error)
+            {
+                _handler.VirtualView?.SendLoadFailed(error.LocalizedDescription);
+            }
+
+            [Export("webView:decidePolicyForNavigationAction:decisionHandler:")]
+            public void DecidePolicy(WKWebView webView, WKNavigationAction navigationAction, Action<WKNavigationActionPolicy> decisionHandler)
+            {
+                var url = navigationAction.Request.Url;
+                if (url != null && url.Scheme != "http" && url.Scheme != "https")
+                {
+                    decisionHandler(WKNavigationActionPolicy.Cancel);
+                    UAirship.ProcessDeepLink(url, (_) => { });
+                }
+                else
+                {
+                    decisionHandler(WKNavigationActionPolicy.Allow);
+                }
             }
         }
     }
