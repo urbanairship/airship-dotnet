@@ -13,6 +13,9 @@ public final class UAMessageCenterMessageViewController: UIViewController {
     private let messageID: String
     private var hostingController: UIViewController?
 
+    /// Called after the message view has been set up and had one run-loop pass to render.
+    @objc public var onViewReady: (() -> Void)?
+
     @objc
     public init(messageID: String) {
         self.messageID = messageID
@@ -45,5 +48,7 @@ public final class UAMessageCenterMessageViewController: UIViewController {
 
         host.didMove(toParent: self)
         hostingController = host
+
+        Task { @MainActor in self.onViewReady?() }
     }
 }

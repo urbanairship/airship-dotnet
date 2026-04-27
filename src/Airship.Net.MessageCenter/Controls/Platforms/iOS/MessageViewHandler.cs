@@ -83,7 +83,12 @@ namespace AirshipDotNet.MessageCenter.Controls
 
             var parentVC = FindViewController(_containerView);
             if (parentVC == null)
+            {
+                VirtualView?.SendLoadFailed("Unable to present message: no parent view controller found");
                 return;
+            }
+
+            _messageVC.OnViewReady = () => VirtualView?.SendLoadFinished();
 
             parentVC.AddChildViewController(_messageVC);
 
@@ -100,7 +105,6 @@ namespace AirshipDotNet.MessageCenter.Controls
             });
 
             _messageVC.DidMoveToParentViewController(parentVC);
-            VirtualView?.SendLoadFinished();
         }
 
         private void UnloadMessageVC()

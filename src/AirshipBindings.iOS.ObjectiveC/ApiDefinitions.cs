@@ -1412,6 +1412,9 @@ namespace Airship
 		// -(instancetype _Nonnull)initWithMessageID:(NSString * _Nonnull)messageID;
 		[Export ("initWithMessageID:")]
 		NativeHandle Constructor (string messageID);
+
+		[NullAllowed, Export ("onViewReady", ArgumentSemantic.Copy)]
+		Action? OnViewReady { get; set; }
 	}
 
 	// @interface UANotificationCategories : NSObject
