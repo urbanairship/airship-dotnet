@@ -90,11 +90,7 @@ namespace AirshipDotNet
                 string channelID = notification.UserInfo?[UAirshipNotificationChannelCreated.ChannelIDKey]?.ToString() ?? "";
                 var eventArgs = new ChannelEventArgs(channelID);
 
-                // Emit to event queue
                 AirshipEventEmitter.Shared.Emit(AirshipEventType.ChannelCreated, eventArgs);
-
-                // Also fire traditional event for backwards compatibility
-                _onChannelCreation?.Invoke(this, eventArgs);
             });
 
             // Message Center updated notification
@@ -121,7 +117,6 @@ namespace AirshipDotNet
         /// </summary>
         internal event EventHandler<EventArgs>? OnMessagesUpdated;
 
-        private EventHandler<ChannelEventArgs>? _onChannelCreation;
         /// <summary>
         /// Add/remove the channel creation listener.
         /// </summary>
@@ -129,7 +124,6 @@ namespace AirshipDotNet
         {
             add
             {
-                _onChannelCreation += value;
                 if (value != null)
                 {
                     // Create and store wrapper handler to prevent memory leak
@@ -142,7 +136,6 @@ namespace AirshipDotNet
             }
             remove
             {
-                _onChannelCreation -= value;
                 if (value != null && _channelHandlerMap.TryGetValue(value, out var wrapper))
                 {
                     AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.ChannelCreated, wrapper);
@@ -151,7 +144,6 @@ namespace AirshipDotNet
             }
         }
 
-        private EventHandler<PushNotificationStatusEventArgs>? _onPushNotificationStatusUpdate;
         /// <summary>
         /// Add/remove the push notification status listener.
         /// </summary>
@@ -159,7 +151,6 @@ namespace AirshipDotNet
         {
             add
             {
-                _onPushNotificationStatusUpdate += value;
                 if (value != null)
                 {
                     // Create and store wrapper handler to prevent memory leak
@@ -173,7 +164,6 @@ namespace AirshipDotNet
             }
             remove
             {
-                _onPushNotificationStatusUpdate -= value;
                 if (value != null && _pushStatusHandlerMap.TryGetValue(value, out var wrapper))
                 {
                     AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.NotificationStatusChanged, wrapper);
@@ -182,7 +172,6 @@ namespace AirshipDotNet
             }
         }
 
-        private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
         private AirshipDeepLinkDelegate? deepLinkDelegate;
 
         /// <summary>
@@ -192,7 +181,6 @@ namespace AirshipDotNet
         {
             add
             {
-                onDeepLinkReceived += value;
                 if (value != null)
                 {
                     // Create and store wrapper handler to prevent memory leak
@@ -209,25 +197,20 @@ namespace AirshipDotNet
                     {
                         var eventArgs = new DeepLinkEventArgs(deepLink);
 
-                        // Emit to event queue
                         AirshipEventEmitter.Shared.Emit(AirshipEventType.DeepLinkReceived, eventArgs);
-
-                        // Also fire traditional event for backwards compatibility
-                        onDeepLinkReceived?.Invoke(this, eventArgs);
                     });
                     UAirship.DeepLinkDelegate = deepLinkDelegate;
                 }
             }
             remove
             {
-                onDeepLinkReceived -= value;
                 if (value != null && _deepLinkHandlerMap.TryGetValue(value, out var wrapper))
                 {
                     AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.DeepLinkReceived, wrapper);
                     _deepLinkHandlerMap.Remove(value);
                 }
 
-                if (onDeepLinkReceived == null)
+                if (_deepLinkHandlerMap.Count == 0)
                 {
                     UAirship.DeepLinkDelegate = null;
                     deepLinkDelegate = null;

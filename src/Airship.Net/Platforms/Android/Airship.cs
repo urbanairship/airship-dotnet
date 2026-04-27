@@ -90,7 +90,6 @@ namespace AirshipDotNet
             }
         }
 
-        private EventHandler<ChannelEventArgs>? _onChannelCreation;
         /// <summary>
         /// Add/remove the channel creation listener.
         /// </summary>
@@ -98,7 +97,6 @@ namespace AirshipDotNet
         {
             add
             {
-                _onChannelCreation += value;
                 if (value != null)
                 {
                     // Create and store wrapper handler to prevent memory leak
@@ -111,7 +109,6 @@ namespace AirshipDotNet
             }
             remove
             {
-                _onChannelCreation -= value;
                 if (value != null && _channelHandlerMap.TryGetValue(value, out var wrapper))
                 {
                     AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.ChannelCreated, wrapper);
@@ -120,7 +117,6 @@ namespace AirshipDotNet
             }
         }
 
-        private EventHandler<PushNotificationStatusEventArgs>? _onPushNotificationStatusUpdate;
         /// <summary>
         /// Add/remove the push notification status listener.
         /// </summary>
@@ -128,7 +124,6 @@ namespace AirshipDotNet
         {
             add
             {
-                _onPushNotificationStatusUpdate += value;
                 if (value != null)
                 {
                     // Create and store wrapper handler to prevent memory leak
@@ -142,7 +137,6 @@ namespace AirshipDotNet
             }
             remove
             {
-                _onPushNotificationStatusUpdate -= value;
                 if (value != null && _pushStatusHandlerMap.TryGetValue(value, out var wrapper))
                 {
                     AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.NotificationStatusChanged, wrapper);
@@ -156,8 +150,6 @@ namespace AirshipDotNet
         /// </summary>
         internal event EventHandler<EventArgs>? OnMessagesUpdated;
 
-        private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
-
         /// <summary>
         /// Add/remove the deep link listener.
         /// </summary>
@@ -165,7 +157,6 @@ namespace AirshipDotNet
         {
             add
             {
-                onDeepLinkReceived += value;
                 if (value != null)
                 {
                     // Create and store wrapper handler to prevent memory leak
@@ -180,14 +171,13 @@ namespace AirshipDotNet
 
             remove
             {
-                onDeepLinkReceived -= value;
                 if (value != null && _deepLinkHandlerMap.TryGetValue(value, out var wrapper))
                 {
                     AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.DeepLinkReceived, wrapper);
                     _deepLinkHandlerMap.Remove(value);
                 }
 
-                if (onDeepLinkReceived == null)
+                if (_deepLinkHandlerMap.Count == 0)
                 {
                     UAirship.Shared().DeepLinkListener = null;
                 }
@@ -279,31 +269,13 @@ namespace AirshipDotNet
         // Interface implementations
         public bool OnDeepLink(string deepLink)
         {
-            var eventArgs = new DeepLinkEventArgs(deepLink);
-
-            // Emit to event queue
-            AirshipEventEmitter.Shared.Emit(AirshipEventType.DeepLinkReceived, eventArgs);
-
-            // Also fire traditional event for backwards compatibility
-            if (onDeepLinkReceived != null)
-            {
-                onDeepLinkReceived(this, eventArgs);
-                return true;
-            }
-
-            return false;
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.DeepLinkReceived, new DeepLinkEventArgs(deepLink));
+            return _deepLinkHandlerMap.Count > 0;
         }
-
 
         public void OnChannelCreated(string channelId)
         {
-            var eventArgs = new ChannelEventArgs(channelId);
-
-            // Emit to event queue
-            AirshipEventEmitter.Shared.Emit(AirshipEventType.ChannelCreated, eventArgs);
-
-            // Also fire traditional event for backwards compatibility
-            _onChannelCreation?.Invoke(this, eventArgs);
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.ChannelCreated, new ChannelEventArgs(channelId));
         }
 
         public void OnChange(UrbanAirship.Push.PushNotificationStatus status)
@@ -318,13 +290,7 @@ namespace AirshipDotNet
                 IsOptIn = status.IsOptIn
             };
 
-            var eventArgs = new PushNotificationStatusEventArgs(pushStatus);
-
-            // Emit to event queue
-            AirshipEventEmitter.Shared.Emit(AirshipEventType.NotificationStatusChanged, eventArgs);
-
-            // Also fire traditional event for backwards compatibility
-            _onPushNotificationStatusUpdate?.Invoke(this, eventArgs);
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.NotificationStatusChanged, new PushNotificationStatusEventArgs(pushStatus));
         }
 
         public void OnInboxUpdated() => OnMessagesUpdated?.Invoke(this, new EventArgs());
