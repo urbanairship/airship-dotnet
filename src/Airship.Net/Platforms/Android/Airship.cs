@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+using System.Collections.Generic;
+using System.Linq;
 using Com.Urbanairship.Contacts;
 using Java.Util;
 using Java.Util.Concurrent;
@@ -8,6 +10,7 @@ using UrbanAirship.Automation;
 using UrbanAirship.Actions;
 using UrbanAirship.Channel;
 using UrbanAirship.Push;
+using AirshipDotNet.Events;
 using AirshipDotNet.MessageCenter;
 using AirshipDotNet.Platforms.Android;
 using AirshipDotNet.Platforms.Android.Modules;
@@ -26,6 +29,14 @@ namespace AirshipDotNet
             return instance;
         });
 
+        // Event streams similar to Flutter implementation
+        private readonly Dictionary<AirshipEventType, AirshipEventStream> _eventStreams;
+
+        // Handler mappings to prevent memory leaks
+        private readonly Dictionary<EventHandler<ChannelEventArgs>, EventHandler<EventArgs>> _channelHandlerMap = new();
+        private readonly Dictionary<EventHandler<PushNotificationStatusEventArgs>, EventHandler<EventArgs>> _pushStatusHandlerMap = new();
+        private readonly Dictionary<EventHandler<DeepLinkEventArgs>, EventHandler<EventArgs>> _deepLinkHandlerMap = new();
+
         // Module instances
         private readonly AirshipModule _module;
         private readonly IAirshipPush _push;
@@ -41,6 +52,9 @@ namespace AirshipDotNet
 
         public Airship()
         {
+            // Initialize event streams
+            _eventStreams = AirshipEventStream.GenerateEventStreams();
+
             _module = new AirshipModule();
             _push = new AirshipPush(_module);
             _channel = new AirshipDotNet.Platforms.Android.Modules.AirshipChannel(_module);
@@ -63,24 +77,78 @@ namespace AirshipDotNet
 
             UrbanAirship.MessageCenter.MessageCenterClass.Shared().Inbox.AddListener(this);
 
+            // Subscribe to pending events when listeners are added
+            AirshipEventEmitter.Shared.PendingEventAvailable += OnPendingEventAvailable;
+        }
+
+        private void OnPendingEventAvailable(object? sender, AirshipEventType eventType)
+        {
+            // Process pending events through the stream
+            if (_eventStreams.TryGetValue(eventType, out var stream))
+            {
+                _ = stream.ProcessPendingEvents();
+            }
         }
 
         /// <summary>
         /// Add/remove the channel creation listener.
         /// </summary>
-        public event EventHandler<ChannelEventArgs>? OnChannelCreation;
+        public event EventHandler<ChannelEventArgs>? OnChannelCreation
+        {
+            add
+            {
+                if (value != null)
+                {
+                    // Create and store wrapper handler to prevent memory leak
+                    EventHandler<EventArgs> wrapper = (sender, args) =>
+                        value(this, args as ChannelEventArgs ?? new ChannelEventArgs(""));
+
+                    _channelHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.ChannelCreated, wrapper);
+                }
+            }
+            remove
+            {
+                if (value != null && _channelHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.ChannelCreated, wrapper);
+                    _channelHandlerMap.Remove(value);
+                }
+            }
+        }
 
         /// <summary>
         /// Add/remove the push notification status listener.
         /// </summary>
-        public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate;
+        public event EventHandler<PushNotificationStatusEventArgs>? OnPushNotificationStatusUpdate
+        {
+            add
+            {
+                if (value != null)
+                {
+                    // Create and store wrapper handler to prevent memory leak
+                    EventHandler<EventArgs> wrapper = (sender, args) =>
+                        value(this, args as PushNotificationStatusEventArgs ??
+                            new PushNotificationStatusEventArgs(new PushNotificationStatus()));
+
+                    _pushStatusHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.NotificationStatusChanged, wrapper);
+                }
+            }
+            remove
+            {
+                if (value != null && _pushStatusHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.NotificationStatusChanged, wrapper);
+                    _pushStatusHandlerMap.Remove(value);
+                }
+            }
+        }
 
         /// <summary>
         /// Add/remove the Message Center updated listener.
         /// </summary>
         internal event EventHandler<EventArgs>? OnMessagesUpdated;
-
-        private EventHandler<DeepLinkEventArgs>? onDeepLinkReceived;
 
         /// <summary>
         /// Add/remove the deep link listener.
@@ -89,15 +157,27 @@ namespace AirshipDotNet
         {
             add
             {
-                onDeepLinkReceived += value;
+                if (value != null)
+                {
+                    // Create and store wrapper handler to prevent memory leak
+                    EventHandler<EventArgs> wrapper = (sender, args) =>
+                        value(this, args as DeepLinkEventArgs ?? new DeepLinkEventArgs(""));
+
+                    _deepLinkHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.DeepLinkReceived, wrapper);
+                }
                 UAirship.Shared().DeepLinkListener = this;
             }
 
             remove
             {
-                onDeepLinkReceived -= value;
+                if (value != null && _deepLinkHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.DeepLinkReceived, wrapper);
+                    _deepLinkHandlerMap.Remove(value);
+                }
 
-                if (onDeepLinkReceived == null)
+                if (_deepLinkHandlerMap.Count == 0)
                 {
                     UAirship.Shared().DeepLinkListener = null;
                 }
@@ -189,17 +269,14 @@ namespace AirshipDotNet
         // Interface implementations
         public bool OnDeepLink(string deepLink)
         {
-            if (onDeepLinkReceived != null)
-            {
-                onDeepLinkReceived(this, new DeepLinkEventArgs(deepLink));
-                return true;
-            }
-
-            return false;
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.DeepLinkReceived, new DeepLinkEventArgs(deepLink));
+            return _deepLinkHandlerMap.Count > 0;
         }
 
-
-        public void OnChannelCreated(string channelId) => OnChannelCreation?.Invoke(this, new ChannelEventArgs(channelId));
+        public void OnChannelCreated(string channelId)
+        {
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.ChannelCreated, new ChannelEventArgs(channelId));
+        }
 
         public void OnChange(UrbanAirship.Push.PushNotificationStatus status)
         {
@@ -213,7 +290,7 @@ namespace AirshipDotNet
                 IsOptIn = status.IsOptIn
             };
 
-            OnPushNotificationStatusUpdate?.Invoke(this, new PushNotificationStatusEventArgs(pushStatus));
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.NotificationStatusChanged, new PushNotificationStatusEventArgs(pushStatus));
         }
 
         public void OnInboxUpdated() => OnMessagesUpdated?.Invoke(this, new EventArgs());
