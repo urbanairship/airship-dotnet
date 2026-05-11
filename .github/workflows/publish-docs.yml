@@ -1,0 +1,107 @@
+name: Publish Docs
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+    secrets:
+      GCP_SA_KEY:
+        required: true
+      CARTHAGE_GITHUB_TOKEN:
+        required: false
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to publish docs for (e.g. 12.0.0)'
+        required: true
+        type: string
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_16.0.app/Contents/Developer
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+jobs:
+  release-docs:
+    runs-on: macOS-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          dotnet-version: |
+            10.0.x
+
+      - name: Restore workloads
+        run: |
+          dotnet workload install android ios maui-android maui-ios maui-maccatalyst
+
+      - name: Download iOS SDK xcframeworks
+        env:
+          GH_TOKEN: ${{ secrets.CARTHAGE_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          IOS_VERSION=$(grep '^iosVersion' airship.properties | cut -d'=' -f2 | tr -d ' ')
+          gh release download "$IOS_VERSION" \
+            --repo urbanairship/ios-library \
+            --pattern "Airship.dotnet.xcframeworks.zip" \
+            --output Airship.dotnet.xcframeworks.zip
+          mkdir -p Carthage/Build
+          unzip -q Airship.dotnet.xcframeworks.zip
+          mv xcframeworks/*.xcframework Carthage/Build/
+          rm -rf xcframeworks Airship.dotnet.xcframeworks.zip
+
+      - name: Build AirshipWrapper
+        run: |
+          cd AirshipWrapper && ./build-wrapper.sh && cd ..
+          if [ ! -d "AirshipWrapper/lib/AirshipWrapper.xcframework" ]; then
+            echo "ERROR: AirshipWrapper.xcframework not found after build!"
+            exit 1
+          fi
+          mkdir -p src/AirshipBindings.iOS.ObjectiveC/lib
+          cp -R AirshipWrapper/lib/AirshipWrapper.xcframework src/AirshipBindings.iOS.ObjectiveC/lib/
+
+      - name: Install doc dependencies
+        run: |
+          brew install doxygen
+          brew install graphviz
+
+      - name: Build & Package docs
+        run: ./gradlew packageDocs
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/build/html
+
+  deploy-docs:
+    needs: release-docs
+    runs-on: ubuntu-latest
+    continue-on-error: true # Remove when migration to GH Pages is complete
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
