@@ -15,9 +15,7 @@ public partial class App : Application
         // Register deep link event handler
         AirshipDotNet.Airship.Instance.OnDeepLinkReceived += OnDeepLinkReceived;
 
-        AirshipDotNet.Airship.Instance.OnMessageCenterDisplay += OnMessageCenterDisplay;
-
-        AirshipDotNet.Airship.MessageCenter.OnMessagesUpdated += OnMessagesUpdated;
+        AirshipDotNet.Airship.Instance.OnMessageCenterUpdated += OnMessageCenterUpdated;
     }
 
     private void OnDeepLinkReceived(object sender, DeepLinkEventArgs e)
@@ -52,13 +50,7 @@ public partial class App : Application
         Console.WriteLine("App does not know how to handle deepLink" + uri);
     }
 
-    private void OnMessageCenterDisplay(object sender, MessageCenterEventArgs e)
-    {
-        string messageId = e.MessageId;
-        Console.WriteLine("Ready to display message center message" + e.MessageId);
-    }
-
-    private async void OnMessagesUpdated(object sender, EventArgs e)
+    private async void OnMessageCenterUpdated(object sender, EventArgs e)
     {
         // Fetch counts when inbox is updated (e.g., to update a badge)
         var unreadCount = await AirshipDotNet.Airship.MessageCenter.GetUnreadCount();
