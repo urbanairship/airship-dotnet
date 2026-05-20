@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Android.OS;
 using Com.Urbanairship.Contacts;
 using Java.Util;
 using Java.Util.Concurrent;
@@ -10,6 +11,7 @@ using UrbanAirship.Automation;
 using UrbanAirship.Actions;
 using UrbanAirship.Channel;
 using UrbanAirship.Push;
+using UrbanAirship.PreferenceCenter;
 using AirshipDotNet.Events;
 using AirshipDotNet.MessageCenter;
 using AirshipDotNet.Platforms.Android;
@@ -20,7 +22,14 @@ namespace AirshipDotNet
     /// <summary>
     /// Provides cross-platform access to a common subset of functionality between the iOS and Android SDKs
     /// </summary>
-    public class Airship : Java.Lang.Object, IDeepLinkListener, UrbanAirship.Channel.IAirshipChannelListener, IPushNotificationStatusListener, UrbanAirship.MessageCenter.IInboxListener
+    public class Airship : Java.Lang.Object,
+        IDeepLinkListener,
+        UrbanAirship.Channel.IAirshipChannelListener,
+        IPushNotificationStatusListener,
+        UrbanAirship.MessageCenter.IInboxListener,
+        IPushTokenListener,
+        IPushListener,
+        INotificationListener
     {
         private static readonly Lazy<Airship> sharedAirship = new(() =>
         {
@@ -36,6 +45,16 @@ namespace AirshipDotNet
         private readonly Dictionary<EventHandler<ChannelEventArgs>, EventHandler<EventArgs>> _channelHandlerMap = new();
         private readonly Dictionary<EventHandler<PushNotificationStatusEventArgs>, EventHandler<EventArgs>> _pushStatusHandlerMap = new();
         private readonly Dictionary<EventHandler<DeepLinkEventArgs>, EventHandler<EventArgs>> _deepLinkHandlerMap = new();
+        private readonly Dictionary<EventHandler<PushReceivedEventArgs>, EventHandler<EventArgs>> _pushReceivedHandlerMap = new();
+        private readonly Dictionary<EventHandler<NotificationResponseEventArgs>, EventHandler<EventArgs>> _notificationResponseHandlerMap = new();
+        private readonly Dictionary<EventHandler<PushTokenReceivedEventArgs>, EventHandler<EventArgs>> _pushTokenHandlerMap = new();
+        private readonly Dictionary<EventHandler<MessageCenterEventArgs>, EventHandler<EventArgs>> _displayMessageCenterHandlerMap = new();
+        private readonly Dictionary<EventHandler<EventArgs>, EventHandler<EventArgs>> _messageCenterUpdatedHandlerMap = new();
+        private readonly Dictionary<EventHandler<PreferenceCenterEventArgs>, EventHandler<EventArgs>> _displayPreferenceCenterHandlerMap = new();
+
+        // Strong references for delegates / listeners that are held weakly or by interface
+        private AirshipMessageCenterDisplayDelegate? _messageCenterDisplayDelegate;
+        private AirshipPreferenceCenterOpenDelegate? _preferenceCenterOpenDelegate;
 
         // Module instances
         private readonly AirshipModule _module;
@@ -71,9 +90,10 @@ namespace AirshipDotNet
         private void Init()
         {
             UAirship.Shared().Channel.AddChannelListener(this);
-
-            //Adding Push notification status listener
             UAirship.Shared().PushManager.AddNotificationStatusListener(this);
+            UAirship.Shared().PushManager.AddPushTokenListener(this);
+            UAirship.Shared().PushManager.AddPushListener(this);
+            UAirship.Shared().PushManager.NotificationListener = this;
 
             UrbanAirship.MessageCenter.MessageCenterClass.Shared().Inbox.AddListener(this);
 
@@ -99,7 +119,6 @@ namespace AirshipDotNet
             {
                 if (value != null)
                 {
-                    // Create and store wrapper handler to prevent memory leak
                     EventHandler<EventArgs> wrapper = (sender, args) =>
                         value(this, args as ChannelEventArgs ?? new ChannelEventArgs(""));
 
@@ -126,7 +145,6 @@ namespace AirshipDotNet
             {
                 if (value != null)
                 {
-                    // Create and store wrapper handler to prevent memory leak
                     EventHandler<EventArgs> wrapper = (sender, args) =>
                         value(this, args as PushNotificationStatusEventArgs ??
                             new PushNotificationStatusEventArgs(new PushNotificationStatus()));
@@ -146,11 +164,6 @@ namespace AirshipDotNet
         }
 
         /// <summary>
-        /// Add/remove the Message Center updated listener.
-        /// </summary>
-        internal event EventHandler<EventArgs>? OnMessagesUpdated;
-
-        /// <summary>
         /// Add/remove the deep link listener.
         /// </summary>
         public event EventHandler<DeepLinkEventArgs> OnDeepLinkReceived
@@ -159,7 +172,6 @@ namespace AirshipDotNet
             {
                 if (value != null)
                 {
-                    // Create and store wrapper handler to prevent memory leak
                     EventHandler<EventArgs> wrapper = (sender, args) =>
                         value(this, args as DeepLinkEventArgs ?? new DeepLinkEventArgs(""));
 
@@ -184,51 +196,187 @@ namespace AirshipDotNet
             }
         }
 
-        // Internal delegate class for Message Center display
-        internal class AirshipMessageCenterDisplayDelegate : Java.Lang.Object, UrbanAirship.MessageCenter.MessageCenterClass.IOnShowMessageCenterListener
-        {
-            private readonly Action<string?> handler;
-
-            public AirshipMessageCenterDisplayDelegate(Action<string?> handler)
-            {
-                this.handler = handler;
-            }
-
-            public bool OnShowMessageCenter(string? messageId)
-            {
-                handler?.Invoke(messageId);
-                return true;
-            }
-        }
-
-        private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
-        private AirshipMessageCenterDisplayDelegate? messageCenterDisplayDelegate;
-
         /// <summary>
-        /// Add/remove the Message Center display listener.
+        /// Add/remove the push received listener. Fires for both foreground and background pushes.
         /// </summary>
-        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
+        public event EventHandler<PushReceivedEventArgs>? OnPushReceived
         {
             add
             {
-                onMessageCenterDisplay += value;
-                if (messageCenterDisplayDelegate == null)
+                if (value != null)
                 {
-                    messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
-                    {
-                        onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
-                    });
-                    UrbanAirship.MessageCenter.MessageCenterClass.Shared().SetOnShowMessageCenterListener(messageCenterDisplayDelegate);
+                    EventHandler<EventArgs> wrapper = (sender, args) =>
+                        value(this, (args as PushReceivedEventArgs)!);
+
+                    _pushReceivedHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.PushReceived, wrapper);
                 }
             }
             remove
             {
-                onMessageCenterDisplay -= value;
+                if (value != null && _pushReceivedHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.PushReceived, wrapper);
+                    _pushReceivedHandlerMap.Remove(value);
+                }
+            }
+        }
 
-                if (onMessageCenterDisplay == null)
+        /// <summary>
+        /// Add/remove the notification response listener (user tap or action button).
+        /// </summary>
+        public event EventHandler<NotificationResponseEventArgs>? OnNotificationResponse
+        {
+            add
+            {
+                if (value != null)
+                {
+                    EventHandler<EventArgs> wrapper = (sender, args) =>
+                        value(this, (args as NotificationResponseEventArgs)!);
+
+                    _notificationResponseHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.NotificationResponse, wrapper);
+                }
+            }
+            remove
+            {
+                if (value != null && _notificationResponseHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.NotificationResponse, wrapper);
+                    _notificationResponseHandlerMap.Remove(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add/remove the push token received listener.
+        /// </summary>
+        public event EventHandler<PushTokenReceivedEventArgs>? OnPushTokenReceived
+        {
+            add
+            {
+                if (value != null)
+                {
+                    EventHandler<EventArgs> wrapper = (sender, args) =>
+                        value(this, (args as PushTokenReceivedEventArgs)!);
+
+                    _pushTokenHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.PushTokenReceived, wrapper);
+                }
+            }
+            remove
+            {
+                if (value != null && _pushTokenHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.PushTokenReceived, wrapper);
+                    _pushTokenHandlerMap.Remove(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add/remove the message center display request listener.
+        /// </summary>
+        public event EventHandler<MessageCenterEventArgs>? OnDisplayMessageCenter
+        {
+            add
+            {
+                if (value != null)
+                {
+                    EventHandler<EventArgs> wrapper = (sender, args) =>
+                        value(this, args as MessageCenterEventArgs ?? new MessageCenterEventArgs(null));
+
+                    _displayMessageCenterHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.DisplayMessageCenter, wrapper);
+
+                    if (_messageCenterDisplayDelegate == null)
+                    {
+                        _messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
+                        {
+                            AirshipEventEmitter.Shared.Emit(AirshipEventType.DisplayMessageCenter, new MessageCenterEventArgs(messageId));
+                        });
+                        UrbanAirship.MessageCenter.MessageCenterClass.Shared().SetOnShowMessageCenterListener(_messageCenterDisplayDelegate);
+                    }
+                }
+            }
+            remove
+            {
+                if (value != null && _displayMessageCenterHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.DisplayMessageCenter, wrapper);
+                    _displayMessageCenterHandlerMap.Remove(value);
+                }
+
+                if (_displayMessageCenterHandlerMap.Count == 0 && _messageCenterDisplayDelegate != null)
                 {
                     UrbanAirship.MessageCenter.MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
-                    messageCenterDisplayDelegate = null;
+                    _messageCenterDisplayDelegate = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add/remove the message center inbox updated listener.
+        /// </summary>
+        public event EventHandler<EventArgs>? OnMessageCenterUpdated
+        {
+            add
+            {
+                if (value != null)
+                {
+                    EventHandler<EventArgs> wrapper = (sender, args) => value(this, args);
+
+                    _messageCenterUpdatedHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.MessageCenterUpdated, wrapper);
+                }
+            }
+            remove
+            {
+                if (value != null && _messageCenterUpdatedHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.MessageCenterUpdated, wrapper);
+                    _messageCenterUpdatedHandlerMap.Remove(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add/remove the preference center display request listener.
+        /// </summary>
+        public event EventHandler<PreferenceCenterEventArgs>? OnDisplayPreferenceCenter
+        {
+            add
+            {
+                if (value != null)
+                {
+                    EventHandler<EventArgs> wrapper = (sender, args) =>
+                        value(this, (args as PreferenceCenterEventArgs)!);
+
+                    _displayPreferenceCenterHandlerMap[value] = wrapper;
+                    AirshipEventEmitter.Shared.AddListener(AirshipEventType.DisplayPreferenceCenter, wrapper);
+
+                    if (_preferenceCenterOpenDelegate == null)
+                    {
+                        _preferenceCenterOpenDelegate = new AirshipPreferenceCenterOpenDelegate((preferenceCenterId) =>
+                        {
+                            AirshipEventEmitter.Shared.Emit(AirshipEventType.DisplayPreferenceCenter, new PreferenceCenterEventArgs(preferenceCenterId));
+                        });
+                        global::UrbanAirship.PreferenceCenter.PreferenceCenter.Shared().OpenListener = _preferenceCenterOpenDelegate;
+                    }
+                }
+            }
+            remove
+            {
+                if (value != null && _displayPreferenceCenterHandlerMap.TryGetValue(value, out var wrapper))
+                {
+                    AirshipEventEmitter.Shared.RemoveListener(AirshipEventType.DisplayPreferenceCenter, wrapper);
+                    _displayPreferenceCenterHandlerMap.Remove(value);
+                }
+
+                if (_displayPreferenceCenterHandlerMap.Count == 0 && _preferenceCenterOpenDelegate != null)
+                {
+                    global::UrbanAirship.PreferenceCenter.PreferenceCenter.Shared().OpenListener = null;
+                    _preferenceCenterOpenDelegate = null;
                 }
             }
         }
@@ -293,6 +441,99 @@ namespace AirshipDotNet
             AirshipEventEmitter.Shared.Emit(AirshipEventType.NotificationStatusChanged, new PushNotificationStatusEventArgs(pushStatus));
         }
 
-        public void OnInboxUpdated() => OnMessagesUpdated?.Invoke(this, new EventArgs());
+        public void OnInboxUpdated()
+        {
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.MessageCenterUpdated, EventArgs.Empty);
+        }
+
+        public void OnPushTokenUpdated(string token)
+        {
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.PushTokenReceived, new PushTokenReceivedEventArgs(token));
+        }
+
+        void IPushListener.OnPushReceived(PushMessage message, bool notificationPosted)
+        {
+            var args = BuildPushReceivedEventArgs(message, isBackground: !notificationPosted);
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.PushReceived, args);
+        }
+
+        public void OnNotificationPosted(NotificationInfo notificationInfo) { }
+
+        public bool OnNotificationOpened(NotificationInfo notificationInfo)
+        {
+            var push = BuildPushReceivedEventArgs(notificationInfo.Message, isBackground: false);
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.NotificationResponse,
+                new NotificationResponseEventArgs(push, actionId: null, isForeground: true));
+            return false;
+        }
+
+        public bool OnNotificationForegroundAction(NotificationInfo notificationInfo, NotificationActionButtonInfo actionButtonInfo)
+        {
+            var push = BuildPushReceivedEventArgs(notificationInfo.Message, isBackground: false);
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.NotificationResponse,
+                new NotificationResponseEventArgs(push, actionButtonInfo.ButtonId, isForeground: true));
+            return false;
+        }
+
+        public void OnNotificationBackgroundAction(NotificationInfo notificationInfo, NotificationActionButtonInfo actionButtonInfo)
+        {
+            var push = BuildPushReceivedEventArgs(notificationInfo.Message, isBackground: false);
+            AirshipEventEmitter.Shared.Emit(AirshipEventType.NotificationResponse,
+                new NotificationResponseEventArgs(push, actionButtonInfo.ButtonId, isForeground: false));
+        }
+
+        public void OnNotificationDismissed(NotificationInfo notificationInfo) { }
+
+        private static PushReceivedEventArgs BuildPushReceivedEventArgs(PushMessage message, bool isBackground)
+        {
+            var payload = BundleToDictionary(message.PushBundle);
+            return new PushReceivedEventArgs(payload, message.Alert, message.Title, isBackground);
+        }
+
+        private static IDictionary<string, object?> BundleToDictionary(Bundle? bundle)
+        {
+            var dict = new Dictionary<string, object?>();
+            if (bundle == null) return dict;
+
+            foreach (var key in bundle.KeySet() ?? new List<string>())
+            {
+                dict[key] = bundle.Get(key)?.ToString();
+            }
+            return dict;
+        }
+
+        // Inner delegate classes wrapping Airship Java listener interfaces.
+
+        internal class AirshipMessageCenterDisplayDelegate : Java.Lang.Object, UrbanAirship.MessageCenter.MessageCenterClass.IOnShowMessageCenterListener
+        {
+            private readonly Action<string?> handler;
+
+            public AirshipMessageCenterDisplayDelegate(Action<string?> handler)
+            {
+                this.handler = handler;
+            }
+
+            public bool OnShowMessageCenter(string? messageId)
+            {
+                handler?.Invoke(messageId);
+                return true;
+            }
+        }
+
+        internal class AirshipPreferenceCenterOpenDelegate : Java.Lang.Object, global::UrbanAirship.PreferenceCenter.PreferenceCenter.IOnOpenListener
+        {
+            private readonly Action<string> handler;
+
+            public AirshipPreferenceCenterOpenDelegate(Action<string> handler)
+            {
+                this.handler = handler;
+            }
+
+            public bool OnOpenPreferenceCenter(string preferenceCenterId)
+            {
+                handler?.Invoke(preferenceCenterId);
+                return true;
+            }
+        }
     }
 }
