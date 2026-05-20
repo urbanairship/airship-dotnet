@@ -26,8 +26,6 @@ namespace AirshipDotNet.Events
         /// </summary>
         public static readonly Dictionary<AirshipEventType, string> EventNameMap = new()
         {
-            { AirshipEventType.BackgroundNotificationResponse, "com.airship.dotnet/event/notification_response" },
-            { AirshipEventType.ForegroundNotificationResponse, "com.airship.dotnet/event/notification_response" },
             { AirshipEventType.NotificationResponse, "com.airship.dotnet/event/notification_response" },
             { AirshipEventType.ChannelCreated, "com.airship.dotnet/event/channel_created" },
             { AirshipEventType.DeepLinkReceived, "com.airship.dotnet/event/deep_link_received" },
@@ -36,7 +34,6 @@ namespace AirshipDotNet.Events
             { AirshipEventType.MessageCenterUpdated, "com.airship.dotnet/event/message_center_updated" },
             { AirshipEventType.PushTokenReceived, "com.airship.dotnet/event/push_token_received" },
             { AirshipEventType.PushReceived, "com.airship.dotnet/event/push_received" },
-            { AirshipEventType.BackgroundPushReceived, "com.airship.dotnet/event/background_push_received" },
             { AirshipEventType.NotificationStatusChanged, "com.airship.dotnet/event/notification_status_changed" },
             { AirshipEventType.PendingEmbeddedUpdated, "com.airship.dotnet/event/pending_embedded_updated" },
             { AirshipEventType.AuthorizedNotificationSettingsChanged, "com.airship.dotnet/event/ios_authorized_notification_settings_changed" }
