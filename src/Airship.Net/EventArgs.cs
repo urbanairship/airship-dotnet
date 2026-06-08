@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 using System;
+using System.Collections.Generic;
 
 namespace AirshipDotNet
 {
@@ -44,6 +45,116 @@ namespace AirshipDotNet
         }
     }
     
+    /// <summary>
+    /// Event args for push notifications received.
+    /// </summary>
+    public class PushReceivedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the raw notification payload (APNs userInfo on iOS, push extras on Android).
+        /// </summary>
+        public IDictionary<string, object?> Payload { get; }
+
+        /// <summary>
+        /// Gets the alert text, or null if not present.
+        /// </summary>
+        public string? Alert { get; }
+
+        /// <summary>
+        /// Gets the notification title, or null if not present.
+        /// </summary>
+        public string? Title { get; }
+
+        /// <summary>
+        /// True when this was a silent/background push that did not post a notification.
+        /// </summary>
+        public bool IsBackground { get; }
+
+        public PushReceivedEventArgs(IDictionary<string, object?> payload, string? alert, string? title, bool isBackground)
+        {
+            Payload = payload;
+            Alert = alert;
+            Title = title;
+            IsBackground = isBackground;
+        }
+    }
+
+    /// <summary>
+    /// Event args for the user interacting with a notification.
+    /// </summary>
+    public class NotificationResponseEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the underlying push payload.
+        /// </summary>
+        public PushReceivedEventArgs Push { get; }
+
+        /// <summary>
+        /// Gets the action identifier the user tapped, or null for the default tap.
+        /// </summary>
+        public string? ActionId { get; }
+
+        /// <summary>
+        /// True if the action ran in the foreground.
+        /// </summary>
+        public bool IsForeground { get; }
+
+        public NotificationResponseEventArgs(PushReceivedEventArgs push, string? actionId, bool isForeground)
+        {
+            Push = push;
+            ActionId = actionId;
+            IsForeground = isForeground;
+        }
+    }
+
+    /// <summary>
+    /// Event args for push token registration.
+    /// </summary>
+    public class PushTokenReceivedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the push token (APNs device token hex on iOS, FCM registration token on Android).
+        /// </summary>
+        public string Token { get; }
+
+        public PushTokenReceivedEventArgs(string token)
+        {
+            Token = token;
+        }
+    }
+
+    /// <summary>
+    /// Event args for preference center open requests.
+    /// </summary>
+    public class PreferenceCenterEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the preference center identifier the user requested.
+        /// </summary>
+        public string PreferenceCenterId { get; }
+
+        public PreferenceCenterEventArgs(string preferenceCenterId)
+        {
+            PreferenceCenterId = preferenceCenterId;
+        }
+    }
+
+    /// <summary>
+    /// Event args for iOS authorized notification settings changes.
+    /// </summary>
+    public class IOSAuthorizedNotificationSettingsEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Gets the raw authorized settings bitmask reported by iOS.
+        /// </summary>
+        public ulong AuthorizedSettings { get; }
+
+        public IOSAuthorizedNotificationSettingsEventArgs(ulong authorizedSettings)
+        {
+            AuthorizedSettings = authorizedSettings;
+        }
+    }
+
     /// <summary>
     /// Event args for deep link events.
     /// </summary>

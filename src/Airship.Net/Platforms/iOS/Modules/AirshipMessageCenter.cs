@@ -23,30 +23,6 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             _module = module;
         }
 
-        internal class AirshipMessageCenterDisplayDelegate : global::Airship.UAMessageCenterDisplayDelegate
-        {
-            private readonly Action<string?> handler;
-
-            public AirshipMessageCenterDisplayDelegate(Action<string?> handler)
-            {
-                this.handler = handler;
-            }
-
-            public override void DisplayMessageCenterForMessageID(string messageId)
-            {
-                handler?.Invoke(messageId);
-            }
-
-            public override void DisplayMessageCenter()
-            {
-
-            }
-
-            public override void DismissMessageCenter()
-            {
-                handler?.Invoke(null);
-            }
-        }
 
         /// <summary>
         /// Gets all messages from the message center.
@@ -213,70 +189,6 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             }
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return epoch.AddSeconds(date.SecondsSince1970);
-        }
-
-        private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
-        private AirshipMessageCenterDisplayDelegate? messageCenterDisplayDelegate;
-
-        /// <summary>
-        /// Add/remove the Message Center display listener.
-        /// </summary>
-        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
-        {
-            add
-            {
-                onMessageCenterDisplay += value;
-                if (messageCenterDisplayDelegate == null)
-                {
-                    messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
-                    {
-                        onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
-                    });
-                    UAirship.MessageCenter.WeakDisplayDelegate = messageCenterDisplayDelegate;
-                }
-            }
-            remove
-            {
-                onMessageCenterDisplay -= value;
-
-                if (onMessageCenterDisplay == null)
-                {
-                    UAirship.MessageCenter.WeakDisplayDelegate = null;
-                    messageCenterDisplayDelegate = null;
-                }
-            }
-        }
-
-        private EventHandler<EventArgs>? onMessagesUpdated;
-        private EventHandler<EventArgs>? airshipMessagesUpdatedHandler;
-
-        /// <summary>
-        /// Add/remove the Message Center updated listener.
-        /// </summary>
-        public event EventHandler<EventArgs> OnMessagesUpdated
-        {
-            add
-            {
-                onMessagesUpdated += value;
-                if (airshipMessagesUpdatedHandler == null)
-                {
-                    airshipMessagesUpdatedHandler = (sender, e) =>
-                    {
-                        onMessagesUpdated?.Invoke(this, e);
-                    };
-                    Airship.Instance.OnMessagesUpdated += airshipMessagesUpdatedHandler;
-                }
-            }
-            remove
-            {
-                onMessagesUpdated -= value;
-
-                if (onMessagesUpdated == null && airshipMessagesUpdatedHandler != null)
-                {
-                    Airship.Instance.OnMessagesUpdated -= airshipMessagesUpdatedHandler;
-                    airshipMessagesUpdatedHandler = null;
-                }
-            }
         }
 
     }

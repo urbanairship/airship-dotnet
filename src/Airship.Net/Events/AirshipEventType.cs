@@ -18,24 +18,9 @@ namespace AirshipDotNet.Events
         PushReceived,
 
         /// <summary>
-        /// Fired when a background push notification is received.
-        /// </summary>
-        BackgroundPushReceived,
-
-        /// <summary>
-        /// Fired when a push notification response is received.
+        /// Fired when the user interacts with a push notification.
         /// </summary>
         NotificationResponse,
-
-        /// <summary>
-        /// Fired when a background notification response is received.
-        /// </summary>
-        BackgroundNotificationResponse,
-
-        /// <summary>
-        /// Fired when a foreground notification response is received.
-        /// </summary>
-        ForegroundNotificationResponse,
 
         /// <summary>
         /// Fired when push notification status changes.

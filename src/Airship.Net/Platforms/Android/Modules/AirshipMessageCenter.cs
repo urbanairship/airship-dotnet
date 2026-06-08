@@ -23,22 +23,6 @@ namespace AirshipDotNet.Platforms.Android.Modules
             _module = module;
         }
 
-        internal class AirshipMessageCenterDisplayDelegate : Java.Lang.Object, MessageCenterClass.IOnShowMessageCenterListener
-        {
-            private readonly Action<string?> handler;
-
-            public AirshipMessageCenterDisplayDelegate(Action<string?> handler)
-            {
-                this.handler = handler;
-            }
-
-            public bool OnShowMessageCenter(string? messageId)
-            {
-                handler?.Invoke(messageId);
-                return true;
-            }
-        }
-
         /// <summary>
         /// Displays the message center.
         /// </summary>
@@ -180,70 +164,6 @@ namespace AirshipDotNet.Platforms.Android.Modules
         {
             MessageCenterClass.Shared().Inbox.DeleteMessages(messageIds);
             return Task.CompletedTask;
-        }
-
-        private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
-        private AirshipMessageCenterDisplayDelegate? messageCenterDisplayDelegate;
-
-        /// <summary>
-        /// Add/remove the Message Center display listener.
-        /// </summary>
-        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
-        {
-            add
-            {
-                onMessageCenterDisplay += value;
-                if (messageCenterDisplayDelegate == null)
-                {
-                    messageCenterDisplayDelegate = new AirshipMessageCenterDisplayDelegate((messageId) =>
-                    {
-                        onMessageCenterDisplay?.Invoke(this, new MessageCenterEventArgs(messageId));
-                    });
-                    MessageCenterClass.Shared().SetOnShowMessageCenterListener(messageCenterDisplayDelegate);
-                }
-            }
-            remove
-            {
-                onMessageCenterDisplay -= value;
-
-                if (onMessageCenterDisplay == null)
-                {
-                    MessageCenterClass.Shared().SetOnShowMessageCenterListener(null);
-                    messageCenterDisplayDelegate = null;
-                }
-            }
-        }
-
-        private EventHandler<EventArgs>? onMessagesUpdated;
-        private EventHandler<EventArgs>? airshipMessagesUpdatedHandler;
-
-        /// <summary>
-        /// Add/remove the Message Center updated listener.
-        /// </summary>
-        public event EventHandler<EventArgs> OnMessagesUpdated
-        {
-            add
-            {
-                onMessagesUpdated += value;
-                if (airshipMessagesUpdatedHandler == null)
-                {
-                    airshipMessagesUpdatedHandler = (sender, e) =>
-                    {
-                        onMessagesUpdated?.Invoke(this, e);
-                    };
-                    Airship.Instance.OnMessagesUpdated += airshipMessagesUpdatedHandler;
-                }
-            }
-            remove
-            {
-                onMessagesUpdated -= value;
-
-                if (onMessagesUpdated == null && airshipMessagesUpdatedHandler != null)
-                {
-                    Airship.Instance.OnMessagesUpdated -= airshipMessagesUpdatedHandler;
-                    airshipMessagesUpdatedHandler = null;
-                }
-            }
         }
 
         private static DateTime? FromDate(Date? date)
