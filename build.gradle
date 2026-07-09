@@ -45,6 +45,7 @@ tasks.register('pack') {
     // Pack .net common libraries
     dependsOn(':src:Airship.Net:pack')
     dependsOn(':src:Airship.Net.MessageCenter:pack')
+    dependsOn(':src:Airship.Net.Embedded:pack')
 }
 
 tasks.register('buildSample') {
@@ -247,7 +248,8 @@ tasks.register('build') {
             ':binderator:build',
             ':src:AirshipBindings.iOS.ObjectiveC:build',
             ':src:Airship.Net:build',
-            ':src:Airship.Net.MessageCenter:build')
+            ':src:Airship.Net.MessageCenter:build',
+            ':src:Airship.Net.Embedded:build')
 
     doFirst() {
         mkdir project.buildDir
