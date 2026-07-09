@@ -164,7 +164,7 @@ namespace AirshipDotNet
         /// Gets the deep link.
         /// </summary>
         public string DeepLink { get; }
-        
+
         /// <summary>
         /// Initializes a new instance of the DeepLinkEventArgs class.
         /// </summary>
@@ -172,6 +172,18 @@ namespace AirshipDotNet
         public DeepLinkEventArgs(string deepLink)
         {
             DeepLink = deepLink;
+        }
+    }
+
+    /// <summary>Event args for embedded content availability updates.</summary>
+    public class EmbeddedInfoUpdatedEventArgs : EventArgs
+    {
+        /// <summary>The current set of pending embedded content.</summary>
+        public IReadOnlyList<EmbeddedInfo> Pending { get; }
+
+        public EmbeddedInfoUpdatedEventArgs(IReadOnlyList<EmbeddedInfo> pending)
+        {
+            Pending = pending;
         }
     }
 }

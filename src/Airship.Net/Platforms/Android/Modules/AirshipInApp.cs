@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AirshipDotNet;
 using UrbanAirship;
 using UrbanAirship.Automation;
 
@@ -55,6 +57,45 @@ namespace AirshipDotNet.Platforms.Android.Modules
         {
             InAppAutomation.Shared().InAppMessaging!.DisplayInterval = (long)interval.TotalMilliseconds;
             return Task.CompletedTask;
+        }
+
+        public bool IsEmbeddedAvailable(string embeddedId)
+        {
+            foreach (var info in AirshipDotNet.Airship.Instance.PendingEmbedded)
+                if (info.EmbeddedId == embeddedId) return true;
+            return false;
+        }
+
+        private readonly object embeddedEventLock = new object();
+        private EventHandler<EmbeddedInfoUpdatedEventArgs>? embeddedInfoUpdated;
+        private EventHandler<EmbeddedInfoUpdatedEventArgs>? airshipEmbeddedHandler;
+
+        public event EventHandler<EmbeddedInfoUpdatedEventArgs> EmbeddedInfoUpdated
+        {
+            add
+            {
+                lock (embeddedEventLock)
+                {
+                    embeddedInfoUpdated += value;
+                    if (airshipEmbeddedHandler == null)
+                    {
+                        airshipEmbeddedHandler = (s, e) => embeddedInfoUpdated?.Invoke(this, e);
+                        AirshipDotNet.Airship.Instance.OnEmbeddedInfoUpdated += airshipEmbeddedHandler;
+                    }
+                }
+            }
+            remove
+            {
+                lock (embeddedEventLock)
+                {
+                    embeddedInfoUpdated -= value;
+                    if (embeddedInfoUpdated == null && airshipEmbeddedHandler != null)
+                    {
+                        AirshipDotNet.Airship.Instance.OnEmbeddedInfoUpdated -= airshipEmbeddedHandler;
+                        airshipEmbeddedHandler = null;
+                    }
+                }
+            }
         }
     }
 }

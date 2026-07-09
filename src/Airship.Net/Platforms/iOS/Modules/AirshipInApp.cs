@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AirshipDotNet;
 using Foundation;
 using Airship;
 
@@ -56,7 +58,43 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             return Task.CompletedTask;
         }
 
-        // Additional in-app automation methods would be added here as the SDK bindings are updated
-        // to expose more functionality from the native SDK.
+        public bool IsEmbeddedAvailable(string embeddedId)
+        {
+            foreach (var info in AirshipDotNet.Airship.Instance.PendingEmbedded)
+                if (info.EmbeddedId == embeddedId) return true;
+            return false;
+        }
+
+        private readonly object embeddedEventLock = new object();
+        private EventHandler<EmbeddedInfoUpdatedEventArgs>? embeddedInfoUpdated;
+        private EventHandler<EmbeddedInfoUpdatedEventArgs>? airshipEmbeddedHandler;
+
+        public event EventHandler<EmbeddedInfoUpdatedEventArgs> EmbeddedInfoUpdated
+        {
+            add
+            {
+                lock (embeddedEventLock)
+                {
+                    embeddedInfoUpdated += value;
+                    if (airshipEmbeddedHandler == null)
+                    {
+                        airshipEmbeddedHandler = (s, e) => embeddedInfoUpdated?.Invoke(this, e);
+                        AirshipDotNet.Airship.Instance.OnEmbeddedInfoUpdated += airshipEmbeddedHandler;
+                    }
+                }
+            }
+            remove
+            {
+                lock (embeddedEventLock)
+                {
+                    embeddedInfoUpdated -= value;
+                    if (embeddedInfoUpdated == null && airshipEmbeddedHandler != null)
+                    {
+                        AirshipDotNet.Airship.Instance.OnEmbeddedInfoUpdated -= airshipEmbeddedHandler;
+                        airshipEmbeddedHandler = null;
+                    }
+                }
+            }
+        }
     }
 }

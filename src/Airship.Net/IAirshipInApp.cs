@@ -33,5 +33,12 @@ namespace AirshipDotNet
         /// </summary>
         /// <param name="interval">The display interval.</param>
         Task SetDisplayInterval(TimeSpan interval);
+
+        /// <summary>Returns true if at least one embedded content item is pending for the given id.</summary>
+        /// <param name="embeddedId">The embedded placement ID.</param>
+        bool IsEmbeddedAvailable(string embeddedId);
+
+        /// <summary>Raised whenever the set of pending embedded content changes.</summary>
+        event EventHandler<EmbeddedInfoUpdatedEventArgs> EmbeddedInfoUpdated;
     }
 }
