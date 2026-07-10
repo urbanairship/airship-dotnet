@@ -12,6 +12,7 @@ namespace AirshipDotNet.Embedded.Controls
     {
         private EmbeddedContainerView? _containerView;
         private UIViewController? _embeddedVC;
+        private IDisposable? _sizeObservation;
         private bool _installed;
         private string? _installedId;
         private EventHandler<AirshipDotNet.EmbeddedInfoUpdatedEventArgs>? _availabilityHandler;
@@ -60,6 +61,8 @@ namespace AirshipDotNet.Embedded.Controls
 
         private void Uninstall()
         {
+            _sizeObservation?.Dispose();
+            _sizeObservation = null;
             _embeddedVC?.WillMoveToParentViewController(null);
             _embeddedVC?.View?.RemoveFromSuperview();
             _embeddedVC?.RemoveFromParentViewController();
@@ -84,14 +87,37 @@ namespace AirshipDotNet.Embedded.Controls
             var v = _embeddedVC.View!;
             v.TranslatesAutoresizingMaskIntoConstraints = false;
             _containerView.AddSubview(v);
+            // Pin top/leading/trailing only - not bottom.
+            // UIHostingController with sizingOptions = .intrinsicContentSize reports the
+            // SwiftUI content's natural height as its intrinsicContentSize. Pinning bottom
+            // in addition would override that and cause content to be clipped.
             NSLayoutConstraint.ActivateConstraints(new[]
             {
                 v.TopAnchor.ConstraintEqualTo(_containerView.TopAnchor),
                 v.LeadingAnchor.ConstraintEqualTo(_containerView.LeadingAnchor),
                 v.TrailingAnchor.ConstraintEqualTo(_containerView.TrailingAnchor),
-                v.BottomAnchor.ConstraintEqualTo(_containerView.BottomAnchor),
             });
             _embeddedVC.DidMoveToParentViewController(parentVC);
+
+            // Observe preferredContentSize so height stays in sync whenever Airship content
+            // appears, disappears, or changes size - not just at the 300 ms snapshot.
+            _sizeObservation = _embeddedVC.AddObserver(
+                "preferredContentSize",
+                NSKeyValueObservingOptions.New,
+                _ => MainThread.BeginInvokeOnMainThread(FitToContent));
+
+            // Initial fit after SwiftUI has had a chance to render.
+            System.Threading.Tasks.Task.Delay(300).ContinueWith(_ =>
+                MainThread.BeginInvokeOnMainThread(FitToContent));
+        }
+
+        private void FitToContent()
+        {
+            var h = _embeddedVC?.PreferredContentSize.Height ?? 0;
+            if (VirtualView == null) return;
+
+            // Collapse to zero when empty so the blank area doesn't take up space.
+            VirtualView.HeightRequest = h > 0 ? h : 0;
         }
 
         private void UpdateCollapse()
