@@ -271,6 +271,9 @@ namespace AirshipDotNet
             NSRunLoop.Main.BeginInvokeOnMainThread(() =>
             {
                 _embeddedObserver = new global::Airship.UAEmbeddedObserver();
+                // OnUpdate is bound as Action<NSArray> (untyped), so read the strongly
+                // typed Infos property instead of unpacking the raw array; the Swift side
+                // sets infos before invoking onUpdate, so this is the same data.
                 _embeddedObserver.OnUpdate = (nsArray) =>
                 {
                     var list = new List<EmbeddedInfo>();
