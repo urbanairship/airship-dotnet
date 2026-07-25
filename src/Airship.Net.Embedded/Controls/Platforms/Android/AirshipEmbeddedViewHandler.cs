@@ -89,7 +89,7 @@ namespace AirshipDotNet.Embedded.Controls
             }
         }
 
-        private void OnNativeLayoutChange(object? sender, View.LayoutChangeEventArgs e) => FitToContent();
+        private void OnNativeLayoutChange(object? sender, Android.Views.View.LayoutChangeEventArgs e) => FitToContent();
 
         /// <summary>
         /// Measures the embedded content against an unconstrained height and pushes the result
@@ -108,8 +108,8 @@ namespace AirshipDotNet.Embedded.Controls
                 return; // Not laid out yet; a later layout pass will trigger another fit.
 
             _nativeView.Measure(
-                View.MeasureSpec.MakeMeasureSpec(widthPx, MeasureSpecMode.Exactly),
-                View.MeasureSpec.MakeMeasureSpec(0, MeasureSpecMode.Unspecified));
+                Android.Views.View.MeasureSpec.MakeMeasureSpec(widthPx, MeasureSpecMode.Exactly),
+                Android.Views.View.MeasureSpec.MakeMeasureSpec(0, MeasureSpecMode.Unspecified));
 
             var height = _nativeView.MeasuredHeight > 0
                 ? Context.FromPixels(_nativeView.MeasuredHeight)
