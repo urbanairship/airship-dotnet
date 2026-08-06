@@ -1,0 +1,34 @@
+tasks.register('pack') {
+    dependsOn(':syncRootVersion', ':src:Airship.Net.Embedded:build')
+    doLast() {
+        exec {
+            workingDir projectDir
+            environment 'AirshipCrossPlatformVersion', "$crossPlatformVersion"
+            environment 'AirshipCrossPlatformNugetVersion', "$crossPlatformNugetVersion"
+            commandLine 'dotnet', 'pack', 'Airship.Net.Embedded.csproj',
+                '--configuration', 'Release', '--output', "$rootProject.buildDir", '--no-build'
+        }
+    }
+}
+
+tasks.register('build') {
+    dependsOn(':src:Airship.Net:build', ':src:AirshipBindings.iOS.ObjectiveC:build')
+    doLast() {
+        exec {
+            workingDir projectDir
+            environment 'AirshipCrossPlatformVersion', "$crossPlatformVersion"
+            environment 'AirshipCrossPlatformNugetVersion', "$crossPlatformNugetVersion"
+            commandLine 'dotnet', 'build', 'Airship.Net.Embedded.csproj',
+                '--configuration', 'Release', '--no-dependencies'
+        }
+    }
+}
+
+tasks.register('clean') {
+    doLast() {
+        exec {
+            workingDir projectDir
+            commandLine 'dotnet', 'clean', 'Airship.Net.Embedded.csproj', '--configuration', 'Release'
+        }
+    }
+}

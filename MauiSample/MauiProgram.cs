@@ -1,4 +1,5 @@
 ﻿using AirshipDotNet;
+using AirshipDotNet.Embedded;
 using AirshipDotNet.MessageCenter;
 
 namespace MauiSample;
@@ -11,6 +12,7 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.UseAirshipMessageCenter()
+            .UseAirshipEmbedded()
             .ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

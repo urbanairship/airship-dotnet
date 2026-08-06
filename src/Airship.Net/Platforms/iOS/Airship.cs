@@ -195,6 +195,7 @@ namespace AirshipDotNet
         private AirshipRegistrationDelegate? _registrationDelegate;
         private AirshipPreferenceCenterOpenDelegate? _preferenceCenterOpenDelegate;
         private AirshipMessageCenterDisplayDelegate? _messageCenterDisplayDelegate;
+        private global::Airship.UAEmbeddedObserver? _embeddedObserver;
 
         public Airship()
         {
@@ -261,6 +262,27 @@ namespace AirshipDotNet
 
             // Subscribe to pending events when listeners are added
             AirshipEventEmitter.Shared.PendingEventAvailable += OnPendingEventAvailable;
+
+            StartEmbeddedObserver();
+        }
+
+        private void StartEmbeddedObserver()
+        {
+            NSRunLoop.Main.BeginInvokeOnMainThread(() =>
+            {
+                _embeddedObserver = new global::Airship.UAEmbeddedObserver();
+                // OnUpdate is bound as Action<NSArray> (untyped), so read the strongly
+                // typed Infos property instead of unpacking the raw array; the Swift side
+                // sets infos before invoking onUpdate, so this is the same data.
+                _embeddedObserver.OnUpdate = (nsArray) =>
+                {
+                    var list = new List<EmbeddedInfo>();
+                    foreach (var info in _embeddedObserver.Infos)
+                        list.Add(new EmbeddedInfo(info.EmbeddedID, info.InstanceID, (int)info.Priority));
+                    UpdatePendingEmbedded(list);
+                };
+                _embeddedObserver.Start();
+            });
         }
 
         private void OnPendingEventAvailable(object? sender, AirshipEventType eventType)
@@ -483,6 +505,24 @@ namespace AirshipDotNet
                     _messageCenterDisplayDelegate = null;
                 }
             }
+        }
+
+        private IReadOnlyList<EmbeddedInfo> _pendingEmbedded = new List<EmbeddedInfo>();
+
+        /// <summary>Latest snapshot of pending embedded content.</summary>
+        internal IReadOnlyList<EmbeddedInfo> PendingEmbedded => _pendingEmbedded;
+
+        /// <summary>Raised when the pending embedded snapshot changes.</summary>
+        internal event EventHandler<EmbeddedInfoUpdatedEventArgs>? OnEmbeddedInfoUpdated;
+
+        /// <summary>Updates the cached snapshot, raises the facade event, and emits the SDK event.</summary>
+        internal void UpdatePendingEmbedded(IReadOnlyList<EmbeddedInfo> pending)
+        {
+            _pendingEmbedded = pending;
+            var args = new EmbeddedInfoUpdatedEventArgs(pending);
+            OnEmbeddedInfoUpdated?.Invoke(this, args);
+            AirshipDotNet.Events.AirshipEventEmitter.Shared.Emit(
+                AirshipDotNet.Events.AirshipEventType.PendingEmbeddedUpdated, args);
         }
 
         /// <summary>

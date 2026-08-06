@@ -55,6 +55,9 @@ namespace AirshipDotNet
         // Strong references for delegates / listeners that are held weakly or by interface
         private AirshipMessageCenterDisplayDelegate? _messageCenterDisplayDelegate;
         private AirshipPreferenceCenterOpenDelegate? _preferenceCenterOpenDelegate;
+        private global::Com.Urbanairship.Embedded.AirshipEmbeddedObserver? _embeddedObserver;
+        private AirshipEmbeddedObserverListener? _embeddedObserverListener;
+        private readonly Android.OS.Handler _mainHandler = new Android.OS.Handler(Android.OS.Looper.MainLooper!);
 
         // Module instances
         private readonly AirshipModule _module;
@@ -99,6 +102,27 @@ namespace AirshipDotNet
 
             // Subscribe to pending events when listeners are added
             AirshipEventEmitter.Shared.PendingEventAvailable += OnPendingEventAvailable;
+
+            StartEmbeddedObserver();
+        }
+
+        private void StartEmbeddedObserver()
+        {
+            // The vararg constructor filters to the given IDs, so an empty array would match
+            // nothing; observe all embedded IDs with an always-true filter instead.
+            _embeddedObserver = new global::Com.Urbanairship.Embedded.AirshipEmbeddedObserver(new AllEmbeddedIdsFilter());
+            _embeddedObserverListener = new AirshipEmbeddedObserverListener((views) =>
+            {
+                var list = new List<EmbeddedInfo>();
+                foreach (var info in views)
+                {
+                    list.Add(new EmbeddedInfo(info.EmbeddedId, info.InstanceId, info.Priority));
+                }
+                // The observer delivers updates on a background dispatcher; subscribers
+                // (handlers, app code) touch UI state, so marshal to the main thread.
+                _mainHandler.Post(() => UpdatePendingEmbedded(list));
+            });
+            _embeddedObserver.Listener = _embeddedObserverListener;
         }
 
         private void OnPendingEventAvailable(object? sender, AirshipEventType eventType)
@@ -313,6 +337,24 @@ namespace AirshipDotNet
                     _messageCenterDisplayDelegate = null;
                 }
             }
+        }
+
+        private IReadOnlyList<EmbeddedInfo> _pendingEmbedded = new List<EmbeddedInfo>();
+
+        /// <summary>Latest snapshot of pending embedded content.</summary>
+        internal IReadOnlyList<EmbeddedInfo> PendingEmbedded => _pendingEmbedded;
+
+        /// <summary>Raised when the pending embedded snapshot changes.</summary>
+        internal event EventHandler<EmbeddedInfoUpdatedEventArgs>? OnEmbeddedInfoUpdated;
+
+        /// <summary>Updates the cached snapshot, raises the facade event, and emits the SDK event.</summary>
+        internal void UpdatePendingEmbedded(IReadOnlyList<EmbeddedInfo> pending)
+        {
+            _pendingEmbedded = pending;
+            var args = new EmbeddedInfoUpdatedEventArgs(pending);
+            OnEmbeddedInfoUpdated?.Invoke(this, args);
+            AirshipDotNet.Events.AirshipEventEmitter.Shared.Emit(
+                AirshipDotNet.Events.AirshipEventType.PendingEmbeddedUpdated, args);
         }
 
         /// <summary>
@@ -533,6 +575,27 @@ namespace AirshipDotNet
             {
                 handler?.Invoke(preferenceCenterId);
                 return true;
+            }
+        }
+
+        /// <summary>Always-true embedded info filter, so the observer reports all embedded IDs.</summary>
+        internal class AllEmbeddedIdsFilter : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
+        {
+            public Java.Lang.Object? Invoke(Java.Lang.Object? p0) => Java.Lang.Boolean.True;
+        }
+
+        internal class AirshipEmbeddedObserverListener : Java.Lang.Object, global::Com.Urbanairship.Embedded.AirshipEmbeddedObserver.IListener
+        {
+            private readonly Action<IList<global::Com.Urbanairship.Embedded.AirshipEmbeddedInfo>> _onUpdate;
+
+            public AirshipEmbeddedObserverListener(Action<IList<global::Com.Urbanairship.Embedded.AirshipEmbeddedInfo>> onUpdate)
+            {
+                _onUpdate = onUpdate;
+            }
+
+            public void OnEmbeddedViewInfoUpdate(IList<global::Com.Urbanairship.Embedded.AirshipEmbeddedInfo> views)
+            {
+                _onUpdate?.Invoke(views);
             }
         }
     }

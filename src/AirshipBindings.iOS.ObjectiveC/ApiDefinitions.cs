@@ -1917,4 +1917,51 @@ namespace Airship
 		[Export ("processDeepLink:completionHandler:")]
 		void ProcessDeepLink (NSUrl url, Action<bool> completionHandler);
 	}
+
+	// @interface UAEmbeddedViewControllerFactory : NSObject
+	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC31UAEmbeddedViewControllerFactory")]
+	interface UAEmbeddedViewControllerFactory
+	{
+		// +(UIViewController * _Nonnull)makeViewControllerWithEmbeddedID:(NSString * _Nonnull)embeddedID __attribute__((warn_unused_result("")));
+		[Static]
+		[Export ("makeViewControllerWithEmbeddedID:")]
+		UIViewController MakeViewControllerWithEmbeddedID (string embeddedID);
+
+		// +(UIView * _Nonnull)embedWithEmbeddedID:(NSString * _Nonnull)embeddedID in:(UIViewController * _Nonnull)parentViewController __attribute__((warn_unused_result("")));
+		[Static]
+		[Export ("embedWithEmbeddedID:in:")]
+		UIView EmbedWithEmbeddedID (string embeddedID, UIViewController parentViewController);
+	}
+
+	// @interface UAEmbeddedInfo : NSObject
+	[BaseType (typeof(NSObject), Name = "UAEmbeddedInfo")]
+	[DisableDefaultCtor]
+	interface UAEmbeddedInfo
+	{
+		[Export ("embeddedID")]
+		string EmbeddedID { get; }
+
+		[Export ("instanceID")]
+		string InstanceID { get; }
+
+		[Export ("priority")]
+		nint Priority { get; }
+	}
+
+	// @interface UAEmbeddedObserver : NSObject
+	[BaseType (typeof(NSObject), Name = "UAEmbeddedObserver")]
+	interface UAEmbeddedObserver
+	{
+		[NullAllowed, Export ("onUpdate", ArgumentSemantic.Copy)]
+		Action<NSArray> OnUpdate { get; set; }
+
+		[Export ("infos")]
+		UAEmbeddedInfo[] Infos { get; }
+
+		[Export ("start")]
+		void Start ();
+
+		[Export ("stop")]
+		void Stop ();
+	}
 }

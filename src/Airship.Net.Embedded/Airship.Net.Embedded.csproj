@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<RootNamespace>AirshipDotNet.Embedded</RootNamespace>
+		<IsTrimmable>false</IsTrimmable>
+		<UseMaui>true</UseMaui>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">16.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageId>Airship.Net.Embedded</PackageId>
+		<Title>Airship Embedded View SDK</Title>
+		<Summary>Airship Embedded View SDK .NET Library</Summary>
+		<Description>Embedded view (MAUI) components for Airship SDK</Description>
+		<AssemblyVersion>$(AirshipCrossPlatformVersion)</AssemblyVersion>
+		<PackageVersion>$(AirshipCrossPlatformNugetVersion)</PackageVersion>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
+	  <CreatePackage>false</CreatePackage>
+	  <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Controls/Platforms/Android/**" Condition="'$(TargetFramework)' != 'net10.0-android'" />
+		<Compile Remove="Controls/Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net10.0-ios'" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Airship.Net\Airship.Net.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-ios'">
+		<ProjectReference Include="..\AirshipBindings.iOS.ObjectiveC\AirshipBindings.iOS.ObjectiveC.csproj" />
+	</ItemGroup>
+
+</Project>
