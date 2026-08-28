@@ -8,6 +8,7 @@ using AirshipDotNet.Channel;
 using AirshipDotNet.Attributes;
 using UrbanAirship;
 using Java.Util;
+using global::Android.Runtime;
 
 namespace AirshipDotNet.Platforms.Android.Modules
 {
@@ -60,20 +61,33 @@ namespace AirshipDotNet.Platforms.Android.Modules
         public async Task<List<string>> FetchSubscriptionLists()
         {
             var pendingResult = _module.UAirship.Channel.FetchSubscriptionListsPendingResult();
-            var result = await _module.WrapPendingResult<HashSet>(pendingResult);
+            var result = await _module.WrapPendingResult(pendingResult);
 
             var list = new List<string>();
-            if (result != null)
+            if (result == null)
             {
-                var iterator = result.Iterator();
-                while (iterator.HasNext)
+                return list;
+            }
+
+            // Construct the wrapper around the handle rather than casting the peer -- see
+            // WrapPendingResult. FromJniHandle is not safe here: Mono.Android registers a
+            // non-generic Android.Runtime.JavaSet peer for java.util.LinkedHashSet, and
+            // FromJniHandle hard-casts that peer to JavaSet<T> and throws.
+            try
+            {
+                var javaSet = new JavaSet<string>(result.Handle, JniHandleOwnership.DoNotTransfer);
+                foreach (var item in javaSet)
                 {
-                    var item = iterator.Next()?.ToString();
                     if (item != null)
                     {
                         list.Add(item);
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                UALog.E("Failed to read the channel subscription lists returned by the Android SDK: " + e);
+                list.Clear();
             }
 
             return list;

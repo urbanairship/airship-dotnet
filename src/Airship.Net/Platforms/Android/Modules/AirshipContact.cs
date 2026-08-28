@@ -10,6 +10,7 @@ using AirshipDotNet.Attributes;
 using UrbanAirship;
 using Com.Urbanairship.Contacts;
 using Java.Util;
+using global::Android.Runtime;
 
 namespace AirshipDotNet.Platforms.Android.Modules
 {
@@ -60,34 +61,47 @@ namespace AirshipDotNet.Platforms.Android.Modules
         public async Task<Dictionary<string, List<string>>> FetchSubscriptionLists()
         {
             var pendingResult = _module.UAirship.Contact.FetchSubscriptionListsPendingResult();
-            var result = await _module.WrapPendingResult<HashMap>(pendingResult);
+            var result = await _module.WrapPendingResult(pendingResult);
 
             var dictionary = new Dictionary<string, List<string>>();
-            if (result != null)
+            if (result == null)
             {
-                foreach (var key in result.KeySet())
-                {
-                    if (key != null)
-                    {
-                        var keyStr = key.ToString()!;
-                        var value = result.Get(key as Java.Lang.Object);
+                return dictionary;
+            }
 
-                        if (value is HashSet hashSet)
+            // Construct the wrapper around the handle rather than casting the peer -- see
+            // WrapPendingResult. FromJniHandle is not safe here: Mono.Android registers a
+            // non-generic Android.Runtime.JavaDictionary peer for java.util.LinkedHashMap,
+            // and FromJniHandle hard-casts that peer to JavaDictionary<K, V> and throws.
+            try
+            {
+                var javaMap = new JavaDictionary<string, ICollection<Scope>>(
+                    result.Handle, JniHandleOwnership.DoNotTransfer);
+
+                foreach (var entry in javaMap)
+                {
+                    if (entry.Key == null || entry.Value == null)
+                    {
+                        continue;
+                    }
+
+                    var list = new List<string>();
+                    foreach (var scope in entry.Value)
+                    {
+                        var value = scope?.ToString();
+                        if (value != null)
                         {
-                            var list = new List<string>();
-                            var iterator = hashSet.Iterator();
-                            while (iterator.HasNext)
-                            {
-                                var item = iterator.Next()?.ToString();
-                                if (item != null)
-                                {
-                                    list.Add(item);
-                                }
-                            }
-                            dictionary.Add(keyStr, list);
+                            list.Add(value);
                         }
                     }
+
+                    dictionary[entry.Key] = list;
                 }
+            }
+            catch (Exception e)
+            {
+                UALog.E("Failed to read the contact subscription lists returned by the Android SDK: " + e);
+                dictionary.Clear();
             }
 
             return dictionary;
