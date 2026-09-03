@@ -36,7 +36,8 @@
         "version": "20.7.0",
         "nugetVersion": "20.7.0",
         "nugetId": "Airship.Net.Android.Core",
-        "dependencyOnly": false
+        "dependencyOnly": false,
+        "extraDependencies": "androidx.lifecycle.lifecycle-viewmodel-savedstate:2.9.4,androidx.lifecycle.lifecycle-viewmodel-savedstate-android:2.9.4,androidx.lifecycle.lifecycle-process:2.9.4"
       },
       {
         "groupId": "com.urbanairship.android",
@@ -84,7 +85,8 @@
         "version": "20.7.0",
         "nugetVersion": "20.7.0",
         "nugetId": "Airship.Net.Android.MessageCenterCore",
-        "dependencyOnly": false
+        "dependencyOnly": false,
+        "extraDependencies": "androidx.savedstate.savedstate-ktx:1.3.3"
       },
       {
         "groupId": "com.urbanairship.android",
@@ -100,7 +102,8 @@
         "version": "20.7.0",
         "nugetVersion": "20.7.0",
         "nugetId": "Airship.Net.Android.PreferenceCenterCore",
-        "dependencyOnly": false
+        "dependencyOnly": false,
+        "extraDependencies": "androidx.savedstate.savedstate-ktx:1.3.3"
       },
       {
         "groupId": "androidx.activity",
@@ -200,6 +203,14 @@
       },
       {
         "groupId": "androidx.lifecycle",
+        "artifactId": "lifecycle-process",
+        "version": "2.9.4",
+        "nugetVersion": "2.9.4",
+        "nugetId": "Xamarin.AndroidX.Lifecycle.Process",
+        "dependencyOnly": true
+      },
+      {
+        "groupId": "androidx.lifecycle",
         "artifactId": "lifecycle-runtime",
         "version": "2.9.4",
         "nugetVersion": "2.9.4",
@@ -239,6 +250,22 @@
         "dependencyOnly": true
       },
       {
+        "groupId": "androidx.lifecycle",
+        "artifactId": "lifecycle-viewmodel-savedstate",
+        "version": "2.9.4",
+        "nugetVersion": "2.9.4",
+        "nugetId": "Xamarin.AndroidX.Lifecycle.ViewModelSavedState",
+        "dependencyOnly": true
+      },
+      {
+        "groupId": "androidx.lifecycle",
+        "artifactId": "lifecycle-viewmodel-savedstate-android",
+        "version": "2.9.4",
+        "nugetVersion": "2.9.4",
+        "nugetId": "Xamarin.AndroidX.Lifecycle.ViewModelSavedState.Android",
+        "dependencyOnly": true
+      },
+      {
         "groupId": "androidx.recyclerview",
         "artifactId": "recyclerview",
         "version": "1.4.0",
@@ -260,6 +287,14 @@
         "version": "2.8.3",
         "nugetVersion": "2.8.3",
         "nugetId": "Xamarin.AndroidX.Room.Runtime",
+        "dependencyOnly": true
+      },
+      {
+        "groupId": "androidx.savedstate",
+        "artifactId": "savedstate-ktx",
+        "version": "1.3.3",
+        "nugetVersion": "1.3.3",
+        "nugetId": "Xamarin.AndroidX.SavedState.SavedState.Ktx",
         "dependencyOnly": true
       },
       {
@@ -347,7 +382,7 @@
         "artifactId": "kotlin-parcelize-runtime",
         "version": "2.2.20",
         "nugetVersion": "2.2.21",
-        "nugetId": "Xamarin.Kotlin.StdLib",
+        "nugetId": "Xamarin.Kotlin.Parcelize.Runtime",
         "dependencyOnly": true
       },
       {

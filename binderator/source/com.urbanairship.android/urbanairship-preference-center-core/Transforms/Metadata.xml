@@ -10,4 +10,9 @@
 
     <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='Condition.State.Creator']/method[@name='createFromParcel']" name="managedReturn">Java.Lang.Object</attr>
     <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='Condition.State.Creator']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+
+    <!-- Fix IParceler interface implementation for PreferenceCenterConfigParceler -->
+    <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='PreferenceCenterConfigParceler']/method[@name='create']" name="managedReturn">Java.Lang.Object</attr>
+    <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='PreferenceCenterConfigParceler']/method[@name='newArray']" name="managedReturn">Java.Lang.Object[]</attr>
+    <attr path="/api/package[@name='com.urbanairship.preferencecenter.data']/class[@name='PreferenceCenterConfigParceler']/method[@name='write']/parameter[@type='com.urbanairship.preferencecenter.data.PreferenceCenterConfig']" name="type">java.lang.Object</attr>
 </metadata>
