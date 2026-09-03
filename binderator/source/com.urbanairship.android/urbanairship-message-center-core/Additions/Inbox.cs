@@ -3,8 +3,8 @@
 */
 
 using Android.OS;
+using Android.Runtime;
 using UrbanAirship;
-using IList = Java.Util.IList;
 
 namespace UrbanAirship.MessageCenter
 {
@@ -58,7 +58,18 @@ namespace UrbanAirship.MessageCenter
 		{
 			var pendingMessage = GetMessagePendingResult(messageId);
 			pendingMessage.AddResultCallback(
-				new ResultCallback((result) => callback.Invoke((Message?)result))
+				new ResultCallback((result) =>
+				{
+					// A null result means "no such message". Anything else that isn't a Message
+					// means the peer didn't marshal as expected; log it rather than throwing an
+					// InvalidCastException back across the JNI callback.
+					var message = result as Message;
+					if (result != null && message == null)
+					{
+						UALog.E("Unexpected result type reading inbox message " + messageId + ": " + result.Class?.Name);
+					}
+					callback.Invoke(message);
+				})
 			);
 		}
 
@@ -129,18 +140,49 @@ namespace UrbanAirship.MessageCenter
 				{
 					return predicate.Invoke(message);
 				}
+
+				// Returning false here silently drops the message from the filtered results,
+				// so make the reason visible rather than reporting an empty inbox.
+				UALog.E("Unexpected result type in inbox message predicate: " + value?.Class?.Name);
 				return false;
 			}
 		}
 
-		private List<Message> CastToList(Java.Lang.Object? result)
+		// PendingResult<List<Message>> erases to Object over JNI, so the result arrives as a
+		// bare Java.Lang.Object. Casting that peer to Java.Util.IList would depend on the
+		// runtime type map, and Release builds trim Java.Util.ArrayList (and its AbstractList
+		// base) out of Mono.Android, leaving the cast null and the list silently empty.
+		//
+		// Construct JavaList<T> around the handle directly. JavaList<T>.FromJniHandle is not
+		// safe here: for a runtime class the type map doesn't cover, Mono.Android may already
+		// have a non-generic Android.Runtime.JavaList peer registered for the handle, and
+		// FromJniHandle hard-casts that peer to JavaList<T> and throws.
+		private static List<Message> CastToList(Java.Lang.Object? result)
 		{
 			var list = new List<Message>();
 
-			var enumerable = (result as IList)?.ToEnumerable();
-			if (enumerable == null) return list;
+			if (result == null)
+			{
+				return list;
+			}
 
-			list.AddRange(enumerable.Cast<Message>());
+			try
+			{
+				var javaList = new JavaList<Message>(result.Handle, JniHandleOwnership.DoNotTransfer);
+				foreach (var message in javaList)
+				{
+					if (message != null)
+					{
+						list.Add(message);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				UALog.E("Failed to read the inbox message list returned by the Android SDK: " + e);
+				list.Clear();
+			}
+
 			return list;
 		}
 	}

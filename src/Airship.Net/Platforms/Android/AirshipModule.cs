@@ -39,11 +39,18 @@ namespace AirshipDotNet.Platforms.Android
         /// <summary>
         /// Helper method to wrap PendingResult into Tasks.
         /// </summary>
-        internal Task<T?> WrapPendingResult<T>(UrbanAirship.PendingResult pendingResult) where T : Java.Lang.Object
+        /// <remarks>
+        /// The result is returned as a raw <see cref="Java.Lang.Object"/> rather than cast to a
+        /// concrete Java type. PendingResult's generic argument erases over JNI, so the peer's
+        /// managed type depends on the runtime type map, and Release builds trim most of
+        /// Java.Util out of Mono.Android. Callers should wrap the handle (JavaList, JavaSet,
+        /// JavaDictionary) instead of casting the peer.
+        /// </remarks>
+        internal Task<Java.Lang.Object?> WrapPendingResult(UrbanAirship.PendingResult pendingResult)
         {
             var tcs = new TaskCompletionSource<Java.Lang.Object?>();
             pendingResult.AddResultCallback(new TaskResultCallback(tcs));
-            return tcs.Task.ContinueWith(t => t.Result as T);
+            return tcs.Task;
         }
     }
 }
