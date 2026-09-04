@@ -1,5 +1,12 @@
 # Airship DotNet Changelog
 
+## Version 21.5.0 - September 4, 2026
+Minor release that updates the iOS SDK to 20.12.1 and Android SDK to 20.12.0.
+
+### Changes
+- Updated iOS SDK to [20.12.1](https://github.com/urbanairship/ios-library/releases/tag/20.12.1)
+- Updated Android SDK to [20.12.0](https://github.com/urbanairship/android-library/releases/tag/20.12.0)
+
 ## Version 21.4.0 - May 1, 2026
 Minor release that updates the iOS SDK to 20.7.0 and Android SDK to 20.7.0.
 
