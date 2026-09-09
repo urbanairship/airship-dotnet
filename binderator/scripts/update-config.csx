@@ -399,6 +399,9 @@ public class ArtifactModel
 	[JsonProperty ("excludedRuntimeDependencies")]
 	public string ExcludedRuntimeDependencies { get; set; }
 
+	[JsonProperty ("extraDependencies")]
+	public string ExtraDependencies { get; set; }
+
 	[JsonProperty ("templateSet")]
 	public string TemplateSet { get; set; }
 
