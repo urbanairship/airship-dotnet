@@ -46,7 +46,9 @@ namespace AirshipDotNet.Platforms.Android.Modules
         /// <returns>The display interval.</returns>
         public Task<TimeSpan> GetDisplayInterval()
         {
-            return Task.FromResult(TimeSpan.FromMilliseconds(InAppAutomation.Shared().InAppMessaging!.DisplayInterval));
+            // SDK 21 types displayInterval as kotlin.time.Duration; DisplayIntervalSeconds is
+            // the Java-friendly counterpart. The value is seconds, matching iOS.
+            return Task.FromResult(TimeSpan.FromSeconds(InAppAutomation.Shared().InAppMessaging!.DisplayIntervalSeconds));
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace AirshipDotNet.Platforms.Android.Modules
         /// <param name="interval">The display interval.</param>
         public Task SetDisplayInterval(TimeSpan interval)
         {
-            InAppAutomation.Shared().InAppMessaging!.DisplayInterval = (long)interval.TotalMilliseconds;
+            InAppAutomation.Shared().InAppMessaging!.DisplayIntervalSeconds = (long)interval.TotalSeconds;
             return Task.CompletedTask;
         }
 

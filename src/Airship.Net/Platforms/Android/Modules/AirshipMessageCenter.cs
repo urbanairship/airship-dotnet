@@ -8,6 +8,7 @@ using AirshipDotNet.MessageCenter;
 using AirshipDotNet.Platforms.Android;
 using UrbanAirship.MessageCenter;
 using Java.Util;
+using Java.Time;
 
 namespace AirshipDotNet.Platforms.Android.Modules
 {
@@ -84,8 +85,8 @@ namespace AirshipDotNet.Platforms.Android.Modules
                         extras.Add(key, message.Extras[key]);
                     }
 
-                    DateTime? sentDate = FromDate(message.SentDate);
-                    DateTime? expirationDate = FromDate(message.ExpirationDate);
+                    DateTime? sentDate = FromInstant(message.SentDate);
+                    DateTime? expirationDate = FromInstant(message.ExpirationDate);
 
                     var inboxMessage = new AirshipDotNet.MessageCenter.Message(
                         message.Id,
@@ -128,8 +129,8 @@ namespace AirshipDotNet.Platforms.Android.Modules
                     extras.Add(key, message.Extras[key]);
                 }
 
-                DateTime? sentDate = FromDate(message.SentDate);
-                DateTime? expirationDate = FromDate(message.ExpirationDate);
+                DateTime? sentDate = FromInstant(message.SentDate);
+                DateTime? expirationDate = FromInstant(message.ExpirationDate);
 
                 var inboxMessage = new AirshipDotNet.MessageCenter.Message(
                     message.Id,
@@ -166,14 +167,16 @@ namespace AirshipDotNet.Platforms.Android.Modules
             return Task.CompletedTask;
         }
 
-        private static DateTime? FromDate(Date? date)
+        // SDK 21 changed Message.SentDate/ExpirationDate from java.util.Date to java.time.Instant.
+        private static DateTime? FromInstant(Instant? instant)
         {
-            if (date == null)
+            if (instant == null)
             {
                 return null;
             }
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            return epoch.AddMilliseconds(date.Time);
+            // Instant carries nanoseconds; DateTime ticks are 100ns, so convert both parts.
+            return epoch.AddSeconds(instant.EpochSecond).AddTicks(instant.Nano / 100);
         }
     }
 }

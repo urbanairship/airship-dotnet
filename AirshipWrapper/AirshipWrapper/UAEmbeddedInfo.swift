@@ -2,6 +2,7 @@
 
 import Foundation
 import AirshipCore
+import AirshipScenes
 
 /// ObjC-friendly mirror of AirshipEmbeddedInfo.
 @objc(UAEmbeddedInfo)

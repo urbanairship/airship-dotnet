@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
-		<RootNamespace>AirshipDotNet.Embedded</RootNamespace>
+		<RootNamespace>AirshipDotNet.CustomViews</RootNamespace>
 		<IsTrimmable>false</IsTrimmable>
 		<UseMaui>true</UseMaui>
 
@@ -15,10 +15,10 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageId>Airship.Net.Embedded</PackageId>
-		<Title>Airship Embedded View SDK</Title>
-		<Summary>Airship Embedded View SDK .NET Library</Summary>
-		<Description>Embedded view (MAUI) components for Airship SDK</Description>
+		<PackageId>Airship.Net.CustomViews</PackageId>
+		<Title>Airship Custom Views SDK</Title>
+		<Summary>Airship Scenes custom view SDK .NET Library</Summary>
+		<Description>Register MAUI views that Airship Scenes can render inline</Description>
 		<AssemblyVersion>$(AirshipCrossPlatformVersion)</AssemblyVersion>
 		<PackageVersion>$(AirshipCrossPlatformNugetVersion)</PackageVersion>
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
@@ -30,8 +30,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="Controls/Platforms/Android/**" Condition="'$(TargetFramework)' != 'net10.0-android'" />
-		<Compile Remove="Controls/Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net10.0-ios'" />
+		<Compile Remove="Platforms/Android/**" Condition="'$(TargetFramework)' != 'net10.0-android'" />
+		<Compile Remove="Platforms/iOS/**" Condition="'$(TargetFramework)' != 'net10.0-ios'" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -43,7 +43,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
-		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Automation\Airship.Net.Android.Automation.csproj" />
+		<ProjectReference Include="..\..\binderator\generated\Airship.Net.Android.Layout\Airship.Net.Android.Layout.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-ios'">

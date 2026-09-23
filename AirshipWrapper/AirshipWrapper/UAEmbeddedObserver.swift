@@ -3,6 +3,7 @@
 import Foundation
 import Combine
 import AirshipCore
+import AirshipScenes
 
 /// ObjC-friendly wrapper around AirshipEmbeddedObserver that reports all pending embedded content.
 @objc(UAEmbeddedObserver)

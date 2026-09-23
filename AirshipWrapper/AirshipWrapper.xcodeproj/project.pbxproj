@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4EA3CC0CBE77A7ED517E641D /* AWAirshipWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 109769D5157B1120463434E4 /* AWAirshipWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E1CAEB02E5D33CF001CC1DC /* AirshipAutomation.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E26E0E00F569E933145941 /* AirshipAutomation.xcframework */; };
+		A1B2C3D40000000000000002 /* AirshipScenes.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000001 /* AirshipScenes.xcframework */; };
+		A1B2C3D40000000000000004 /* AirshipSceneRenderer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000003 /* AirshipSceneRenderer.xcframework */; };
 		6E1CAEB22E5D33CF001CC1DC /* AirshipBasement.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C35FA47C8428D6E224F65B2 /* AirshipBasement.xcframework */; };
 		6E1CAEB42E5D33CF001CC1DC /* AirshipCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10F49A6FCBDCFC70B2256918 /* AirshipCore.xcframework */; };
 		6E1CAEB62E5D33CF001CC1DC /* AirshipFeatureFlags.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F93ED2CA4CF614E9DBBB071D /* AirshipFeatureFlags.xcframework */; };
@@ -20,6 +22,8 @@
 		D65CF4CA1E707DCD8BA7F464 /* AWAirshipWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = E50A971F9CC72E96B2D5FF51 /* AWAirshipWrapper.m */; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* UAMessageCenterMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* UAMessageCenterMessageViewController.swift */; };
 		C3D4E5F6A7B8C9D0E1F2A3B4 /* UAEmbeddedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A7B8C9D0E1F2A3B4C5 /* UAEmbeddedInfo.swift */; };
+		A1B2C3D40000000000000011 /* UACustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000012 /* UACustomViewManager.swift */; };
+		A1B2C3D40000000000000021 /* UAAirshipAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D40000000000000022 /* UAAirshipAI.swift */; };
 		E5F6A7B8C9D0E1F2A3B4C5D6 /* UAEmbeddedObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A7B8C9D0E1F2A3B4C5D6E7 /* UAEmbeddedObserver.swift */; };
 /* End PBXBuildFile section */
 
@@ -31,12 +35,16 @@
 		6FE4AB48294B2EEE918A265B /* AirshipObjectiveC.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipObjectiveC.xcframework; path = ../Carthage/Build/AirshipObjectiveC.xcframework; sourceTree = "<group>"; };
 		8DFBC95C256204401035D12F /* AirshipMessageCenter.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipMessageCenter.xcframework; path = ../Carthage/Build/AirshipMessageCenter.xcframework; sourceTree = "<group>"; };
 		93E26E0E00F569E933145941 /* AirshipAutomation.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipAutomation.xcframework; path = ../Carthage/Build/AirshipAutomation.xcframework; sourceTree = "<group>"; };
+		A1B2C3D40000000000000001 /* AirshipScenes.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipScenes.xcframework; path = ../Carthage/Build/AirshipScenes.xcframework; sourceTree = "<group>"; };
+		A1B2C3D40000000000000003 /* AirshipSceneRenderer.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipSceneRenderer.xcframework; path = ../Carthage/Build/AirshipSceneRenderer.xcframework; sourceTree = "<group>"; };
 		9B56CFBD35061668DFD7A926 /* AirshipPreferenceCenter.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipPreferenceCenter.xcframework; path = ../Carthage/Build/AirshipPreferenceCenter.xcframework; sourceTree = "<group>"; };
 		BA003529B07C47D0E427238D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		C8679CB2177B318DE463308D /* AirshipWrapper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = AirshipWrapper.h; path = AirshipWrapper/AirshipWrapper.h; sourceTree = "<group>"; };
 		E50A971F9CC72E96B2D5FF51 /* AWAirshipWrapper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AWAirshipWrapper.m; path = AirshipWrapper/AWAirshipWrapper.m; sourceTree = "<group>"; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* UAMessageCenterMessageViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UAMessageCenterMessageViewController.swift; path = AirshipWrapper/UAMessageCenterMessageViewController.swift; sourceTree = "<group>"; };
 		D4E5F6A7B8C9D0E1F2A3B4C5 /* UAEmbeddedInfo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UAEmbeddedInfo.swift; path = AirshipWrapper/UAEmbeddedInfo.swift; sourceTree = "<group>"; };
+		A1B2C3D40000000000000012 /* UACustomViewManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UACustomViewManager.swift; path = AirshipWrapper/UACustomViewManager.swift; sourceTree = "<group>"; };
+		A1B2C3D40000000000000022 /* UAAirshipAI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UAAirshipAI.swift; path = AirshipWrapper/UAAirshipAI.swift; sourceTree = "<group>"; };
 		F6A7B8C9D0E1F2A3B4C5D6E7 /* UAEmbeddedObserver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UAEmbeddedObserver.swift; path = AirshipWrapper/UAEmbeddedObserver.swift; sourceTree = "<group>"; };
 		F93ED2CA4CF614E9DBBB071D /* AirshipFeatureFlags.xcframework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.xcframework; name = AirshipFeatureFlags.xcframework; path = ../Carthage/Build/AirshipFeatureFlags.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -54,6 +62,8 @@
 				6E1CAEB82E5D33CF001CC1DC /* AirshipMessageCenter.xcframework in Frameworks */,
 				6E1CAEBA2E5D33CF001CC1DC /* AirshipObjectiveC.xcframework in Frameworks */,
 				6E1CAEB42E5D33CF001CC1DC /* AirshipCore.xcframework in Frameworks */,
+				A1B2C3D40000000000000004 /* AirshipSceneRenderer.xcframework in Frameworks */,
+				A1B2C3D40000000000000002 /* AirshipScenes.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +87,8 @@
 				E50A971F9CC72E96B2D5FF51 /* AWAirshipWrapper.m */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* UAMessageCenterMessageViewController.swift */,
 				D4E5F6A7B8C9D0E1F2A3B4C5 /* UAEmbeddedInfo.swift */,
+				A1B2C3D40000000000000012 /* UACustomViewManager.swift */,
+				A1B2C3D40000000000000022 /* UAAirshipAI.swift */,
 				F6A7B8C9D0E1F2A3B4C5D6E7 /* UAEmbeddedObserver.swift */,
 			);
 			name = AirshipWrapper;
@@ -93,6 +105,8 @@
 				8DFBC95C256204401035D12F /* AirshipMessageCenter.xcframework */,
 				F93ED2CA4CF614E9DBBB071D /* AirshipFeatureFlags.xcframework */,
 				9B56CFBD35061668DFD7A926 /* AirshipPreferenceCenter.xcframework */,
+				A1B2C3D40000000000000003 /* AirshipSceneRenderer.xcframework */,
+				A1B2C3D40000000000000001 /* AirshipScenes.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -191,6 +205,8 @@
 				D65CF4CA1E707DCD8BA7F464 /* AWAirshipWrapper.m in Sources */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* UAMessageCenterMessageViewController.swift in Sources */,
 				C3D4E5F6A7B8C9D0E1F2A3B4 /* UAEmbeddedInfo.swift in Sources */,
+				A1B2C3D40000000000000011 /* UACustomViewManager.swift in Sources */,
+				A1B2C3D40000000000000021 /* UAAirshipAI.swift in Sources */,
 				E5F6A7B8C9D0E1F2A3B4C5D6 /* UAEmbeddedObserver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

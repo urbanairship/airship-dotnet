@@ -22,5 +22,21 @@
 
   <!-- Remove FrequencyLimitDao_Impl.insert -->
   <remove-node path="/api/package[@name='com.urbanairship.automation.limits.storage']/class[@name='FrequencyLimitDao_Impl']/method[@name='insert' and count(parameter)=2 and parameter[1][@type='java.lang.Object'] and parameter[2][@type='kotlin.coroutines.Continuation&lt;? super kotlin.Unit&gt;']]" />
-</metadata>
 
+  <!--
+    SDK 21 types `Banner.duration` as kotlin.time.Duration, a value class. Kotlin emits a
+    name-mangled overload (copy-26RPDK8 etc.) alongside the plain `copy`; both erase to the
+    same C# signature, so the binding fails with CS0111. The mangled names are not callable
+    from managed code, so drop them and keep the plain overloads.
+  -->
+  <remove-node path="/api/package[@name='com.urbanairship.iam.content']/class[@name='Banner']/method[starts-with(@name,'copy-')]" />
+
+  <!--
+    SDK 21's AI evaluations implement the generic Kotlin interface Evaluation<Output, Subject>.
+    Generic erasure gives the implementations a narrower return type than the bound interface
+    (CS0738). These are internal evaluation plumbing - apps supply context via Airship.AI and
+    never construct an Evaluation - so they are not bound.
+  -->
+  <remove-node path="/api/package[@name='com.urbanairship.embedded.ai']/class[@name='EmbeddedSelectionEvaluation']" />
+  <remove-node path="/api/package[@name='com.urbanairship.iam.ai']/class[@name='InAppMessageSuppressionEvaluation']" />
+</metadata>

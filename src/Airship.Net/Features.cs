@@ -51,8 +51,13 @@ namespace AirshipDotNet
         FeatureFlags = 1 << 8,
 
         /// <summary>
+        /// On-device AI feature.
+        /// </summary>
+        OnDeviceAI = 1 << 9,
+
+        /// <summary>
         /// All features enabled.
         /// </summary>
-        All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts | FeatureFlags
+        All = InAppAutomation | MessageCenter | Push | Analytics | TagsAndAttributes | Contacts | FeatureFlags | OnDeviceAI
     }
 }

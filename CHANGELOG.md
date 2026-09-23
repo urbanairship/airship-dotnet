@@ -1,5 +1,28 @@
 # Airship DotNet Changelog
 
+## Version 22.0.0 - TBD
+Major release that updates the native SDKs to Airship SDK 21, raises the Android minimum to API 26, and consolidates lifecycle events onto the `Airship.Instance` facade.
+
+### Changes
+- Updated iOS SDK to [21.0.2](https://github.com/urbanairship/ios-library/releases/tag/21.0.2)
+- Updated Android SDK to [21.0.2](https://github.com/urbanairship/android-library/releases/tag/21.0.2)
+- Updated Android minimum version to API 26 (Android 8.0)
+- Moved Message Center events onto the `Airship.Instance` facade: `Airship.MessageCenter.OnMessagesUpdated` -> `Airship.Instance.OnMessageCenterUpdated`, and `OnMessageCenterDisplay` -> `Airship.Instance.OnDisplayMessageCenter`
+- Collapsed the background and foreground variants of `AirshipEventType` into `PushReceived` and `NotificationResponse`
+- Added `OnPushReceived`, `OnNotificationResponse`, `OnPushTokenReceived` and `OnDisplayPreferenceCenter` events on `Airship.Instance`, with typed event args
+- Added `OnAuthorizedNotificationSettingsChanged` event on `Airship.Instance` (iOS)
+- Added six `Permission` values for the system-permission actions used by Scenes: `AppTrackingTransparency`, `Camera`, `Microphone`, `Bluetooth`, `PhotoLibrary`, `Contacts`
+- Added the `Features.OnDeviceAI` privacy feature flag
+- Added `Airship.Net.CustomViews`, a new package for registering MAUI views that Scenes can render inline
+- Added `Airship.AI` for supplying app context to on-device AI evaluations, with `SetContextProvider` and `SetDefaultContextProvider`
+- Removed the Message Center user credentials and native bridge bindings (`UAMessageCenterUser`, `UAMessageCenterNativeBridge`), removed from the native iOS SDK
+- Removed the background-fetch app integration method, removed from the native iOS SDK
+- Updated `Microsoft.Maui.Controls` to 10.0.110 (from 9.0.0), aligning the MAUI version with the `net10.0` target
+- Apps built against the iOS 27 SDK must now declare a `UIApplicationSceneManifest`; see the Migration Guide for the required values
+- Building from source now requires Xcode 27 and JDK 17
+
+See the [Migration Guide](MIGRATION.md) for upgrade instructions.
+
 ## Version 21.5.0 - September 9, 2026
 Minor release that updates the iOS SDK to 20.12.1 and Android SDK to 20.12.0.
 
