@@ -507,6 +507,16 @@ namespace AirshipDotNet
             }
         }
 
+        /// <summary>
+        /// Add/remove the Message Center display listener.
+        /// </summary>
+        [Obsolete("Renamed to OnDisplayMessageCenter. This member will be removed in a future major release.")]
+        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
+        {
+            add => OnDisplayMessageCenter += value;
+            remove => OnDisplayMessageCenter -= value;
+        }
+
         private IReadOnlyList<EmbeddedInfo> _pendingEmbedded = new List<EmbeddedInfo>();
 
         /// <summary>Latest snapshot of pending embedded content.</summary>
@@ -623,7 +633,7 @@ namespace AirshipDotNet
         /// <summary>
         /// Gets the Airship .NET library version.
         /// </summary>
-        public static string Version => "21.5.0";
+        public static string Version => "21.5.1";
 
         // Module properties
         public static IAirshipPush Push => Instance._push;

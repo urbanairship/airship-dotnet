@@ -12,8 +12,8 @@
     <AirshipIosNugetVersion>20.12.1</AirshipIosNugetVersion>
 
     <!-- Airship.Net version -->
-    <AirshipCrossPlatformVersion>21.5.0</AirshipCrossPlatformVersion>
-    <AirshipCrossPlatformNugetVersion>21.5.0</AirshipCrossPlatformNugetVersion>
+    <AirshipCrossPlatformVersion>21.5.1</AirshipCrossPlatformVersion>
+    <AirshipCrossPlatformNugetVersion>21.5.1</AirshipCrossPlatformNugetVersion>
   </PropertyGroup>
 
   <!-- Nuget packaging metadata -->

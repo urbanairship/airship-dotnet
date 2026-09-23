@@ -24,9 +24,13 @@ namespace AirshipDotNet.Events
         /// Event name mappings similar to Flutter's EVENT_NAME_MAP.
         /// Multiple event types can map to the same stream.
         /// </summary>
+        #pragma warning disable CS0618 // Deprecated event types are mapped here for backwards compatibility.
         public static readonly Dictionary<AirshipEventType, string> EventNameMap = new()
         {
             { AirshipEventType.NotificationResponse, "com.airship.dotnet/event/notification_response" },
+            { AirshipEventType.BackgroundNotificationResponse, "com.airship.dotnet/event/notification_response" },
+            { AirshipEventType.ForegroundNotificationResponse, "com.airship.dotnet/event/notification_response" },
+            { AirshipEventType.BackgroundPushReceived, "com.airship.dotnet/event/background_push_received" },
             { AirshipEventType.ChannelCreated, "com.airship.dotnet/event/channel_created" },
             { AirshipEventType.DeepLinkReceived, "com.airship.dotnet/event/deep_link_received" },
             { AirshipEventType.DisplayMessageCenter, "com.airship.dotnet/event/display_message_center" },
@@ -38,6 +42,7 @@ namespace AirshipDotNet.Events
             { AirshipEventType.PendingEmbeddedUpdated, "com.airship.dotnet/event/pending_embedded_updated" },
             { AirshipEventType.AuthorizedNotificationSettingsChanged, "com.airship.dotnet/event/ios_authorized_notification_settings_changed" }
         };
+        #pragma warning restore CS0618
 
         /// <summary>
         /// Initializes a new instance of the AirshipEventStream class.
