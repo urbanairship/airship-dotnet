@@ -1,41 +1,5 @@
 # Migration Guide
 
-## 21.4.x to 21.5.x
-
-No migration is required. 21.5.0 briefly removed the two Message Center events below; **21.5.1 restores them** as deprecated members, so existing code continues to compile and run unchanged.
-
-The events have moved onto the `Airship` facade. The old names still work but will be removed in a future major release:
-
-| 21.4.0 and earlier | Replacement | Signature |
-|---|---|---|
-| `Airship.MessageCenter.OnMessagesUpdated` | `Airship.Instance.OnMessageCenterUpdated` | `EventHandler<EventArgs>` — unchanged |
-| `Airship.MessageCenter.OnMessageCenterDisplay` | `Airship.Instance.OnDisplayMessageCenter` | `EventHandler<MessageCenterEventArgs>` — unchanged |
-| `Airship.Instance.OnMessageCenterDisplay` | `Airship.Instance.OnDisplayMessageCenter` | `EventHandler<MessageCenterEventArgs>` — unchanged |
-
-```csharp
-// 21.4.x — still supported in 21.5.1, now deprecated
-Airship.MessageCenter.OnMessagesUpdated += OnMessagesUpdated;
-Airship.Instance.OnMessageCenterDisplay += OnMessageCenterDisplay;
-
-// 21.5.x — preferred
-Airship.Instance.OnMessageCenterUpdated += OnMessagesUpdated;
-Airship.Instance.OnDisplayMessageCenter += OnMessageCenterDisplay;
-```
-
-### Deprecated `AirshipEventType` members
-
-`BackgroundPushReceived`, `BackgroundNotificationResponse` and `ForegroundNotificationResponse` were removed in 21.5.0 and are restored in 21.5.1 as deprecated. They were never emitted by the SDK; use `PushReceived` with `PushReceivedEventArgs.IsBackground`, or `NotificationResponse` with `NotificationResponseEventArgs.IsForeground`.
-
-All `AirshipEventType` values are now pinned to explicit numbers, so deprecating or adding a member can no longer shift the others.
-
-### Queued events
-
-Events raised while no handler is attached are now queued and delivered when a handler subscribes; in 21.4.0 and earlier they were dropped. A handler attached after startup may therefore receive callbacks for events that occurred before it subscribed — for example, a Message Center updated callback fired immediately on subscribe. Handlers should be idempotent.
-
-### iOS Message Center display behavior
-
-On iOS, a Message Center display request without a message ID now invokes the display handler with a null `MessageId`. In 21.4.0 and earlier this case was silently dropped, so an app that set a display delegate never saw a callback for a plain display request. Apps that switch on `MessageId` should handle null by showing their Message Center list.
-
 ## 20.x to 21.x
 
 ### .NET Version
