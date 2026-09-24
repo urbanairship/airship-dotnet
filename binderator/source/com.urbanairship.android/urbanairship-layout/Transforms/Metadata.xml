@@ -1,4 +1,19 @@
 ﻿<metadata>
-    <remove-node path="/api/package[starts-with(@name, 'com.urbanairship.android.layout')]" />
-</metadata>
+    <!--
+      The layout package is SDK internals and is not bound, with one exception: the
+      custom view API, which SDK 21 made public (it was @RestrictTo before). Removing
+      the package wholesale would take AirshipCustomViewManager with it, so remove
+      every type in the package EXCEPT the custom view entry points.
+    -->
+    <remove-node path="/api/package[starts-with(@name, 'com.urbanairship.android.layout')]/*[not(self::class[@name='AirshipCustomViewManager'] or self::interface[@name='AirshipCustomViewHandler'] or self::class[@name='AirshipCustomViewArguments'] or self::class[@name='AirshipCustomViewArguments.SizeInfo'])]" />
 
+    <!--
+      AirshipCustomViewArguments.sceneController is typed SceneController, which lives in
+      the removed scenecontroller package. Drop the getter so the binding does not
+      reference a type that no longer exists.
+    -->
+    <remove-node path="/api/package[@name='com.urbanairship.android.layout']/class[@name='AirshipCustomViewArguments']/method[@name='getSceneController']" />
+
+    <!-- Kotlin `object` singleton: expose the instance rather than a constructor. -->
+    <attr path="/api/package[@name='com.urbanairship.android.layout']/class[@name='AirshipCustomViewManager']" name="managedName">AirshipCustomViewManager</attr>
+</metadata>

@@ -74,11 +74,6 @@ namespace Airship
 		[Export ("fetchContactSubscriptionLists:")]
 		void FetchContactSubscriptionLists (Action<NSDictionary<NSString, NSArray>, NSError> completion);
 
-		// + (void)getMessageCenterUserAuth:(void(^)(NSString * _Nullable))completion;
-		[Static]
-		[Export ("getMessageCenterUserAuth:")]
-		void GetMessageCenterUserAuth (Action<NSString> completion);
-
 		// + (void)getMessageForID:(NSString *)messageID completion:(void(^)(UAMessageCenterMessage * _Nullable))completion;
 		[Static]
 		[Export ("getMessageForID:completion:")]
@@ -197,11 +192,6 @@ namespace Airship
 	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC16UAAppIntegration")]
 	interface UAAppIntegration
 	{
-		// +(void)application:(UIApplication * _Nonnull)application performFetchWithCompletionHandler:(void (^ _Nonnull)(UIBackgroundFetchResult))completionHandler;
-		[Static]
-		[Export ("application:performFetchWithCompletionHandler:")]
-		void Application (UIApplication application, Action<UIBackgroundFetchResult> completionHandler);
-
 		// +(void)application:(UIApplication * _Nonnull)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData * _Nonnull)deviceToken;
 		[Static]
 		[Export ("application:didRegisterForRemoteNotificationsWithDeviceToken:")]
@@ -952,6 +942,11 @@ namespace Airship
 		[Export ("featureFlags")]
 		UAFeature FeatureFlags { get; }
 
+		// +(UAFeature * _Nonnull)onDeviceAI __attribute__((warn_unused_result("")));
+		[Static]
+		[Export ("onDeviceAI")]
+		UAFeature OnDeviceAI { get; }
+
 		// +(UAFeature * _Nonnull)all __attribute__((warn_unused_result("")));
 		[Static]
 		[Export ("all")]
@@ -1070,10 +1065,6 @@ namespace Airship
 		// -(void)getMessagesWithCompletionHandler:(void (^ _Nonnull)(NSArray<UAMessageCenterMessage *> * _Nonnull))completionHandler;
 		[Export ("getMessagesWithCompletionHandler:")]
 		void GetMessagesWithCompletionHandler (Action<UAMessageCenterMessage[]> completionHandler);
-
-		// -(void)getUserWithCompletionHandler:(void (^ _Nonnull)(UAMessageCenterUser * _Nullable))completionHandler;
-		[Export ("getUserWithCompletionHandler:")]
-		void GetUserWithCompletionHandler (Action<UAMessageCenterUser> completionHandler);
 
 		// -(void)getUnreadCountWithCompletionHandler:(void (^ _Nonnull)(NSInteger))completionHandler;
 		[Export ("getUnreadCountWithCompletionHandler:")]
@@ -1327,54 +1318,6 @@ namespace Airship
 		// @property (nonatomic, strong) UIColor * _Nullable messageViewContainerBackgroundColorDark;
 		[NullAllowed, Export ("messageViewContainerBackgroundColorDark", ArgumentSemantic.Strong)]
 		UIColor MessageViewContainerBackgroundColorDark { get; set; }
-	}
-
-	// @interface UAMessageCenterUser : NSObject
-	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC19UAMessageCenterUser")]
-	[DisableDefaultCtor]
-	interface UAMessageCenterUser
-	{
-		// @property (readonly, copy, nonatomic) NSString * _Nonnull password;
-		[Export ("password")]
-		string Password { get; }
-
-		// @property (readonly, copy, nonatomic) NSString * _Nonnull username;
-		[Export ("username")]
-		string Username { get; }
-
-		// @property (readonly, copy, nonatomic) NSString * _Nonnull basicAuthString;
-		[Export ("basicAuthString")]
-		string BasicAuthString { get; }
-	}
-
-	// @protocol UAMessageCenterNativeBridgeDelegate
-	[Protocol (Name = "_TtP17AirshipObjectiveC35UAMessageCenterNativeBridgeDelegate_"), Model]
-	[BaseType (typeof(NSObject))]
-	interface UAMessageCenterNativeBridgeDelegate
-	{
-		[Abstract]
-		[Export ("close")]
-		void Close ();
-	}
-
-	// @interface UAMessageCenterNativeBridge : NSObject
-	[BaseType (typeof(NSObject), Name = "_TtC17AirshipObjectiveC27UAMessageCenterNativeBridge")]
-	interface UAMessageCenterNativeBridge
-	{
-		// navigationDelegate is bound as NSObject because Swift's `any WKNavigationDelegate`
-		// produces WKNavigationDelegateWrapper in .NET (not an NSObject), so we use
-		// WKWebView.WeakNavigationDelegate instead of NavigationDelegate.
-		[Export ("navigationDelegate", ArgumentSemantic.Strong)]
-		NSObject NavigationDelegate { get; }
-
-		[NullAllowed, Export ("nativeBridgeDelegate", ArgumentSemantic.Weak)]
-		UAMessageCenterNativeBridgeDelegate NativeBridgeDelegate { get; set; }
-
-		[NullAllowed, Export ("forwardNavigationDelegate", ArgumentSemantic.Strong)]
-		WebKit.IWKNavigationDelegate ForwardNavigationDelegate { get; set; }
-
-		[Export ("setMessage:user:")]
-		void SetMessage (UAMessageCenterMessage message, UAMessageCenterUser user);
 	}
 
 	// @interface UAMessageCenterViewControllerFactory : NSObject
@@ -1963,5 +1906,83 @@ namespace Airship
 
 		[Export ("stop")]
 		void Stop ();
+	}
+
+	// @interface UACustomViewSizeInfo : NSObject
+	[BaseType (typeof(NSObject), Name = "UACustomViewSizeInfo")]
+	[DisableDefaultCtor]
+	interface UACustomViewSizeInfo
+	{
+		[Export ("isAutoHeight")]
+		bool IsAutoHeight { get; }
+
+		[Export ("isAutoWidth")]
+		bool IsAutoWidth { get; }
+	}
+
+	// @interface UACustomViewArguments : NSObject
+	[BaseType (typeof(NSObject), Name = "UACustomViewArguments")]
+	[DisableDefaultCtor]
+	interface UACustomViewArguments
+	{
+		[Export ("name")]
+		string Name { get; }
+
+		// The Scene's properties as a JSON string; AirshipJSON has no ObjC representation.
+		[NullAllowed, Export ("propertiesJSON")]
+		string PropertiesJson { get; }
+
+		[Export ("sizeInfo")]
+		UACustomViewSizeInfo SizeInfo { get; }
+	}
+
+	// @interface UACustomViewManager : NSObject
+	[BaseType (typeof(NSObject), Name = "UACustomViewManager")]
+	interface UACustomViewManager
+	{
+		[Static]
+		[Export ("shared")]
+		UACustomViewManager Shared { get; }
+
+		[Export ("registerWithName:builder:")]
+		void Register (string name, Func<UACustomViewArguments, UIView> builder);
+
+		[Export ("unregisterWithName:")]
+		void Unregister (string name);
+	}
+
+	// @interface UAEvaluationContextItem : NSObject
+	[BaseType (typeof(NSObject), Name = "UAEvaluationContextItem")]
+	[DisableDefaultCtor]
+	interface UAEvaluationContextItem
+	{
+		[Export ("initWithContent:priority:")]
+		NativeHandle Constructor (string content, double priority);
+
+		[Export ("content")]
+		string Content { get; }
+
+		[Export ("priority")]
+		double Priority { get; }
+	}
+
+	// @interface UAAirshipAI : NSObject
+	[BaseType (typeof(NSObject), Name = "UAAirshipAI")]
+	interface UAAirshipAI
+	{
+		[Static]
+		[Export ("shared")]
+		UAAirshipAI Shared { get; }
+
+		[Static]
+		[Export ("usageInAppMessageSuppression")]
+		string UsageInAppMessageSuppression { get; }
+
+		// Returns false when the usage string is not recognized by the SDK.
+		[Export ("setContextProviderForUsage:provider:")]
+		bool SetContextProvider (string usage, [NullAllowed] Func<NSString, UAEvaluationContextItem[]> provider);
+
+		[Export ("setDefaultContextProvider:")]
+		void SetDefaultContextProvider ([NullAllowed] Func<UAEvaluationContextItem[]> provider);
 	}
 }

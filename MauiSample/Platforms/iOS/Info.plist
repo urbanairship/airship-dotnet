@@ -32,6 +32,30 @@
 		<string>remote-notification</string>
 		<string>processing</string>
 	</array>
+	<!--
+	  iOS 27 traps at launch for apps built against the iOS 27 SDK that have not adopted the
+	  UIScene lifecycle (__UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption).
+	  MAUI 10 ships MauiUISceneDelegate for this. The configuration name must match
+	  MauiUIApplicationDelegate.MauiSceneConfigurationKey exactly, or MauiUISceneDelegate
+	  skips window creation in WillConnect and the app launches to a black screen.
+	-->
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>__MAUI_DEFAULT_SCENE_CONFIGURATION__</string>
+					<key>UISceneDelegateClassName</key>
+					<string>Microsoft_Maui_MauiUISceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
 	<key>CFBundleIdentifier</key>

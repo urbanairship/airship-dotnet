@@ -132,6 +132,12 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             {
                 Permission.DisplayNotifications => UAPermission.DisplayNotifications,
                 Permission.Location => UAPermission.Location,
+                Permission.AppTrackingTransparency => UAPermission.AppTrackingTransparency,
+                Permission.Camera => UAPermission.Camera,
+                Permission.Microphone => UAPermission.Microphone,
+                Permission.Bluetooth => UAPermission.Bluetooth,
+                Permission.PhotoLibrary => UAPermission.PhotoLibrary,
+                Permission.Contacts => UAPermission.Contacts,
                 _ => UAPermission.DisplayNotifications
             };
         }

@@ -84,29 +84,6 @@ static AWAirshipWrapper *_shared = nil;
     [[UAirship contact] fetchSubscriptionListsWithCompletionHandler:completion];
 }
 
-+ (void)getMessageCenterUserAuth:(void(^)(NSString * _Nullable))completion {
-    // Directly extract the auth string without creating intermediate objects
-    [[UAirship messageCenter].inbox getUserWithCompletionHandler:^(id _Nullable userObject) {
-        if (userObject) {
-            @try {
-                SEL basicAuthSelector = @selector(basicAuthString);
-                if ([userObject respondsToSelector:basicAuthSelector]) {
-                    NSString *authString = [userObject performSelector:basicAuthSelector];
-                    completion(authString);
-                } else {
-                    NSLog(@"UAMessageCenterUser doesn't respond to basicAuthString selector");
-                    completion(nil);
-                }
-            } @catch (NSException *exception) {
-                NSLog(@"Failed to extract auth string: %@", exception);
-                completion(nil);
-            }
-        } else {
-            completion(nil);
-        }
-    }];
-}
-
 + (void)getMessageForID:(NSString *)messageID completion:(void(^)(UAMessageCenterMessage * _Nullable))completion {
     [[UAirship messageCenter].inbox messageForID:messageID completionHandler:completion];
 }

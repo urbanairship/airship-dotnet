@@ -46,6 +46,8 @@ namespace AirshipDotNet.Platforms.Android.Modules
                     features |= Features.Contacts;
                 if (privacyManager.IsEnabled(PrivacyManager.Feature.FeatureFlags))
                     features |= Features.FeatureFlags;
+                if (privacyManager.IsEnabled(PrivacyManager.Feature.OnDeviceAi))
+                    features |= Features.OnDeviceAI;
 
                 return features;
             }
@@ -142,6 +144,10 @@ namespace AirshipDotNet.Platforms.Android.Modules
             {
                 uaFeatures.Add(PrivacyManager.Feature.FeatureFlags);
             }
+            if (features.HasFlag(Features.OnDeviceAI))
+            {
+                uaFeatures.Add(PrivacyManager.Feature.OnDeviceAi);
+            }
 
             return uaFeatures.ToArray();
         }
@@ -177,6 +183,10 @@ namespace AirshipDotNet.Platforms.Android.Modules
             if (uaFeatures.Contains(PrivacyManager.Feature.FeatureFlags))
             {
                 features |= Features.FeatureFlags;
+            }
+            if (uaFeatures.Contains(PrivacyManager.Feature.OnDeviceAi))
+            {
+                features |= Features.OnDeviceAI;
             }
 
             return features;

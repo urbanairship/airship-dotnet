@@ -185,6 +185,7 @@ namespace AirshipDotNet
         private readonly IAirshipInApp _inApp;
         private readonly IAirshipPrivacyManager _privacyManager;
         private readonly IAirshipFeatureFlagManager _featureFlagManager;
+        private readonly AirshipDotNet.AI.IAirshipAI _ai;
         private readonly IAirshipPreferenceCenter _preferenceCenter;
         private readonly IAirshipMessageCenter _messageCenter;
         private readonly IAirshipPermissionsManager _permissionsManager;
@@ -210,6 +211,7 @@ namespace AirshipDotNet
             _inApp = new AirshipInApp(_module);
             _privacyManager = new AirshipPrivacyManager(_module);
             _featureFlagManager = new AirshipFeatureFlagManager(_module);
+            _ai = new AirshipDotNet.Platforms.iOS.Modules.AirshipAI(_module);
             _preferenceCenter = new AirshipPreferenceCenter(_module);
             _messageCenter = new AirshipDotNet.Platforms.iOS.Modules.AirshipMessageCenter(_module);
             _permissionsManager = new AirshipDotNet.Platforms.iOS.Modules.AirshipPermissionsManager(_module);
@@ -623,7 +625,7 @@ namespace AirshipDotNet
         /// <summary>
         /// Gets the Airship .NET library version.
         /// </summary>
-        public static string Version => "21.5.0";
+        public static string Version => "22.0.0";
 
         // Module properties
         public static IAirshipPush Push => Instance._push;
@@ -633,6 +635,11 @@ namespace AirshipDotNet
         public static IAirshipInApp InApp => Instance._inApp;
         public static IAirshipPrivacyManager PrivacyManager => Instance._privacyManager;
         public static IAirshipFeatureFlagManager FeatureFlagManager => Instance._featureFlagManager;
+
+        /// <summary>
+        /// On-device AI context providers. Gated by <see cref="Features.OnDeviceAI"/>.
+        /// </summary>
+        public static AirshipDotNet.AI.IAirshipAI AI => Instance._ai;
         public static IAirshipPreferenceCenter PreferenceCenter => Instance._preferenceCenter;
         public static IAirshipMessageCenter MessageCenter => Instance._messageCenter;
         public static IAirshipPermissionsManager PermissionsManager => Instance._permissionsManager;

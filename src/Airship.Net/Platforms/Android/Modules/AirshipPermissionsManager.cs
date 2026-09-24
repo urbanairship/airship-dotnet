@@ -196,6 +196,12 @@ namespace AirshipDotNet.Platforms.Android.Modules
             {
                 Permission.DisplayNotifications => Com.Urbanairship.Permission.Permission.DisplayNotifications!,
                 Permission.Location => Com.Urbanairship.Permission.Permission.Location!,
+                Permission.AppTrackingTransparency => Com.Urbanairship.Permission.Permission.AppTrackingTransparency!,
+                Permission.Camera => Com.Urbanairship.Permission.Permission.Camera!,
+                Permission.Microphone => Com.Urbanairship.Permission.Permission.Microphone!,
+                Permission.Bluetooth => Com.Urbanairship.Permission.Permission.Bluetooth!,
+                Permission.PhotoLibrary => Com.Urbanairship.Permission.Permission.PhotoLibrary!,
+                Permission.Contacts => Com.Urbanairship.Permission.Permission.Contacts!,
                 _ => Com.Urbanairship.Permission.Permission.DisplayNotifications!
             };
         }

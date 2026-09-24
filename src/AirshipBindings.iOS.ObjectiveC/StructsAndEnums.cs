@@ -42,7 +42,13 @@ namespace Airship
 	public enum UAPermission : long
 	{
 		DisplayNotifications = 0,
-		Location = 1
+		Location = 1,
+		AppTrackingTransparency = 2,
+		Camera = 3,
+		Microphone = 4,
+		Bluetooth = 5,
+		PhotoLibrary = 6,
+		Contacts = 7
 	}
 
 	[Native]

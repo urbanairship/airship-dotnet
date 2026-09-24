@@ -127,6 +127,10 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             {
                 featureList.Add(UAFeature.Contacts);
             }
+            if (features.HasFlag(Features.OnDeviceAI))
+            {
+                featureList.Add(UAFeature.OnDeviceAI);
+            }
 
             if (featureList.Count == 0)
             {
@@ -163,6 +167,10 @@ namespace AirshipDotNet.Platforms.iOS.Modules
             if (uaFeature.Contains(UAFeature.Contacts))
             {
                 features |= Features.Contacts;
+            }
+            if (uaFeature.Contains(UAFeature.OnDeviceAI))
+            {
+                features |= Features.OnDeviceAI;
             }
 
             return features;
