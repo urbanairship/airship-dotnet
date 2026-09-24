@@ -175,5 +175,71 @@ namespace AirshipDotNet.Platforms.Android.Modules
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return epoch.AddMilliseconds(date.Time);
         }
+
+        #pragma warning disable CS0618 // Obsolete members are implemented here intentionally.
+
+        private EventHandler<MessageCenterEventArgs>? onMessageCenterDisplay;
+        private EventHandler<MessageCenterEventArgs>? facadeDisplayHandler;
+
+        /// <summary>
+        /// Add/remove the Message Center display listener.
+        /// </summary>
+        [Obsolete("Use Airship.Instance.OnDisplayMessageCenter instead. This member will be removed in a future major release.")]
+        public event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay
+        {
+            add
+            {
+                onMessageCenterDisplay += value;
+                if (facadeDisplayHandler == null)
+                {
+                    // Re-raise with this module as the sender, matching 21.4.0 behavior.
+                    facadeDisplayHandler = (sender, e) => onMessageCenterDisplay?.Invoke(this, e);
+                    AirshipDotNet.Airship.Instance.OnDisplayMessageCenter += facadeDisplayHandler;
+                }
+            }
+            remove
+            {
+                onMessageCenterDisplay -= value;
+
+                if (onMessageCenterDisplay == null && facadeDisplayHandler != null)
+                {
+                    AirshipDotNet.Airship.Instance.OnDisplayMessageCenter -= facadeDisplayHandler;
+                    facadeDisplayHandler = null;
+                }
+            }
+        }
+
+        private EventHandler<EventArgs>? onMessagesUpdated;
+        private EventHandler<EventArgs>? facadeUpdatedHandler;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        [Obsolete("Use Airship.Instance.OnMessageCenterUpdated instead. This member will be removed in a future major release.")]
+        public event EventHandler<EventArgs> OnMessagesUpdated
+        {
+            add
+            {
+                onMessagesUpdated += value;
+                if (facadeUpdatedHandler == null)
+                {
+                    // Re-raise with this module as the sender, matching 21.4.0 behavior.
+                    facadeUpdatedHandler = (sender, e) => onMessagesUpdated?.Invoke(this, e);
+                    AirshipDotNet.Airship.Instance.OnMessageCenterUpdated += facadeUpdatedHandler;
+                }
+            }
+            remove
+            {
+                onMessagesUpdated -= value;
+
+                if (onMessagesUpdated == null && facadeUpdatedHandler != null)
+                {
+                    AirshipDotNet.Airship.Instance.OnMessageCenterUpdated -= facadeUpdatedHandler;
+                    facadeUpdatedHandler = null;
+                }
+            }
+        }
+
+        #pragma warning restore CS0618
     }
 }

@@ -58,5 +58,17 @@ namespace AirshipDotNet
         /// </summary>
         /// <param name="messageId">The message ID to display.</param>
         Task DisplayMessage(string messageId);
+
+        /// <summary>
+        /// Add/remove the Message Center display listener.
+        /// </summary>
+        [Obsolete("Use Airship.Instance.OnDisplayMessageCenter instead. This member will be removed in a future major release.")]
+        event EventHandler<MessageCenterEventArgs> OnMessageCenterDisplay;
+
+        /// <summary>
+        /// Add/remove the Message Center updated listener.
+        /// </summary>
+        [Obsolete("Use Airship.Instance.OnMessageCenterUpdated instead. This member will be removed in a future major release.")]
+        event EventHandler<EventArgs> OnMessagesUpdated;
     }
 }

@@ -1,5 +1,15 @@
 # Airship DotNet Changelog
 
+## Version 21.5.1 - September 23, 2026
+Patch release that restores the public Message Center event APIs that were unintentionally removed in 21.5.0. Code written against 21.4.0 and earlier compiles and behaves as it did before; the restored members are deprecated in favor of their replacements on the `Airship` facade.
+
+### Changes
+- Restored `IAirshipMessageCenter.OnMessagesUpdated` and `IAirshipMessageCenter.OnMessageCenterDisplay`, now deprecated in favor of `Airship.Instance.OnMessageCenterUpdated` and `Airship.Instance.OnDisplayMessageCenter`
+- Restored `Airship.Instance.OnMessageCenterDisplay`, now deprecated in favor of `Airship.Instance.OnDisplayMessageCenter`
+- Restored the `AirshipEventType` members `BackgroundPushReceived`, `BackgroundNotificationResponse` and `ForegroundNotificationResponse`, now deprecated. All `AirshipEventType` values are now pinned explicitly so that deprecating or adding a member can no longer renumber the others
+- Note: on iOS, a Message Center display request without a message ID now fires the display event with a null `MessageId`. In 21.4.0 and earlier this callback was silently dropped, so a display delegate set by the app was never invoked for a plain display request
+- Note: events raised while no handler is attached are now queued and delivered when a handler subscribes. In 21.4.0 and earlier they were dropped
+
 ## Version 21.5.0 - September 9, 2026
 Minor release that updates the iOS SDK to 20.12.1 and Android SDK to 20.12.0.
 
