@@ -21,7 +21,7 @@ Major release that updates the native SDKs to Airship SDK 21, raises the Android
 - Apps built against the iOS 27 SDK must now declare a `UIApplicationSceneManifest`; see the Migration Guide for the required values
 - Building from source now requires Xcode 27 and JDK 17
 
-See the [Migration Guide](MIGRATION.md) for upgrade instructions.
+See the [Migration Guide](https://github.com/urbanairship/airship-dotnet/blob/main/MIGRATION.md) for upgrade instructions.
 
 ## Version 21.5.0 - September 9, 2026
 Minor release that updates the iOS SDK to 20.12.1 and Android SDK to 20.12.0.
@@ -78,7 +78,7 @@ Major release that moves Message Center inbox functionality into the main packag
 - Updated iOS minimum version to iOS 16+
 - Updated MAUI Controls dependency to 9.0.0
 
-See the [Migration Guide](MIGRATION.md) for upgrade instructions.
+See the [Migration Guide](https://github.com/urbanairship/airship-dotnet/blob/main/MIGRATION.md) for upgrade instructions.
 
 ## Version 20.3.0 - December 30, 2025
 Minor release to update SDKs and resolve crashes caused by calling iOS SDK methods on background threads instead of the main thread.
