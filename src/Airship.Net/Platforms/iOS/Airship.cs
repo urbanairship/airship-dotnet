@@ -625,7 +625,7 @@ namespace AirshipDotNet
         /// <summary>
         /// Gets the Airship .NET library version.
         /// </summary>
-        public static string Version => "22.0.0";
+        public static string Version => "22.1.0";
 
         // Module properties
         public static IAirshipPush Push => Instance._push;

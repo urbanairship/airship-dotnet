@@ -1,6 +1,13 @@
 # Airship DotNet Changelog
 
-## Version 22.0.0 - TBD
+## Version 22.1.0 - November 16, 2026
+Minor release that updates the iOS SDK to 21.2.0 and Android SDK to 21.2.0, which fixes reporting for Scenes launched from a push.
+
+### Changes
+- Updated iOS SDK to [21.2.0](https://github.com/urbanairship/ios-library/releases/tag/21.2.0)
+- Updated Android SDK to [21.2.0](https://github.com/urbanairship/android-library/releases/tag/21.2.0)
+
+## Version 22.0.0 - September 24, 2026
 Major release that updates the native SDKs to Airship SDK 21, raises the Android minimum to API 26, and consolidates lifecycle events onto the `Airship.Instance` facade.
 
 ### Changes
